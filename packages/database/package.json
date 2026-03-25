@@ -1,0 +1,13 @@
+{
+  "name": "@i-mendly/database",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "generate": "prisma generate"
+  },
+  "devDependencies": {
+    "prisma": "^5.13.0"
+  }
+}

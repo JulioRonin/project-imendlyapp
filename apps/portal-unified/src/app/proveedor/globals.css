@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #060d16;
+  
+  /* Brand Colors */
+  --brand-night: #060d16;
+  --brand-navy: #0f3460;
+  --brand-coral: #ff6b47;
+  --brand-teal: #0891b2;
+  --brand-glacial: #bae6fd;
+
+  /* Purple & Lavender Aesthetic */
+  --primary: #7c3aed;
+  --primary-light: #ddd6fe;
+  --primary-dark: #5b21b6;
+  --secondary: #a78bfa;
+  --secondary-light: #ede9fe;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-brand-night: var(--brand-night);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-coral: var(--brand-coral);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-glacial: var(--brand-glacial);
+
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
