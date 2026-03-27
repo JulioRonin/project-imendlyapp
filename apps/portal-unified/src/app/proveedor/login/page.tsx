@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
+import { Home, LogOut, Globe, Shield } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
@@ -7,45 +9,98 @@ import { Input } from '@i-mendly/shared/components/Input';
 import Link from 'next/link';
 
 export default function ProfessionalLoginPage() {
+  const router = useRouter();
+
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <Card className="max-w-md w-full p-12 rounded-[3rem] border-none shadow-2xl bg-white">
-        <div className="text-center mb-10">
-          <Logo className="w-16 h-16 mx-auto mb-6 text-brand-night" />
-          <h1 className="text-3xl font-black text-brand-night uppercase tracking-tighter">Bienvenido</h1>
-          <p className="text-brand-night/40 font-medium text-sm mt-2">INGRESA A TU PORTAL DE PROFESIONAL</p>
+    <main className="min-h-screen relative flex items-center justify-center p-8 overflow-hidden font-urbanist bg-brand-night">
+      {/* Decorative Blur */}
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary opacity-[0.1] blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#FF6B47] opacity-[0.05] blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="flex justify-center mb-16">
+           <Logo size={100} orientation="vertical" variant="dark" />
         </div>
 
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); window.location.href='/proveedor/dashboard'; }}>
-          <Input label="Email Profesional" type="email" placeholder="nombre@compania.com" required className="py-4" />
-          <Input label="Contraseña" type="password" placeholder="••••••••" required className="py-4" />
-          
-          <div className="flex items-center justify-between text-xs font-bold px-1">
-            <label className="flex items-center gap-2 cursor-pointer text-brand-night/40 hover:text-brand-night transition-colors">
-              <input type="checkbox" className="rounded-md border-slate-200 text-primary focus:ring-primary" />
-              Recordarme
-            </label>
-            <button type="button" className="text-primary hover:underline uppercase tracking-widest">¿Olvidaste tu contraseña?</button>
+        <Card variant="glass" className="p-12 md:p-16 rounded-[4rem] border-white/10 shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)] backdrop-blur-2xl bg-white/5">
+          <div className="text-center mb-14">
+            <h1 className="text-5xl font-black text-white tracking-tighter mb-4 uppercase drop-shadow-2xl">
+              Profesionales
+            </h1>
+            <p className="text-primary text-[11px] font-black uppercase tracking-[0.5em] opacity-90">
+              Gestión y Crecimiento de tu Oficio
+            </p>
           </div>
 
-          <Button type="submit" className="w-full py-8 text-sm font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/10 hover:scale-[1.02] transition-transform">
-            Entrar al Portal
-          </Button>
-        </form>
+          <div className="space-y-12">
+            {/* Login Section */}
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="h-[1px] flex-1 bg-white/10" />
+                <h2 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] whitespace-nowrap">Ya tengo cuenta</h2>
+                <div className="h-[1px] flex-1 bg-white/10" />
+              </div>
+              
+              <form 
+                className="space-y-5" 
+                onSubmit={(e) => { e.preventDefault(); router.push('/proveedor'); }}
+              >
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-1">Email Profesional</label>
+                  <Input 
+                    type="email" 
+                    placeholder="NOMBRE@COMPANIA.COM" 
+                    required 
+                    className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-1">Contraseña</label>
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    required 
+                    className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
+                  />
+                </div>
+                <Button type="submit" className="w-full h-18 py-8 text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-white hover:bg-primary/80 transition-all rounded-3xl shadow-[0_20px_48px_rgba(124,58,237,0.3)] border-none mt-6 group overflow-hidden relative">
+                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                   Entrar al Portal
+                </Button>
+              </form>
+            </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-50 text-center">
-          <p className="text-xs font-bold text-brand-night/30 uppercase tracking-widest mb-4">¿Aún no tienes cuenta?</p>
-          <Link href="/proveedor/onboarding">
-            <span className="text-sm font-black text-coral uppercase tracking-widest hover:underline cursor-pointer">Postularme ahora</span>
+            {/* Registration Section */}
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="h-[1px] flex-1 bg-white/10" />
+                <h2 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] whitespace-nowrap">Soy nuevo</h2>
+                <div className="h-[1px] flex-1 bg-white/10" />
+              </div>
+
+              <div className="bg-white/5 p-10 rounded-[3rem] border border-white/5 text-center relative overflow-hidden group hover:bg-white/[0.07] transition-all">
+                <div className="absolute top-0 right-0 p-8 opacity-5 text-white">
+                  <Shield size={64} strokeWidth={1} />
+                </div>
+                <p className="text-white/80 text-sm mb-10 leading-relaxed font-medium relative z-10 px-4">
+                  Únete a la red más exclusiva de prestadores de servicios y digitaliza tu operación con nuestra infraestructura premium.
+                </p>
+                <Link href="/proveedor/onboarding">
+                  <Button className="w-full h-16 text-[10px] font-black uppercase tracking-[0.3em] bg-transparent border-white/20 text-white hover:bg-white hover:text-brand-night transition-all rounded-2xl relative z-10 shadow-2xl">
+                    Postularme Ahora
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <div className="mt-12 flex justify-center">
+          <Link href="/role-selection" className="flex items-center gap-3 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] hover:text-white transition-colors group">
+            <Home size={16} className="group-hover:-translate-y-0.5 transition-transform" /> Volver a Roles
           </Link>
         </div>
-        
-        <div className="mt-8 text-center">
-          <Link href="/">
-            <span className="text-[10px] font-black text-brand-night/20 uppercase tracking-widest hover:text-brand-night transition-colors cursor-pointer">← Volver al inicio</span>
-          </Link>
-        </div>
-      </Card>
+      </div>
     </main>
   );
 }

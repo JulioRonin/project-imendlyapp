@@ -22,7 +22,12 @@ export default function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const providerId = searchParams.get('providerId');
+  const servicesParam = searchParams.get('services');
+  const totalParam = searchParams.get('total');
+  
   const provider = MOCK_PROVIDERS.find(p => p.id === providerId) || MOCK_PROVIDERS[0];
+  const selectedServices = servicesParam ? servicesParam.split(',') : [];
+  const basePrice = totalParam ? parseInt(totalParam) : provider.price;
   
   const [step, setStep] = useState<PaymentStep>('selection');
   const [method, setMethod] = useState<PaymentMethod>('stripe');
@@ -34,7 +39,7 @@ export default function CheckoutPage() {
     } else {
       setIsProcessing(true);
       setTimeout(() => {
-        router.push(`/cliente/orders/success?id=ORD-${Math.floor(Math.random() * 10000)}`);
+        router.push(`/cliente/orders/success?id=ORD-${Math.floor(Math.random() * 10000)}&providerId=${providerId}&services=${encodeURIComponent(servicesParam || '')}&total=${basePrice}`);
       }, 2500);
     }
   };
@@ -234,25 +239,32 @@ export default function CheckoutPage() {
               <h2 className="text-lg font-black text-brand-night uppercase tracking-tight mb-8">Resumen Final</h2>
               
               <div className="flex items-center gap-4 mb-8">
-                 <Avatar name={provider.name} className="w-16 h-16 rounded-2xl shadow-lg" />
+                 <Avatar src={(provider as any).image} name={provider.name} className="w-16 h-16 rounded-2xl shadow-lg" />
                  <div>
                     <h3 className="font-black text-brand-night uppercase text-sm tracking-tight">{provider.name}</h3>
-                    <Badge variant="primary" className="text-[8px] uppercase tracking-widest px-2 py-0.5 mt-1">{provider.category}</Badge>
+                    <Badge variant="default" className="text-[8px] uppercase tracking-widest px-2 py-0.5 mt-1">{provider.category}</Badge>
                  </div>
               </div>
 
               <div className="space-y-4 border-y border-slate-50 py-8 mb-8">
-                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
-                    <span className="text-slate-300">Reserva de Servicio</span>
-                    <span className="text-brand-night">${provider.price}</span>
-                 </div>
-                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
-                    <span className="text-slate-300">Cuota de Plataforma</span>
-                    <span className="text-brand-night">$99</span>
-                 </div>
-                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest pt-2 border-t border-slate-50 mt-2">
+                 {selectedServices.length > 0 ? (
+                    selectedServices.map((s, i) => (
+                      <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
+                         <span className="text-slate-300">{s}</span>
+                         <span className="text-brand-night">
+                            ${provider.services.find((ps: any) => ps.name === s)?.price || 0}
+                         </span>
+                      </div>
+                    ))
+                 ) : (
+                    <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
+                       <span className="text-slate-300">Reserva de Servicio</span>
+                       <span className="text-brand-night">${provider.price}</span>
+                    </div>
+                 )}
+                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest pt-4 border-t border-slate-100 mt-2">
                     <span className="text-brand-night">Total a Pagar</span>
-                    <span className="text-2xl font-black text-brand-night tracking-tighter">${provider.price + 99}</span>
+                    <span className="text-2xl font-black text-brand-night tracking-tighter">${basePrice}</span>
                  </div>
               </div>
 

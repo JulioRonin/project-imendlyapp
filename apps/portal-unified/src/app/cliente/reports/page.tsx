@@ -2,10 +2,26 @@
 
 import { Card } from '@i-mendly/shared/components/Card';
 import { Button } from '@i-mendly/shared/components/Button';
-import { AlertCircle, FileWarning, ShieldCheck, Home } from 'lucide-react';
+import { 
+  AlertCircle, 
+  FileWarning, 
+  ShieldCheck, 
+  Home,
+  BarChart3,
+  MessageCircle,
+  User,
+  LogOut
+} from 'lucide-react';
+import { BottomNav } from '@i-mendly/shared';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ReportsPage() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/role-selection');
+  };
   return (
     <main className="min-h-screen bg-slate-50 p-8 pb-32">
       <header className="mb-12 flex justify-between items-center">
@@ -13,7 +29,7 @@ export default function ReportsPage() {
           <h1 className="text-4xl font-black text-brand-night tracking-tight">Centro de Reportes</h1>
           <p className="text-sm font-bold text-brand-night/40 mt-1">Protegemos tu experiencia con asistencia inmediata</p>
         </div>
-        <Link href="/cliente/home">
+        <Link href="/cliente">
           <Button variant="outline" className="rounded-2xl px-6">
             <Home size={18} className="mr-2" /> Inicio
           </Button>
@@ -74,6 +90,9 @@ export default function ReportsPage() {
           </div>
         </form>
       </Card>
+
+      {/* Bottom Nav (Standardized) */}
+      <BottomNav onLogout={handleLogout} />
     </main>
   );
 }

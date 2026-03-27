@@ -2,21 +2,25 @@ import React from 'react';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'teal' | 'coral' | 'navy' | 'primary' | 'success';
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'silver';
   className?: string;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', className = '' }) => {
+export const Badge: React.FC<BadgeProps> = ({ 
+  children, 
+  variant = 'default',
+  className = '' 
+}) => {
   const variants = {
-    primary: "bg-primary-light text-primary",
-    teal: "bg-brand-teal/10 text-brand-teal",
-    coral: "bg-brand-coral/10 text-brand-coral",
-    navy: "bg-brand-navy text-white",
-    success: "bg-emerald-100 text-emerald-700",
+    default: "bg-primary text-white",
+    success: "bg-im-green text-white",
+    warning: "bg-[#F59E0B] text-white",
+    error: "bg-[#EF4444] text-white",
+    silver: "bg-silver-light text-black-rich",
   };
-  
+
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-tight ${variants[variant]} ${className}`}>
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] font-urbanist font-[500] uppercase tracking-wider ${variants[variant]} ${className}`}>
       {children}
     </span>
   );

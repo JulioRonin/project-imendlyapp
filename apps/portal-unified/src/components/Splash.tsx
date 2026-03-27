@@ -46,11 +46,10 @@ export function Splash() {
       </div>
 
       <div className="flex flex-col items-center text-center mt-[-80px] z-10 px-8">
-        <div className="w-24 h-24 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center mb-10 border border-slate-50">
-          <Logo className="w-12 h-12 text-brand-night" />
+        <div className="flex items-center justify-center mb-12 transform hover:scale-105 transition-transform duration-700">
+          <Logo size={100} orientation="vertical" />
         </div>
-        <h1 className="text-4xl font-black text-brand-night tracking-[0.2em] mb-4 uppercase">I mendly</h1>
-        <p className="text-brand-night/40 text-[10px] font-black tracking-[0.5em] uppercase">Servicios Boutique para el Hogar</p>
+        <p className="text-brand-night/30 text-[10px] font-black tracking-[0.5em] uppercase">Boutique Home Services</p>
         
         <div className="mt-16 flex gap-2">
           {IMAGES.map((_, i) => (

@@ -11,7 +11,8 @@ import { Step2Identity } from './components/Step2Identity';
 import { Step3Docs } from './components/Step3Docs';
 import { Step4Services } from './components/Step4Services';
 import { Step5Interview } from './components/Step5Interview';
-import { Step6Review } from './components/Step6Review';
+import { Step6Exam } from './components/Step6Exam';
+import { Step7Review } from './components/Step7Review';
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
@@ -27,7 +28,8 @@ export default function OnboardingPage() {
     <Step3Docs onNext={nextStep} onBack={prevStep} />,
     <Step4Services onNext={nextStep} onBack={prevStep} />,
     <Step5Interview onNext={nextStep} onBack={prevStep} />,
-    <Step6Review />
+    <Step6Exam onNext={nextStep} onBack={prevStep} />,
+    <Step7Review />
   ];
 
   return (
@@ -37,19 +39,19 @@ export default function OnboardingPage() {
       
       <div className="max-w-xl mx-auto px-6 py-12 relative z-10">
         <div className="flex justify-center mb-12">
-          <Logo size={60} />
+          <Logo size={60} variant="darkBg" />
         </div>
         
-        {step > 0 && step < 6 && (
+        {step > 0 && step < 7 && (
           <div className="mb-10">
             <div className="flex justify-between items-end mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-white/40">Paso {step} de 6</span>
-              <span className="text-2xl font-black text-secondary-light">{Math.round((step / 6) * 100)}%</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-white/40">Paso {step} de 7</span>
+              <span className="text-2xl font-black text-secondary-light">{Math.round((step / 7) * 100)}%</span>
             </div>
             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-primary transition-all duration-500 ease-out" 
-                style={{ width: `${(step / 6) * 100}%` }}
+                style={{ width: `${(step / 7) * 100}%` }}
               />
             </div>
           </div>

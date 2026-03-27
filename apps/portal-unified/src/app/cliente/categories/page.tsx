@@ -3,28 +3,38 @@
 import { Logo } from '@i-mendly/shared/Logo';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
-import { ArrowLeft, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler } from 'lucide-react';
+import { ArrowLeft, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler, Scissors, Car } from 'lucide-react';
+import { BottomNav } from '@i-mendly/shared';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const ALL_CATEGORIES = [
   { name: 'Electricista', icon: <Zap size={32} strokeWidth={1.5} />, image: '/assets/electrician.png', description: 'Instalaciones, reparaciones y cortocircuitos.' },
   { name: 'Plomería', icon: <Droplets size={32} strokeWidth={1.5} />, image: '/assets/plumbing.png', description: 'Tuberías, fugas y mantenimiento hidráulico.' },
-  { name: 'Limpieza', icon: <Sparkles size={32} strokeWidth={1.5} />, image: '/assets/plumbing.png', description: 'Limpieza profunda y mantenimiento de espacios.' },
+  { name: 'Limpieza', icon: <Sparkles size={32} strokeWidth={1.5} />, image: '/assets/cleaning_professional.png', description: 'Limpieza profunda y mantenimiento de espacios con personal calificado.' },
   { name: 'Climas/AC', icon: <Wind size={32} strokeWidth={1.5} />, image: '/assets/ac_work.png', description: 'Mantenimiento preventivo y correctivo de AC.' },
   { name: 'Pintura', icon: <Paintbrush size={32} strokeWidth={1.5} />, image: '/assets/painting_work.png', description: 'Interiores, exteriores y acabados de lujo.' },
   { name: 'Carpintería', icon: <Hammer size={32} strokeWidth={1.5} />, image: '/assets/carpentry.png', description: 'Muebles a medida y reparaciones de madera.' },
   { name: 'Jardinería', icon: <Flower2 size={32} strokeWidth={1.5} />, image: '/assets/gardening.png', description: 'Diseño de paisajes y cuidado de áreas verdes.' },
   { name: 'Cerrajería', icon: <Lock size={32} strokeWidth={1.5} />, image: '/assets/locksmith.png', description: 'Aperturas de emergencia y chapas de seguridad.' },
-  { name: 'Fumigación', icon: <Bug size={32} strokeWidth={1.5} />, image: '/assets/plumbing.png', description: 'Control de plagas residencial y comercial.' },
+  { name: 'Fumigación', icon: <Bug size={32} strokeWidth={1.5} />, image: '/assets/fumigation_professional.png', description: 'Control de plagas especializado con equipo profesional.' },
+  { name: 'Carwash', icon: <Car size={32} strokeWidth={1.5} />, image: '/assets/carwash_boutique.png', description: 'Estética automotriz, detallado y limpieza premium a domicilio.' },
   { name: 'Remodelación', icon: <Ruler size={32} strokeWidth={1.5} />, image: '/assets/electrician_work.png', description: 'Renovación total de espacios y albañilería.' },
+  { name: 'Moda y costura', icon: <Scissors size={32} strokeWidth={1.5} />, image: '/assets/fashion_sewing.png', description: 'Vestidos a medida, ajustes y diseño personalizado.' },
 ];
 
 export default function CategoriesPage() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/role-selection');
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
       {/* Dynamic Header */}
       <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <Link href="/cliente/home">
+        <Link href="/cliente">
           <button className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary hover:scale-110 transition-all border border-slate-100">
             <ArrowLeft size={20} strokeWidth={3} />
           </button>
@@ -70,6 +80,9 @@ export default function CategoriesPage() {
           ))}
         </div>
       </div>
+      
+      {/* Bottom Nav (Standardized) */}
+      <BottomNav onLogout={handleLogout} />
     </main>
   );
 }

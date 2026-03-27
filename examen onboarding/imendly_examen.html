@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen de Certificación — i mendly</title>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #3DB87A;
+    --green-dk: #2A9460;
+    --green-lt: #E8F7F0;
+    --silver: #D1D1D1;
+    --black: #1F1F1F;
+    --gray-60: #4A4A4A;
+    --gray-40: #8A8A8A;
+    --gray-20: #C4C4C4;
+    --white: #FFFFFF;
+    --off: #F7F7F7;
+    --red-lt: #FEE2E2;
+    --red: #DC2626;
+    --amber-lt: #FEF3C7;
+    --amber: #D97706;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Urbanist', sans-serif;
+    background: var(--silver);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px 64px;
+  }
+  .shell {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── NAV BAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-iso { width: 32px; height: 29px; }
+  .logo-word {
+    font-size: 17px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--black);
+  }
+  .timer-pill {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 99px;
+    background: var(--white);
+    color: var(--gray-60);
+    border: 0.5px solid var(--gray-20);
+    font-variant-numeric: tabular-nums;
+    transition: all .3s;
+  }
+  .timer-pill.warn { background: var(--red-lt); color: var(--red); border-color: #FCA5A5; }
+
+  /* ── COVER ── */
+  .cover-card {
+    background: var(--white);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+  .cover-hero {
+    background: var(--black);
+    padding: 48px 40px 40px;
+    position: relative;
+  }
+  .cover-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(61,184,122,.04) 40px,
+      rgba(61,184,122,.04) 41px
+    );
+  }
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(61,184,122,.15);
+    border: 1px solid rgba(61,184,122,.3);
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .cover-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:.5; transform:scale(1.4); }
+  }
+  .cover-title {
+    font-size: 36px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .cover-title span { color: var(--green); }
+  .cover-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,.5);
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+  .cover-body { padding: 32px 40px 40px; }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .stat-item {
+    background: var(--off);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+  .stat-val {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-lbl { font-size: 11px; font-weight: 400; color: var(--gray-40); letter-spacing: .5px; }
+  .modules-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray-40);
+    margin-bottom: 12px;
+  }
+  .mods-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .mod-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--off);
+    border-radius: 14px;
+  }
+  .mod-row.full { grid-column: span 2; }
+  .mod-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .mod-label { font-size: 13px; font-weight: 400; color: var(--black); flex: 1; }
+  .mod-count { font-size: 12px; color: var(--gray-40); }
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    font-family: 'Urbanist', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: .3px;
+    transition: all .2s;
+  }
+  .start-btn:hover { background: var(--green-dk); transform: translateY(-1px); }
+  .start-btn:active { transform: scale(.98); }
+
+  /* ── EXAM SCREEN ── */
+  .progress-bar-wrap {
+    background: rgba(0,0,0,.08);
+    border-radius: 99px;
+    height: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .q-module-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .5px;
+  }
+  .q-num {
+    font-size: 12px;
+    color: var(--gray-40);
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .q-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--black);
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid #EBEBEB;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all .18s;
+    background: var(--white);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--green);
+    background: var(--green-lt);
+    transform: translateX(2px);
+  }
+  .opt.chosen { border-color: var(--green); background: var(--green-lt); }
+  .opt.correct { border-color: var(--green-dk); background: var(--green-lt); }
+  .opt.wrong { border-color: #FCA5A5; background: var(--red-lt); }
+  .opt.locked { cursor: default; }
+  .opt.reveal-correct:not(.wrong) { border-color: var(--green-dk); background: var(--green-lt); }
+  .opt-letter {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid #EBEBEB;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    color: var(--gray-40);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all .18s;
+  }
+  .opt.chosen .opt-letter { background: var(--green); border-color: var(--green); color: #fff; }
+  .opt.correct .opt-letter { background: var(--green-dk); border-color: var(--green-dk); color: #fff; }
+  .opt.wrong .opt-letter { background: var(--red); border-color: var(--red); color: #fff; }
+  .opt.reveal-correct:not(.wrong) .opt-letter { background: var(--green-dk); border-color: var(--green-dk); color: #fff; }
+  .opt-text { font-size: 14px; line-height: 1.5; color: var(--black); flex: 1; padding-top: 4px; }
+  .rationale-card {
+    background: var(--off);
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--gray-60);
+    line-height: 1.65;
+    border-left: 3px solid var(--green);
+    margin-bottom: 12px;
+    animation: fadeSlide .25s ease;
+  }
+  @keyframes fadeSlide {
+    from { opacity:0; transform:translateY(6px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  .nav-row {
+    display: flex;
+    gap: 10px;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 13px;
+    border: 1.5px solid #EBEBEB;
+    border-radius: 99px;
+    background: var(--white);
+    font-family: 'Urbanist', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-60);
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--off); border-color: var(--gray-20); }
+  .nav-btn:disabled { opacity: .35; cursor: default; }
+  .nav-btn.primary {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+  }
+  .nav-btn.primary:hover { background: var(--green-dk); border-color: var(--green-dk); }
+  .nav-btn.danger {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+  }
+
+  /* ── RESULTS ── */
+  .results-card {
+    background: var(--white);
+    border-radius: 28px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .results-hero {
+    padding: 40px 32px;
+    text-align: center;
+    background: var(--black);
+    position: relative;
+  }
+  .score-ring {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 5px solid var(--green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .score-ring.fail { border-color: var(--red); }
+  .score-pct {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-pct.fail { color: #FCA5A5; }
+  .score-ring-label { font-size: 10px; font-weight: 300; color: rgba(255,255,255,.4); letter-spacing: 1px; margin-top: 2px; }
+  .result-title { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 6px; position: relative; z-index: 1; }
+  .result-sub { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); position: relative; z-index: 1; }
+  .results-body { padding: 28px 32px; }
+  .res-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .res-stat {
+    background: var(--off);
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .rs-val { font-size: 20px; font-weight: 600; margin-bottom: 3px; }
+  .rs-lbl { font-size: 11px; color: var(--gray-40); }
+  .mod-breakdown { margin-bottom: 24px; }
+  .mb-title { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-40); margin-bottom: 14px; }
+  .mb-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mb-name { font-size: 13px; color: var(--black); width: 160px; flex-shrink: 0; }
+  .mb-bar { flex: 1; height: 8px; background: var(--off); border-radius: 99px; overflow: hidden; }
+  .mb-fill { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+  .mb-score { font-size: 13px; font-weight: 600; min-width: 30px; text-align: right; }
+  .toggle-review {
+    width: 100%;
+    padding: 13px;
+    border: 1.5px solid #EBEBEB;
+    border-radius: 99px;
+    background: var(--off);
+    font-family: 'Urbanist', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-60);
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: all .18s;
+  }
+  .toggle-review:hover { background: var(--silver); }
+  .review-section { display: none; }
+  .review-section.open { display: block; }
+  .rev-item {
+    padding: 18px 0;
+    border-bottom: 0.5px solid #EBEBEB;
+  }
+  .rev-item:last-child { border: none; }
+  .rev-meta { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-40); margin-bottom: 5px; }
+  .rev-q { font-size: 14px; font-weight: 500; color: var(--black); line-height: 1.4; margin-bottom: 8px; }
+  .rev-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  .rev-tag.ok { background: var(--green-lt); color: var(--green-dk); }
+  .rev-tag.bad { background: var(--red-lt); color: var(--red); }
+  .rev-answer { font-size: 12px; color: var(--gray-60); margin-bottom: 4px; }
+  .rev-rat { font-size: 12px; color: var(--gray-40); line-height: 1.6; }
+  .restart-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--black);
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    font-family: 'Urbanist', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .restart-btn:hover { background: #333; }
+
+  @media(max-width:520px){
+    body { padding: 20px 12px 48px; }
+    .cover-hero { padding: 36px 24px 32px; }
+    .cover-title { font-size: 28px; }
+    .cover-body { padding: 24px; }
+    .q-card { padding: 22px; }
+    .results-body { padding: 22px; }
+    .mb-name { width: 120px; font-size: 12px; }
+    .stats-row { gap: 7px; }
+    .stat-val { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOP BAR (visible in exam) -->
+  <div class="topbar">
+    <div class="logo">
+      <svg class="logo-iso" viewBox="0 0 100 92" fill="none">
+        <defs><clipPath id="lc"><path d="M10,82L10,38L36,8L50,22L64,8L90,38L90,82L70,82L70,48L58,48L50,56L42,48L30,48L30,82Z"/></clipPath></defs>
+        <g clip-path="url(#lc)"><g transform="rotate(-48,50,44)">
+          <rect x="-120" y="9" width="340" height="18.2" fill="#3DB87A"/>
+          <rect x="-120" y="27.2" width="340" height="18.2" fill="#2A9460"/>
+          <rect x="-120" y="45.4" width="340" height="18.2" fill="#1F1F1F"/>
+          <rect x="-120" y="63.6" width="340" height="18.2" fill="#4A4A4A"/>
+          <rect x="-120" y="81.8" width="340" height="80" fill="#E8F7F0"/>
+        </g></g>
+      </svg>
+      <span class="logo-word">i mendly</span>
+    </div>
+    <div class="timer-pill" id="timer">40:00</div>
+  </div>
+
+  <!-- ══ SCREEN: COVER ══ -->
+  <div class="screen active" id="s-cover">
+    <div class="cover-card">
+      <div class="cover-hero">
+        <div class="cover-badge">certificación oficial</div>
+        <div class="cover-title">Examen de<br><span>Certificación</span></div>
+        <div class="cover-sub">Demuestra que dominas los valores, protocolos y estándares de calidad que hacen de I mendly la plataforma de confianza para servicios del hogar.</div>
+      </div>
+      <div class="cover-body">
+        <div class="stats-row">
+          <div class="stat-item"><div class="stat-val">25</div><div class="stat-lbl">preguntas</div></div>
+          <div class="stat-item"><div class="stat-val">80%</div><div class="stat-lbl">para aprobar</div></div>
+          <div class="stat-item"><div class="stat-val">40 min</div><div class="stat-lbl">tiempo límite</div></div>
+        </div>
+        <div class="modules-title">Módulos del examen</div>
+        <div class="mods-grid">
+          <div class="mod-row"><div class="mod-dot" style="background:#3DB87A"></div><span class="mod-label">Valores I mendly</span><span class="mod-count">5</span></div>
+          <div class="mod-row"><div class="mod-dot" style="background:#0891B2"></div><span class="mod-label">Antes del servicio</span><span class="mod-count">5</span></div>
+          <div class="mod-row"><div class="mod-dot" style="background:#7C3AED"></div><span class="mod-label">Durante y después</span><span class="mod-count">5</span></div>
+          <div class="mod-row"><div class="mod-dot" style="background:#F59E0B"></div><span class="mod-label">Situaciones difíciles</span><span class="mod-count">5</span></div>
+          <div class="mod-row full"><div class="mod-dot" style="background:#EF4444"></div><span class="mod-label">Uso de la app I mendly</span><span class="mod-count">5</span></div>
+        </div>
+        <button class="start-btn" onclick="startExam()">Comenzar el examen →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: EXAM ══ -->
+  <div class="screen" id="s-exam">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="prog" style="width:4%"></div>
+    </div>
+    <div class="q-header">
+      <div class="q-module-pill" id="mod-pill"></div>
+      <div class="q-num" id="q-num">1 / 25</div>
+    </div>
+    <div class="q-card">
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="opts"></div>
+    </div>
+    <div id="rationale-area"></div>
+    <div class="nav-row">
+      <button class="nav-btn" id="btn-prev" onclick="goPrev()">← Anterior</button>
+      <button class="nav-btn primary" id="btn-next" onclick="goNext()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: RESULTS ══ -->
+  <div class="screen" id="s-results">
+    <div class="results-card">
+      <div class="results-hero">
+        <div class="score-ring" id="score-ring">
+          <div class="score-pct" id="score-pct">—</div>
+          <div class="score-ring-label">puntaje</div>
+        </div>
+        <div class="result-title" id="result-title">—</div>
+        <div class="result-sub" id="result-sub">—</div>
+      </div>
+      <div class="results-body">
+        <div class="res-stats">
+          <div class="res-stat"><div class="rs-val" id="rs-ok" style="color:#2A9460">—</div><div class="rs-lbl">correctas</div></div>
+          <div class="res-stat"><div class="rs-val" id="rs-bad" style="color:#DC2626">—</div><div class="rs-lbl">incorrectas</div></div>
+          <div class="res-stat"><div class="rs-val" id="rs-time">—</div><div class="rs-lbl">tiempo</div></div>
+        </div>
+        <div class="mod-breakdown">
+          <div class="mb-title">Resultado por módulo</div>
+          <div id="mod-breakdown"></div>
+        </div>
+        <button class="toggle-review" onclick="toggleReview(this)">Ver revisión de respuestas ▼</button>
+        <div class="review-section" id="review-section"></div>
+        <button class="restart-btn" onclick="restart()">Reintentar el examen</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const MODS=[
+  {id:'mod-01',label:'Valores I mendly',color:'#3DB87A'},
+  {id:'mod-02',label:'Antes del servicio',color:'#0891B2'},
+  {id:'mod-03',label:'Durante y después',color:'#7C3AED'},
+  {id:'mod-04',label:'Situaciones difíciles',color:'#F59E0B'},
+  {id:'mod-05',label:'Uso de la app',color:'#EF4444'},
+];
+const QS=[
+  {id:'q01',m:'mod-01',t:'Un cliente te solicita un servicio de plomería y al revisar el trabajo encuentras que el problema es más complejo de lo indicado. El costo real sería el doble del cotizado. ¿Qué debes hacer?',o:[
+    {l:'A',t:'Realizar el trabajo completo y cobrar el doble al final sin avisar — el cliente verá que era necesario.',ok:false,r:'Cobrar más de lo acordado sin consentimiento previo viola los valores de I mendly. El cliente tiene derecho a decidir antes de incurrir en costos adicionales.'},
+    {l:'B',t:'Parar el trabajo, informar al cliente del hallazgo y el nuevo costo estimado, y esperar su aprobación antes de continuar.',ok:true,r:'La transparencia ante imprevistos es un valor fundamental. El cliente siempre debe aprobar cualquier costo adicional ANTES de que se realice. Usa el chat de la app para dejar registro escrito.'},
+    {l:'C',t:'Hacer solo lo que cubre el presupuesto original y dejar el resto sin terminar.',ok:false,r:'Dejar un trabajo a medias sin comunicación puede causar daños adicionales y genera mala experiencia. La comunicación proactiva es siempre la solución correcta.'},
+    {l:'D',t:'Terminar el trabajo y no cobrar la diferencia para mantener buena calificación.',ok:false,r:'Realizas trabajo extra sin compensación justa y sin el consentimiento informado del cliente. Lo correcto es siempre comunicar y acordar.'},
+  ]},
+  {id:'q02',m:'mod-01',t:'Un cliente satisfecho te pide tu número personal para contratarte directamente "para ahorrarse la comisión de I mendly". ¿Cómo respondes?',o:[
+    {l:'A',t:'Le das tu número — es un buen cliente y la comisión es molesta para ambos.',ok:false,r:'Viola directamente la cláusula anti-derivación del Contrato de Proveedor. Puede resultar en baja definitiva y pérdida de pagos pendientes.'},
+    {l:'B',t:'Explicas amablemente que no puedes dar tu contacto directo, pero que con gusto lo atiendes de nuevo a través de la app, donde además tiene la protección del escrow.',ok:true,r:'Rechazas la derivación con educación y resaltas el beneficio que tiene el cliente al usar la plataforma. Tu reputación en I mendly vale más que un servicio directo.'},
+    {l:'C',t:'Dices que sí pero le pides que no lo comente con I mendly.',ok:false,r:'Solicitar discreción sobre una conducta prohibida agrava la infracción y puede resultar en consecuencias legales además de la baja de la plataforma.'},
+    {l:'D',t:'Le das el contacto de un colega que no está en I mendly para que lo contraten directamente.',ok:false,r:'Facilitar que el cliente evite la plataforma también viola el espíritu del contrato, aunque sea a través de un tercero.'},
+  ]},
+  {id:'q03',m:'mod-01',t:'¿Cuál de los siguientes comportamientos puede resultar en la PÉRDIDA PERMANENTE de tu badge "Certificado I mendly"?',o:[
+    {l:'A',t:'Llegar 20 minutos tarde a un servicio sin avisar.',ok:false,r:'Un retraso sin aviso es una falta, pero no causa pérdida del badge directamente. Genera una mala calificación y posiblemente una advertencia.'},
+    {l:'B',t:'Recibir tres disputas resueltas en tu contra en un período de seis meses.',ok:true,r:'Tres disputas perdidas en seis meses activa la pérdida automática del badge. El sistema protege la confianza de los clientes: si consistentemente el trabajo no cumple, el badge no puede mantenerse.'},
+    {l:'C',t:'No responder un mensaje del cliente durante las primeras 2 horas.',ok:false,r:'Un solo retraso en respuesta no causa pérdida del badge. El estándar de I mendly es responder en menos de 30 minutos durante un servicio activo.'},
+    {l:'D',t:'Cobrar en efectivo de manera excepcional cuando la app presenta fallas técnicas.',ok:false,r:'Si la app falla, reportarlo a soporte y reprogramar es lo correcto. Cobrar fuera de la plataforma comprobadamente puede resultar en baja definitiva.'},
+  ]},
+  {id:'q04',m:'mod-01',t:'¿Qué certifica realmente el badge "Proveedor Certificado I mendly" ante los clientes?',o:[
+    {l:'A',t:'Que I mendly garantiza que el proveedor siempre hace trabajos perfectos y sin errores.',ok:false,r:'I mendly no garantiza perfección absoluta. El badge certifica identidad, antecedentes y actitud de servicio — no la ausencia de errores.'},
+    {l:'B',t:'Que el proveedor es empleado directo de I mendly.',ok:false,r:'Los proveedores son profesionales independientes. I mendly actúa como plataforma de intermediación, no como empleador.'},
+    {l:'C',t:'Que el proveedor tiene identidad verificada, antecedentes limpios, portafolio revisado y fue evaluado en una entrevista de calidad.',ok:true,r:'Exactamente lo que certifica el badge: verificación en 6 pasos — identidad, antecedentes, portafolio, entrevista y examen. Eso diferencia a I mendly de cualquier directorio de servicios.'},
+    {l:'D',t:'Que el proveedor tiene más de 10 años de experiencia en su oficio.',ok:false,r:'Los años de experiencia son un factor de evaluación, pero no un requisito mínimo absoluto para la certificación.'},
+  ]},
+  {id:'q05',m:'mod-01',t:'¿Cómo afecta tu calificación promedio tu posición en los resultados de búsqueda de I mendly?',o:[
+    {l:'A',t:'No afecta — todos los proveedores aparecen en orden alfabético.',ok:false,r:'El algoritmo pondera múltiples factores: calificación promedio (40%), tasa de completados, tiempo de respuesta y antigüedad. No es orden alfabético.'},
+    {l:'B',t:'Solo afecta si tienes menos de 4 estrellas.',ok:false,r:'El impacto es continuo y diferenciador en toda la escala. La diferencia entre 4.5 y 4.9 estrellas sí impacta significativamente en la visibilidad.'},
+    {l:'C',t:'Una calificación más alta te posiciona más arriba en los resultados, lo que genera más solicitudes y mayores ingresos.',ok:true,r:'Correcto. La calificación tiene un peso del 40% en el ranking. Los proveedores mejor calificados aparecen primero y reciben más ingresos — el ciclo virtuoso de la excelencia.'},
+    {l:'D',t:'La calificación solo importa para la renovación del badge, no para la visibilidad diaria.',ok:false,r:'La calificación afecta la visibilidad en tiempo real Y es criterio de renovación. Son dos impactos distintos del mismo factor.'},
+  ]},
+  {id:'q06',m:'mod-02',t:'Recibes una solicitud de instalación eléctrica y el cliente menciona que su tablero "chispeó" la semana pasada. ¿Cuál es el primer paso correcto?',o:[
+    {l:'A',t:'Aceptar inmediatamente para no perder el trabajo — evaluarás el riesgo cuando llegues.',ok:false,r:'Aceptar sin entender el alcance es un error. Un tablero que "chispeó" puede indicar un problema grave de seguridad. Primero obtén más información.'},
+    {l:'B',t:'Ignorar esa parte de la descripción — los clientes exageran los problemas.',ok:false,r:'Ignorar señales de alerta es falta de profesionalismo que puede resultar en situaciones peligrosas y en reclamaciones posteriores.'},
+    {l:'C',t:'Usar el chat de la app para preguntar al cliente más detalles antes de aceptar, para evaluar si el trabajo está dentro de tu capacidad y cotizar correctamente.',ok:true,r:'Siempre es profesional pedir más información cuando hay complejidad técnica o riesgo. El chat deja registro oficial. Protege a ambas partes y garantiza una cotización justa.'},
+    {l:'D',t:'Rechazar la solicitud — cualquier trabajo con riesgo eléctrico debe evitarse.',ok:false,r:'Rechazar sin investigar limita innecesariamente tus ingresos. Como electricista certificado, eres el profesional indicado para evaluar y resolver estos problemas.'},
+  ]},
+  {id:'q07',m:'mod-02',t:'Tienes un servicio confirmado a las 10:00 AM. A las 9:30 AM sabes que llegarás a las 10:45 AM por tráfico. ¿Qué debes hacer?',o:[
+    {l:'A',t:'Llegar a las 10:45 AM y disculparte en persona — el tráfico le pasa a todos.',ok:false,r:'No avisar del retraso es una falta de respeto al tiempo del cliente. El protocolo establece avisar inmediatamente cuando sabes que habrá un retraso.'},
+    {l:'B',t:'Enviar un mensaje por el chat de la app en ese momento explicando el retraso y la hora estimada de llegada.',ok:true,r:'Avisar con anticipación, por el canal oficial, con la nueva hora estimada es exactamente el protocolo correcto. El cliente puede reorganizar su tiempo y queda registro.'},
+    {l:'C',t:'Cancelar el servicio — si no puedes llegar puntual, mejor no ir.',ok:false,r:'Cancelar por un retraso de 45 minutos cuando puedes comunicarlo es una solución desproporcionada. Las cancelaciones tienen consecuencias en tu historial.'},
+    {l:'D',t:'No hacer nada — el cliente entenderá cuando llegues.',ok:false,r:'Nunca asumas que el cliente "entenderá". Tu puntualidad y comunicación afectan directamente tu calificación en la plataforma.'},
+  ]},
+  {id:'q08',m:'mod-02',t:'¿Cuál de estas acciones es parte del protocolo recomendado por I mendly ANTES de llegar al servicio?',o:[
+    {l:'A',t:'Llamar al cliente por teléfono la noche anterior para confirmar.',ok:false,r:'Las comunicaciones deben hacerse a través del chat de la app, no por llamada, para mantener el registro oficial. Una llamada la noche anterior también puede ser percibida como intrusiva.'},
+    {l:'B',t:'Enviar un mensaje por el chat de la app 30 minutos antes confirmando que estás en camino.',ok:true,r:'El protocolo I mendly establece enviar confirmación de llegada ~30 minutos antes por el chat oficial. Tranquiliza al cliente y demuestra el profesionalismo que diferencia a un proveedor 5 estrellas.'},
+    {l:'C',t:'Verificar si el cliente publicó el servicio en otras plataformas para comparar precios.',ok:false,r:'Esta conducta no forma parte del protocolo y puede indicar intención de contactar al cliente fuera de la plataforma, lo cual está prohibido.'},
+    {l:'D',t:'Esperar a que el cliente te contacte — si no lo hace, es que no necesita confirmación.',ok:false,r:'No esperes a que el cliente tome la iniciativa. La confirmación proactiva de llegada diferencia a los proveedores 5 estrellas.'},
+  ]},
+  {id:'q09',m:'mod-02',t:'El cliente te envía un mensaje por el chat preguntando si puedes traer un material específico para el servicio. ¿En cuánto tiempo deberías responder?',o:[
+    {l:'A',t:'24 horas — tienes un día completo de margen.',ok:false,r:'24 horas es demasiado tiempo para una consulta de un servicio activo o próximo. Un tiempo de respuesta lento afecta directamente tu calificación.'},
+    {l:'B',t:'Cuando termines tu trabajo actual — el cliente puede esperar.',ok:false,r:'Si estás en otro servicio, al menos envía un mensaje breve reconociendo que leíste y que responderás en X tiempo.'},
+    {l:'C',t:'Máximo 30 minutos para mensajes relacionados con un servicio activo o próximo.',ok:true,r:'El estándar de I mendly es responder en máximo 30 minutos durante servicios activos o próximos. Este tiempo de respuesta rápida es uno de los factores que más impacta en las calificaciones de 5 estrellas.'},
+    {l:'D',t:'No es necesario responder — si el material es necesario lo llevas, si no, no.',ok:false,r:'No responder mensajes del cliente es una falta grave al protocolo de comunicación de I mendly.'},
+  ]},
+  {id:'q10',m:'mod-02',t:'Revisas una solicitud y te das cuenta de que el trabajo supera tu nivel de conocimiento técnico. ¿Cuál es la acción más correcta?',o:[
+    {l:'A',t:'Aceptar de todas formas y aprender en el camino — el cliente no sabrá la diferencia.',ok:false,r:'Aceptar trabajos fuera de tu capacidad técnica es peligroso. Si el trabajo sale mal, la disputa será muy difícil de ganar y tu calificación sufrirá.'},
+    {l:'B',t:'Rechazar la solicitud con una explicación honesta de que ese trabajo está fuera de tu especialidad actual.',ok:true,r:'La honestidad protege al cliente y tu reputación. Un rechazo justificado y comunicado correctamente no impacta negativamente en tu historial. Es mucho mejor rechazar que generar una disputa.'},
+    {l:'C',t:'Aceptar y luego subcontratar a otro profesional sin informar al cliente.',ok:false,r:'El cliente contrató TU servicio certificado. Subcontratar sin informar es un engaño. Si algo sale mal, tú eres el responsable ante el cliente y la plataforma.'},
+    {l:'D',t:'Aceptar y cobrar el precio más alto para justificar el esfuerzo adicional.',ok:false,r:'Cobrar más por un trabajo que no dominas perjudica al cliente doblemente. Viola los valores de transparencia y honestidad de I mendly.'},
+  ]},
+  {id:'q11',m:'mod-03',t:'Al llegar para una reparación de plomería, el cliente quiere mostrarte "otros detalles" de la casa. ¿Cómo manejas esta situación?',o:[
+    {l:'A',t:'Aceptar el recorrido completo y cotizar todos los trabajos extra en el momento.',ok:false,r:'La prioridad debe ser el trabajo contratado. El resto puede cotizarse ordenadamente una vez terminado el trabajo principal.'},
+    {l:'B',t:'Agradecer y explicar que primero atenderás el trabajo contratado, y al terminar revisas los otros puntos si tienes tiempo.',ok:true,r:'Demuestra profesionalismo y gestión del tiempo. Priorizas lo acordado y mantienes la posibilidad de ampliar el alcance de forma ordenada con registro en la app si aplica.'},
+    {l:'C',t:'Aceptar pero cobrar por el tiempo del recorrido.',ok:false,r:'Cobrar por un recorrido que el cliente propone de buena fe generaría una experiencia muy negativa. La situación correcta es gestionar el tiempo con profesionalismo.'},
+    {l:'D',t:'Rechazar cualquier conversación adicional — solo haces lo que dice la solicitud.',ok:false,r:'Ser inflexible y cerrado al diálogo es igualmente incorrecto. I mendly busca proveedores con genuina actitud de servicio.'},
+  ]},
+  {id:'q12',m:'mod-03',t:'Al terminar un trabajo de pintura, ¿cuál es OBLIGATORIO antes de marcar el servicio como completado en la app?',o:[
+    {l:'A',t:'Marcar completado tan pronto el último trazo de pintura esté listo, para liberar el pago rápidamente.',ok:false,r:'El trabajo no está verdaderamente terminado hasta que el área está limpia y el cliente ha visto el resultado.'},
+    {l:'B',t:'Limpiar el área de trabajo, mostrar el resultado al cliente, subir fotografías de evidencia a la app, y entonces marcar como completado.',ok:true,r:'Procedimiento completo y correcto: (1) limpiar, (2) mostrar al cliente, (3) subir fotos de evidencia, (4) marcar completado. Las fotos son evidencia invaluable si surge una disputa.'},
+    {l:'C',t:'Pedir al cliente que firme un papel que diga que el trabajo quedó bien.',ok:false,r:'I mendly no utiliza firmas físicas para el cierre de servicios. El mecanismo oficial es la confirmación digital del cliente en la app.'},
+    {l:'D',t:'Cobrar en efectivo al cliente y luego marcar el servicio como completado.',ok:false,r:'Cobrar en efectivo viola el contrato y puede resultar en un pago doble. Nunca aceptes pagos fuera de la plataforma.'},
+  ]},
+  {id:'q13',m:'mod-03',t:'Durante un servicio de limpieza, accidentalmente rompes un adorno del cliente. Nadie lo vio. ¿Qué haces?',o:[
+    {l:'A',t:'Recoger los pedazos discretamente y no decir nada — es un accidente menor.',ok:false,r:'Ocultar un daño accidental es deshonesto y viola los valores de I mendly. Si el cliente lo descubre después, la situación será mucho peor.'},
+    {l:'B',t:'Informar inmediatamente al cliente del accidente, mostrarle el objeto dañado, disculparte y documentar el incidente en el chat de la app.',ok:true,r:'La honestidad ante accidentes es un valor crítico. Documentar en el chat protege a ambas partes y demuestra integridad. Los clientes perdonan accidentes; lo que no perdonan es el engaño.'},
+    {l:'C',t:'Terminar el servicio y al final mencionarlo como algo "que ya estaba así".',ok:false,r:'Atribuir el daño a una condición preexistente cuando no es verdad es mentira. Perderás cualquier disputa al no tener evidencia previa.'},
+    {l:'D',t:'Dejar dinero en efectivo al lado del objeto roto sin decir nada.',ok:false,r:'Aunque tiene buena intención, evadir la conversación directa no es correcto. La situación requiere comunicación honesta y directa.'},
+  ]},
+  {id:'q14',m:'mod-03',t:'Terminaste un trabajo de carpintería y el cliente quiere darte una propina en efectivo. ¿Puedes aceptarla?',o:[
+    {l:'A',t:'No, nunca puedes aceptar dinero en efectivo — el contrato lo prohíbe absolutamente.',ok:false,r:'La prohibición aplica al Monto del Servicio acordado, no a una propina voluntaria. Una propina es muestra de aprecio personal, no un pago por el servicio.'},
+    {l:'B',t:'Sí, una propina voluntaria del cliente es independiente del pago del servicio y puedes aceptarla con agradecimiento.',ok:true,r:'Correcto. La cláusula anti-derivación prohíbe acordar pagos alternativos al servicio. Una propina voluntaria y espontánea es diferente y no está prohibida. Nunca la solicites ni la insinúes.'},
+    {l:'C',t:'Solo si es menor a $100 pesos.',ok:false,r:'No existe límite monetario en el monto de una propina voluntaria. La distinción relevante es si es voluntaria y adicional (propina) o parte del pago acordado (prohibido en efectivo).'},
+    {l:'D',t:'Sí, pero debes reportarla a I mendly para que la descuente de tu siguiente comisión.',ok:false,r:'No existe ningún mecanismo ni obligación de reportar propinas. Son compensación directa entre cliente y proveedor, completamente al margen de la plataforma.'},
+  ]},
+  {id:'q15',m:'mod-03',t:'Al concluir el servicio, el cliente dice que el trabajo "quedó bien pero podría estar mejor". No abre disputa ni confirma. ¿Qué haces?',o:[
+    {l:'A',t:'Esperar las 24 horas del timeout — si no abre disputa, el pago se libera solo.',ok:false,r:'Aunque el pago se liberará por timeout, no aprovechar la oportunidad de resolver la insatisfacción en ese momento es perder una calificación de 5 estrellas.'},
+    {l:'B',t:'Preguntar al cliente qué específicamente podría mejorar y, si es algo rápido y dentro de lo acordado, corregirlo en ese momento.',ok:true,r:'Esta respuesta demuestra actitud de servicio genuina. Resolver en el momento convierte una experiencia de 3 estrellas en una de 5. Los proveedores top no esperan el timeout.'},
+    {l:'C',t:'Decirle al cliente que si no está satisfecho debe abrir una disputa.',ok:false,r:'Invitar al cliente a abrir una disputa cuando hay una solución simple disponible es una mala práctica. Las disputas son siempre el último recurso.'},
+    {l:'D',t:'Ofrecer un descuento en el próximo servicio para compensar la insatisfacción.',ok:false,r:'Un descuento futuro no resuelve el problema presente. El cliente quiere que el trabajo actual quede bien.'},
+  ]},
+  {id:'q16',m:'mod-04',t:'Un cliente abre una disputa alegando que dejaste manchas en el piso, lo cual es falso — colocaste protecciones antes de empezar. ¿Cómo respondes?',o:[
+    {l:'A',t:'Responder con enojo explicando que el cliente miente y exigir que retire la disputa.',ok:false,r:'Responder con enojo es el peor abordaje posible. El equipo de I mendly leerá todas las comunicaciones. Una respuesta agresiva resta credibilidad incluso si tienes razón.'},
+    {l:'B',t:'Ignorar la disputa — si no tienes evidencia suficiente, no hay nada que hacer.',ok:false,r:'No responder en 24 horas resulta en que I mendly resuelva solo con la versión del cliente, lo cual muy probablemente será en tu contra.'},
+    {l:'C',t:'Responder de forma calmada dentro de 24 horas, describir el protocolo de protección que seguiste y adjuntar fotografías de evidencia tomadas antes y después.',ok:true,r:'Las fotografías tomadas ANTES del trabajo (protecciones colocadas) son tu mejor defensa. Por eso el protocolo exige documentar fotográficamente. Responder calmado con evidencia es siempre la estrategia ganadora.'},
+    {l:'D',t:'Contactar directamente al cliente por teléfono para resolver antes de que I mendly intervenga.',ok:false,r:'Una vez abierta la disputa, toda comunicación debe hacerse por el canal oficial. Contactar por teléfono puede interpretarse como presión al cliente.'},
+  ]},
+  {id:'q17',m:'mod-04',t:'Llegas a instalar un AC y encuentras un problema eléctrico previo que hace el trabajo inseguro. El cliente insiste en que lo hagas de todas formas. ¿Qué haces?',o:[
+    {l:'A',t:'Hacer el trabajo como el cliente pide — él es quien manda en su casa.',ok:false,r:'La seguridad no es negociable. Realizar trabajo en condiciones inseguras te pone en riesgo a ti y al cliente. Si algo sale mal, tú eres el profesional responsable.'},
+    {l:'B',t:'Negarte a realizar el trabajo mientras exista el riesgo, documentarlo en el chat de la app y sugerir al cliente resolver primero el problema eléctrico.',ok:true,r:'Tu seguridad y la del cliente son la prioridad absoluta. Documentar la situación en el chat protege a ambas partes y demuestra profesionalismo. Una cancelación por seguridad justificada no impacta negativamente.'},
+    {l:'C',t:'Hacer el trabajo rápido antes de que el problema eléctrico cause algún incidente.',ok:false,r:'No existe una velocidad que haga seguro un trabajo en condiciones eléctricas peligrosas. Esta lógica es incorrecta y peligrosa.'},
+    {l:'D',t:'Pedir un precio más alto como compensación por el riesgo adicional.',ok:false,r:'El riesgo no se compensa con dinero — se elimina. Cobrar más por trabajo inseguro no te protege legal ni moralmente si ocurre un accidente.'},
+  ]},
+  {id:'q18',m:'mod-04',t:'Un cliente tiene actitud agresiva e intimidante desde el inicio del servicio. ¿Qué debes hacer?',o:[
+    {l:'A',t:'Responder a la agresión con firmeza para que el cliente te respete.',ok:false,r:'Responder a la agresión con agresión escala el conflicto y puede terminar en una situación peligrosa. Nunca respondas de manera agresiva.'},
+    {l:'B',t:'Ignorar la actitud y concentrarte en terminar el trabajo lo más rápido posible.',ok:false,r:'Si la situación es de intimidación activa, terminar rápido sin reportarlo puede exponerte a más riesgos. Un ambiente de trabajo hostil debe reportarse siempre.'},
+    {l:'C',t:'Si sientes que tu seguridad está en riesgo, detener el trabajo, salir del domicilio de manera calmada y reportar la situación a I mendly a través del chat de la app.',ok:true,r:'Tu seguridad personal es la prioridad absoluta. Tienes derecho a retirarte si el ambiente es hostil o intimidante. Reporta de inmediato y el equipo de I mendly intervendrá. Una cancelación por seguridad no impacta negativamente.'},
+    {l:'D',t:'Llamar a un familiar o amigo para que te acompañe y así tener testigos.',ok:false,r:'Llevar personas no autorizadas al domicilio del cliente viola su privacidad. El mecanismo correcto es reportar a I mendly y retirarte si tu seguridad está en riesgo.'},
+  ]},
+  {id:'q19',m:'mod-04',t:'El cliente alega que la fumigación no funcionó porque vio una cucaracha tres días después. ¿Cuál es la respuesta más profesional?',o:[
+    {l:'A',t:'Argumentar que una cucaracha no prueba que la fumigación falló — el cliente exagera.',ok:false,r:'Desestimar la preocupación del cliente sin escuchar ni investigar es una mala práctica de servicio. La respuesta correcta es escuchar primero.'},
+    {l:'B',t:'Escuchar la situación, explicar los tiempos normales de efecto del producto y ofrecer una revisión si el producto garantiza reinfestación cero en el período contratado.',ok:true,r:'Demuestra profesionalismo técnico y actitud de servicio. Explicar los tiempos de efecto y ofrecer revisión dentro del alcance de la garantía diferencia a un proveedor certificado de uno mediocre.'},
+    {l:'C',t:'Decirle al cliente que abra una disputa si no está satisfecho.',ok:false,r:'Derivar inmediatamente a disputa una situación que puede resolverse con comunicación técnica es una mala práctica. Las disputas son siempre el último recurso.'},
+    {l:'D',t:'Ofrecer repetir el servicio gratis para evitar una mala calificación.',ok:false,r:'Ofrecer repetir gratis sin evaluar si es justificado puede ser excesivo. La respuesta correcta es evaluar técnicamente el reclamo y actuar en consecuencia.'},
+  ]},
+  {id:'q20',m:'mod-04',t:'Descubres que otro proveedor certificado I mendly en tu zona está acordando trabajos directamente con clientes de la plataforma. ¿Qué debes hacer?',o:[
+    {l:'A',t:'No hacer nada — no es tu problema.',ok:false,r:'La derivación de otros proveedores daña la plataforma de la que tú también dependes. Aunque no es tu obligación legal, reportarlo es lo correcto.'},
+    {l:'B',t:'Hacer lo mismo — si él lo hace, es señal de que no tiene consecuencias.',ok:false,r:'Que otro cometa una infracción no justifica que tú la cometas. Ambos serían sancionados si se detecta. Las consecuencias incluyen baja definitiva.'},
+    {l:'C',t:'Reportarlo al equipo de I mendly a través del correo proveedores@imendly.com o el canal de soporte de la app.',ok:true,r:'Reportar conductas que violan el contrato protege la plataforma de la que todos dependen. I mendly tiene mecanismos de investigación y tu reporte puede ser anónimo.'},
+    {l:'D',t:'Confrontar directamente al otro proveedor y pedirle que deje de hacerlo.',ok:false,r:'Una confrontación directa puede generar conflictos. El canal correcto es reportarlo al equipo de I mendly, que tiene los recursos para investigar y actuar.'},
+  ]},
+  {id:'q21',m:'mod-05',t:'¿En qué momento exacto se libera el pago del escrow al proveedor?',o:[
+    {l:'A',t:'Inmediatamente cuando el proveedor marca el servicio como completado en la app.',ok:false,r:'Marcar completado inicia el período de validación del cliente, no libera el pago. El pago se libera después de la confirmación o tras el timeout de 24 horas.'},
+    {l:'B',t:'Cuando el cliente confirma su satisfacción en la app, O automáticamente si transcurren 24 horas sin respuesta del cliente.',ok:true,r:'Correcto. Dos mecanismos: (1) cliente confirma → liberación inmediata; (2) cliente no responde en 24h → liberación automática por timeout. El pago llega vía SPEI al siguiente día hábil.'},
+    {l:'C',t:'Todos los viernes en un pago consolidado de los servicios de la semana.',ok:false,r:'I mendly no consolida pagos semanales. Cada servicio tiene su propio flujo de escrow independiente.'},
+    {l:'D',t:'Cuando el cliente califica el servicio con 4 o más estrellas.',ok:false,r:'La calificación y la liberación del pago son procesos independientes. El pago se libera por confirmación o timeout, independientemente de la calificación que el cliente dé.'},
+  ]},
+  {id:'q22',m:'mod-05',t:'¿Qué documentos necesitas mantener vigentes para conservar tu badge de certificación activo?',o:[
+    {l:'A',t:'Solo el INE vigente — los antecedentes se verifican únicamente en el registro inicial.',ok:false,r:'Tanto el INE como los antecedentes no penales deben mantenerse vigentes. Ambos son revisados en cada renovación del badge cada 6 meses.'},
+    {l:'B',t:'INE vigente + antecedentes no penales vigentes (no mayor a 3 meses al momento de la renovación del badge).',ok:true,r:'Correcto. Ambos documentos deben estar vigentes para la renovación cada 6 meses. Documentos vencidos resultan en suspensión del badge hasta que se renueven.'},
+    {l:'C',t:'No necesitas documentos vigentes después del registro inicial — ya fuiste verificado una vez.',ok:false,r:'La certificación es un proceso continuo, no un trámite único. La vigencia de documentos es un criterio de renovación activo cada 6 meses.'},
+    {l:'D',t:'INE, antecedentes y certificado técnico profesional obligatorio.',ok:false,r:'El certificado técnico es opcional (suma puntos en la evaluación). Los obligatorios para mantener el badge son INE vigente y antecedentes no penales actualizados.'},
+  ]},
+  {id:'q23',m:'mod-05',t:'Un cliente te califica con 2 estrellas sin dejar comentario después de un servicio que consideras que hiciste bien. ¿Cuál es la acción correcta?',o:[
+    {l:'A',t:'Contactar al cliente directamente para pedirle que cambie la calificación.',ok:false,r:'Presionar a un cliente para cambiar su calificación está prohibido por I mendly y puede resultar en sanción. Las calificaciones son definitivas una vez publicadas.'},
+    {l:'B',t:'Aceptar la calificación, reflexionar sobre si hubo algo que pudiste hacer mejor, y enfocarte en mantener un promedio alto en los siguientes servicios.',ok:true,r:'La respuesta madura y correcta. Una calificación baja aislada no destruye un promedio alto si tus demás servicios son excelentes. Mejora continua es la estrategia.'},
+    {l:'C',t:'Reportar la calificación a I mendly como injusta para que la eliminen.',ok:false,r:'I mendly solo elimina calificaciones con insultos, información falsa o contenido inapropiado. Una calificación baja sin comentario no califica para eliminación.'},
+    {l:'D',t:'Calificar al cliente con 1 estrella como represalia.',ok:false,r:'Las calificaciones de represalia están prohibidas y son detectables por el sistema. Las calificaciones al cliente son para ayudar a otros proveedores, no para vengarse.'},
+  ]},
+  {id:'q24',m:'mod-05',t:'¿Cuántas cancelaciones injustificadas puedes acumular antes de recibir una suspensión temporal de 30 días?',o:[
+    {l:'A',t:'Cinco cancelaciones injustificadas.',ok:false,r:'Cinco cancelaciones injustificadas resultan en baja DEFINITIVA, no en suspensión temporal de 30 días. La escala de sanciones es progresiva.'},
+    {l:'B',t:'Diez cancelaciones injustificadas.',ok:false,r:'Diez cancelaciones superan con creces el umbral de baja definitiva. El sistema de sanciones actúa mucho antes.'},
+    {l:'C',t:'Tres cancelaciones injustificadas resultan en suspensión temporal de 30 días.',ok:true,r:'Correcto. El régimen de sanciones: 1a = advertencia formal; 2a = reducción de visibilidad 7 días; 3a = suspensión 30 días; 4a = suspensión 90 días; 5a o tres en 30 días = baja definitiva.'},
+    {l:'D',t:'No hay límite de cancelaciones — I mendly entiende que a veces surgen imprevistos.',ok:false,r:'Sí existe un límite y un régimen de sanciones progresivo. Las cancelaciones injustificadas afectan directamente a los clientes y al funcionamiento de la plataforma.'},
+  ]},
+  {id:'q25',m:'mod-05',t:'Tu badge tiene vigencia de 6 meses. Si no completas el proceso de renovación en el plazo establecido, ¿qué ocurre?',o:[
+    {l:'A',t:'No ocurre nada — el badge se renueva automáticamente si no has tenido incidentes.',ok:false,r:'El badge NO se renueva automáticamente. Requiere una revisión activa de criterios y una entrevista de renovación de 15 minutos con el equipo I mendly.'},
+    {l:'B',t:'El badge se suspende hasta que completes el proceso de renovación, lo que reduce tu visibilidad en la plataforma.',ok:true,r:'Correcto. Si no participas en la entrevista de renovación, el badge queda suspendido. Sigues en la plataforma pero sin el distintivo certificado, lo que reduce tu posición en los resultados de búsqueda.'},
+    {l:'C',t:'Tu cuenta es eliminada permanentemente.',ok:false,r:'La no renovación del badge no resulta en eliminación inmediata de cuenta — resulta en suspensión del badge. La baja definitiva requiere infracciones más graves o acumulación de faltas.'},
+    {l:'D',t:'Tienes 6 meses adicionales de gracia antes de que el badge expire.',ok:false,r:'No existe período de gracia para la renovación del badge. I mendly notifica con anticipación y el proceso debe completarse en el plazo establecido.'},
+  ]},
+];
+
+let cur=0, answers={}, timerInterval=null, secsLeft=2400, startTime=null;
+
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+function startExam(){
+  show('s-exam');
+  startTime=Date.now();
+  timerInterval=setInterval(tickTimer,1000);
+  renderQ();
+}
+
+function tickTimer(){
+  secsLeft--;
+  const m=Math.floor(secsLeft/60), s=secsLeft%60;
+  const el=document.getElementById('timer');
+  el.textContent=m+':'+(s<10?'0':'')+s;
+  if(secsLeft<=300) el.classList.add('warn');
+  if(secsLeft<=0){ clearInterval(timerInterval); showResults(); }
+}
+
+function renderQ(){
+  const q=QS[cur];
+  const mod=MODS.find(m=>m.id===q.m);
+  const pct=Math.round(((cur+1)/25)*100);
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('q-num').textContent=(cur+1)+' / 25';
+  document.getElementById('mod-pill').innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${mod.color};display:inline-block;margin-right:6px"></span><span style="font-size:12px;font-weight:500;color:${mod.color}">${mod.label}</span>`;
+
+  const sel=answers[q.id];
+  const locked=sel!==undefined;
+  let optsHTML='';
+  q.o.forEach(o=>{
+    let cls='opt'+(locked?' locked':'');
+    if(locked){
+      if(o.l===sel) cls+= o.ok?' correct':' wrong';
+      else if(o.ok) cls+=' reveal-correct';
+    }
+    optsHTML+=`<div class="${cls}" onclick="pick('${q.id}','${o.l}')"><div class="opt-letter">${o.l}</div><div class="opt-text">${o.t}</div></div>`;
+  });
+  document.getElementById('q-text').textContent=q.t;
+  document.getElementById('opts').innerHTML=optsHTML;
+  let rat='';
+  if(locked){
+    const chosen=q.o.find(o=>o.l===sel);
+    rat=`<div class="rationale-card">${chosen.r}</div>`;
+  }
+  document.getElementById('rationale-area').innerHTML=rat;
+  document.getElementById('btn-prev').disabled=cur===0;
+  const btnNext=document.getElementById('btn-next');
+  if(cur===24){ btnNext.textContent='Ver resultados'; btnNext.onclick=()=>{ clearInterval(timerInterval); showResults(); }; }
+  else{ btnNext.textContent='Siguiente →'; btnNext.onclick=goNext; }
+}
+
+function pick(qid,letter){
+  if(answers[qid]!==undefined) return;
+  answers[qid]=letter;
+  renderQ();
+}
+function goPrev(){ if(cur>0){cur--;renderQ();} }
+function goNext(){ if(cur<24){cur++;renderQ();} }
+
+function showResults(){
+  const elapsed=Math.floor((Date.now()-startTime)/1000);
+  const em=Math.floor(elapsed/60), es=elapsed%60;
+  let correct=0;
+  QS.forEach(q=>{ const sel=answers[q.id]; const o=q.o.find(x=>x.l===sel); if(o&&o.ok) correct++; });
+  const pct=Math.round((correct/25)*100);
+  const passed=pct>=80;
+  const ring=document.getElementById('score-ring');
+  const sp=document.getElementById('score-pct');
+  ring.className='score-ring'+(passed?'':' fail');
+  sp.className='score-pct'+(passed?'':' fail');
+  sp.textContent=pct+'%';
+  document.getElementById('result-title').textContent=passed?'¡Aprobado! Proveedor Certificado':'No aprobado — Intenta de nuevo';
+  document.getElementById('result-sub').textContent=passed?'Obtuviste '+correct+' de 25 respuestas correctas.':'Necesitas 20 correctas (80%). Obtuviste '+correct+' esta vez.';
+  document.getElementById('rs-ok').textContent=correct;
+  document.getElementById('rs-bad').textContent=25-correct;
+  document.getElementById('rs-time').textContent=em+'m '+es+'s';
+  let mbHTML='';
+  MODS.forEach(mod=>{
+    const mqs=QS.filter(q=>q.m===mod.id);
+    let mc=0; mqs.forEach(q=>{ const sel=answers[q.id]; const o=q.o.find(x=>x.l===sel); if(o&&o.ok) mc++; });
+    const mp=Math.round((mc/5)*100);
+    const col=mp>=80?'#3DB87A':mp>=60?'#D97706':'#DC2626';
+    mbHTML+=`<div class="mb-row"><span class="mb-name">${mod.label}</span><div class="mb-bar"><div class="mb-fill" style="width:${mp}%;background:${col}"></div></div><span class="mb-score" style="color:${col}">${mc}/5</span></div>`;
+  });
+  document.getElementById('mod-breakdown').innerHTML=mbHTML;
+  let revHTML='';
+  QS.forEach((q,i)=>{
+    const sel=answers[q.id];
+    const chosen=sel?q.o.find(o=>o.l===sel):null;
+    const ok=chosen&&chosen.ok;
+    const correct_o=q.o.find(o=>o.ok);
+    revHTML+=`<div class="rev-item">
+      <div class="rev-meta">Pregunta ${i+1} · ${MODS.find(m=>m.id===q.m).label}</div>
+      <div class="rev-q">${q.t}</div>
+      ${chosen?`<div class="rev-tag ${ok?'ok':'bad'}">${ok?'Correcto':'Incorrecto'}</div>`:'<div class="rev-tag bad">Sin responder</div>'}
+      ${chosen?`<div class="rev-answer">Tu respuesta: ${chosen.t}</div>`:''}
+      ${!ok?`<div class="rev-answer" style="color:#2A9460">Respuesta correcta: ${correct_o.t}</div>`:''}
+      <div class="rev-rat">${chosen?chosen.r:correct_o.r}</div>
+    </div>`;
+  });
+  document.getElementById('review-section').innerHTML=revHTML;
+  show('s-results');
+}
+
+function toggleReview(btn){
+  const rs=document.getElementById('review-section');
+  const open=rs.classList.toggle('open');
+  btn.textContent=open?'Ocultar revisión de respuestas ▲':'Ver revisión de respuestas ▼';
+}
+
+function restart(){
+  cur=0; answers={}; secsLeft=2400;
+  clearInterval(timerInterval);
+  const td=document.getElementById('timer');
+  td.textContent='40:00'; td.classList.remove('warn');
+  document.getElementById('review-section').classList.remove('open');
+  show('s-cover');
+}
+</script>
+</body>
+</html>

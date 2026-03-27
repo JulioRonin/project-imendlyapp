@@ -3,10 +3,17 @@
 import { Card } from '@i-mendly/shared/components/Card';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Button } from '@i-mendly/shared/components/Button';
+import { useRouter } from 'next/navigation';
 import { User, Bell, Shield, CreditCard, LogOut, ChevronRight, Home } from 'lucide-react';
+import { BottomNav } from '@i-mendly/shared';
 import Link from 'next/link';
 
 export default function ProfilePage() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/role-selection');
+  };
   return (
     <main className="min-h-screen bg-slate-50 p-8 pb-32">
       <header className="mb-12 flex justify-between items-center">
@@ -14,7 +21,7 @@ export default function ProfilePage() {
           <h1 className="text-4xl font-black text-brand-night tracking-tight">Mi Perfil</h1>
           <p className="text-sm font-bold text-brand-night/40 mt-1">Configuración y datos personales</p>
         </div>
-        <Link href="/cliente/home">
+        <Link href="/cliente">
           <Button variant="outline" className="rounded-2xl px-6">
             <Home size={18} className="mr-2" /> Inicio
           </Button>
@@ -75,7 +82,10 @@ export default function ProfilePage() {
                 ))}
              </Card>
 
-             <button className="w-full p-6 bg-red-50 rounded-[2rem] flex items-center justify-between hover:bg-red-100 transition-all group">
+             <button 
+                onClick={handleLogout}
+                className="w-full p-6 bg-red-50 rounded-[2rem] flex items-center justify-between hover:bg-red-100 transition-all group"
+              >
                 <div className="flex items-center gap-4 text-red-600">
                   <LogOut size={18} />
                   <span className="text-sm font-black uppercase tracking-widest">Cerrar Sesión</span>
@@ -85,6 +95,9 @@ export default function ProfilePage() {
            </section>
         </div>
       </div>
+      
+      {/* Bottom Nav (Standardized) */}
+      <BottomNav onLogout={handleLogout} />
     </main>
   );
 }

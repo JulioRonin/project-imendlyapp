@@ -8,12 +8,14 @@ import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Zap, Droplets, Sparkles, Wind, Paintbrush, 
-  Home as HomeIcon, LayoutGrid, Bell, Settings, 
+  LayoutGrid, Bell, Settings, 
   MapPin, BarChart3, MessageCircle, User,
-  Send, X, Sparkle
+  Send, X, Sparkle, LogOut, Car
 } from 'lucide-react';
+import { BottomNav } from '@i-mendly/shared';
 import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
 
 // Helper for distance (Haversine simplified)
@@ -31,9 +33,9 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 const CATEGORIES = [
   { name: 'Electricista', icon: <Zap size={24} strokeWidth={1.5} />, color: 'from-amber-400 to-orange-500', light: 'bg-amber-50', image: '/assets/electrician.png' },
   { name: 'Plomería', icon: <Droplets size={24} strokeWidth={1.5} />, color: 'from-blue-400 to-indigo-600', light: 'bg-blue-50', image: '/assets/plumbing.png' },
-  { name: 'Limpieza', icon: <Sparkles size={24} strokeWidth={1.5} />, color: 'from-emerald-400 to-teal-600', light: 'bg-emerald-50', image: '/assets/plumbing.png' },
+  { name: 'Limpieza', icon: <Sparkles size={24} strokeWidth={1.5} />, color: 'from-emerald-400 to-teal-600', light: 'bg-emerald-50', image: '/assets/cleaning_professional.png' },
+  { name: 'Carwash', icon: <Car size={24} strokeWidth={1.5} />, color: 'from-blue-300 to-blue-500', light: 'bg-blue-50', image: '/assets/carwash_boutique.png' },
   { name: 'Climas/AC', icon: <Wind size={24} strokeWidth={1.5} />, color: 'from-cyan-400 to-blue-500', light: 'bg-cyan-50', image: '/assets/ac_work.png' },
-  { name: 'Pintura', icon: <Paintbrush size={24} strokeWidth={1.5} />, color: 'from-violet-400 to-purple-600', light: 'bg-purple-50', image: '/assets/painting_work.png' },
 ];
 
 const OFFERS = [
@@ -60,7 +62,12 @@ const OFFERS = [
 ];
 
 export default function ClientHome() {
+  const router = useRouter();
   const [showChat, setShowChat] = useState(false);
+
+  const handleLogout = () => {
+    router.push('/role-selection');
+  };
   const [userLocation, setUserLocation] = useState({ lat: 25.6667, lng: -100.4000 }); // San Pedro
   const [isLocating, setIsLocating] = useState(false);
 
@@ -171,7 +178,7 @@ export default function ClientHome() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   <div className="absolute top-8 left-8">
-                    <Badge variant="primary" className="py-2.5 px-5 shadow-2xl text-[10px] font-black tracking-widest uppercase">DISPONIBLE</Badge>
+                    <Badge variant="default" className="py-2.5 px-5 shadow-2xl text-[10px] font-black tracking-widest uppercase">DISPONIBLE</Badge>
                   </div>
                   <button className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-primary hover:text-white transition-all transform hover:scale-110 active:scale-95 text-xl">
                     ♥
@@ -245,21 +252,8 @@ export default function ClientHome() {
         </Card>
       )}
 
-      {/* Bottom Nav (Luxury Boutique style) */}
-      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-brand-night/95 backdrop-blur-xl rounded-full px-10 py-5 flex items-center gap-12 shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-50 border border-white/5">
-        <Link href="/cliente/home" className="text-white transition-all transform hover:scale-110 active:scale-90">
-          <HomeIcon size={22} strokeWidth={2} />
-        </Link>
-        <Link href="/cliente/orders" className="text-white/30 hover:text-white transition-all transform hover:scale-110 active:scale-90">
-          <BarChart3 size={22} strokeWidth={2} />
-        </Link>
-        <Link href="/cliente/reports" className="text-white/30 hover:text-white transition-all transform hover:scale-110 active:scale-90">
-          <MessageCircle size={22} strokeWidth={2} />
-        </Link>
-        <Link href="/cliente/profile" className="text-white/30 hover:text-white transition-all transform hover:scale-110 active:scale-90">
-          <User size={22} strokeWidth={2} />
-        </Link>
-      </nav>
+      {/* Bottom Nav (Standardized) */}
+      <BottomNav onLogout={handleLogout} />
     </main>
   );
 }

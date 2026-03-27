@@ -1,7 +1,8 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useParams } from 'next/navigation';
 import { Button } from '@i-mendly/shared/components/Button';
+import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Badge } from '@i-mendly/shared/components/Badge';
@@ -20,13 +21,23 @@ const STAGES = [
 ];
 
 export default function OrderDetailsPage() {
+  const params = useParams();
   const searchParams = useSearchParams();
-  const orderId = searchParams.get('id') || 'ORD-8842';
+  const orderIdParam = params.id as string;
+  const orderId = orderIdParam || searchParams.get('id') || 'ORD-8842';
+
+  const providerId = searchParams.get('providerId');
+  const servicesParam = searchParams.get('services');
+  const totalParam = searchParams.get('total');
+  
+  const provider = MOCK_PROVIDERS.find(p => p.id === providerId) || MOCK_PROVIDERS[2];
+  const serviceName = servicesParam ? decodeURIComponent(servicesParam).split(',')[0] : 'Mantenimiento de Pintura Mural';
+  const total = totalParam ? `$${parseInt(totalParam).toLocaleString('es-MX')}.00` : '$1,250.00';
 
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
       <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <Link href="/cliente/home">
+        <Link href="/cliente">
           <button className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night border border-slate-100">
             <ArrowLeft size={20} />
           </button>
@@ -55,7 +66,7 @@ export default function OrderDetailsPage() {
                       <div className="flex items-center gap-3 mb-2">
                         <h4 className={`font-black uppercase tracking-widest text-sm ${stage.active || stage.done ? 'text-brand-night' : 'text-slate-300'}`}>{stage.label}</h4>
                         {stage.active && !stage.done && (
-                           <Badge variant="primary" className="text-[8px] px-2 py-0.5 animate-bounce">ACTUAL</Badge>
+                           <Badge variant="default" className="text-[8px] px-2 py-0.5 animate-bounce bg-primary text-white border-primary">ACTUAL</Badge>
                         )}
                       </div>
                       <p className={`text-xs font-medium leading-relaxed max-w-md ${stage.active || stage.done ? 'text-slate-500' : 'text-slate-300'}`}>
@@ -71,14 +82,16 @@ export default function OrderDetailsPage() {
            {/* Provider & Quick Actions */}
            <Card className="p-10 rounded-[3rem] border-none shadow-xl bg-white space-y-8">
               <div className="flex items-center gap-6">
-                 <Avatar name="Carlos Ruiz" className="w-20 h-20 rounded-3xl shadow-lg ring-4 ring-slate-50" />
+                 <Avatar src={(provider as any).image} name={provider.name} className="w-20 h-20 rounded-3xl shadow-lg ring-4 ring-slate-50" />
                  <div className="flex-1">
                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Tu Profesional</p>
-                    <h3 className="text-2xl font-black text-brand-night uppercase tracking-tighter">Carlos Ruiz</h3>
-                    <div className="flex items-center gap-2 mt-2">
-                       <ShieldCheck size={14} className="text-emerald-500" />
-                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Verificado</span>
-                    </div>
+                    <h3 className="text-2xl font-black text-brand-night uppercase tracking-tighter">{provider.name}</h3>
+                    {provider.verified && (
+                      <div className="flex items-center gap-2 mt-2">
+                         <ShieldCheck size={14} className="text-emerald-500" />
+                         <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Verificado</span>
+                      </div>
+                    )}
                  </div>
               </div>
 
@@ -116,7 +129,7 @@ export default function OrderDetailsPage() {
               <div className="space-y-6 relative z-10">
                  <div className="space-y-1">
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Servicio Contratado</p>
-                    <p className="text-sm font-black text-brand-night uppercase tracking-tight">Mantenimiento de Pintura Mural</p>
+                    <p className="text-sm font-black text-brand-night uppercase tracking-tight">{serviceName}</p>
                  </div>
 
                  <div className="space-y-1">
@@ -129,9 +142,9 @@ export default function OrderDetailsPage() {
                  <div className="pt-6 border-t border-slate-50 flex justify-between items-end">
                     <div>
                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Monto Pagado</p>
-                       <p className="text-3xl font-black text-brand-night tracking-tighter">$1,250.00</p>
+                       <p className="text-3xl font-black text-brand-night tracking-tighter">{total}</p>
                     </div>
-                    <Badge variant="primary" className="py-2.5 px-5 text-[9px] font-black uppercase tracking-widest">PAGADO</Badge>
+                    <Badge variant="success" className="py-2.5 px-5 text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 border-emerald-200">PAGADO</Badge>
                  </div>
               </div>
 

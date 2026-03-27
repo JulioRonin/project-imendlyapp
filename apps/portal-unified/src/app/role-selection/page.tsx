@@ -15,8 +15,9 @@ export default function RoleSelectionPage() {
 
       <div className="relative z-10 w-full max-w-6xl">
         <div className="mb-16 text-center animate-in fade-in slide-in-from-top-4 duration-1000">
-          <Logo className="w-16 h-16 mb-6 mx-auto text-brand-night" />
-          <h1 className="text-4xl md:text-5xl font-black text-brand-night tracking-tighter mb-3 uppercase">I mendly</h1>
+          <div className="flex items-center justify-center mb-12 mx-auto w-fit transform hover:scale-105 transition-transform duration-500">
+            <Logo size={100} orientation="vertical" />
+          </div>
           <p className="text-brand-night/30 text-xs font-black tracking-[0.5em] uppercase">Boutique Home Services</p>
         </div>
 
@@ -42,7 +43,7 @@ export default function RoleSelectionPage() {
                 <p className="text-white/60 mb-8 leading-relaxed font-medium text-sm">
                   Solicita servicios premium con el respaldo y la seguridad de nuestra red boutique.
                 </p>
-                <Link href="/cliente/home" className="w-full">
+                <Link href="/login" className="w-full">
                   <Button className="w-full py-7 text-[10px] tracking-[0.4em] uppercase font-black rounded-2xl bg-primary text-white shadow-2xl shadow-primary/20 hover:bg-primary-dark transition-all">
                     Explorar Servicios
                   </Button>
@@ -72,9 +73,9 @@ export default function RoleSelectionPage() {
                 <p className="text-white/60 mb-8 leading-relaxed font-medium text-sm">
                   Digitaliza tu oficio y accede a los clientes más exclusivos con nuestra infraestructura.
                 </p>
-                <Link href="/proveedor" className="w-full">
+                <Link href="/proveedor/login" className="w-full">
                   <Button variant="secondary" className="w-full py-7 text-[10px] tracking-[0.4em] uppercase font-black bg-[#FF6B47] text-white rounded-2xl shadow-xl shadow-[#FF6B47]/20 hover:scale-[1.02] transition-transform">
-                    Mi Dashboard
+                    Comenzar
                   </Button>
                 </Link>
               </div>

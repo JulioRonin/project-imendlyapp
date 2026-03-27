@@ -1,4 +1,5 @@
 import { Button } from '@i-mendly/shared/components/Button';
+import Link from 'next/link';
 
 export const Step0Welcome: React.FC<{ onNext: () => void }> = ({ onNext }) => {
   return (
@@ -34,7 +35,7 @@ export const Step0Welcome: React.FC<{ onNext: () => void }> = ({ onNext }) => {
       </Button>
       
       <p className="mt-8 text-sm font-bold text-white/40">
-        ¿Ya tienes cuenta? <button className="text-primary hover:underline">Iniciar sesión</button>
+        ¿Ya tienes cuenta? <Link href="/proveedor/login" className="text-primary hover:underline">Iniciar sesión</Link>
       </p>
     </div>
   );

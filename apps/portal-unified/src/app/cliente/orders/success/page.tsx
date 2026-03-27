@@ -9,6 +9,9 @@ import Link from 'next/link';
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id') || 'ORD-0000';
+  const providerId = searchParams.get('providerId') || '';
+  const services = searchParams.get('services') || '';
+  const total = searchParams.get('total') || '';
 
   return (
     <main className="min-h-screen bg-white flex items-center justify-center p-8">
@@ -33,12 +36,12 @@ export default function PaymentSuccessPage() {
          </Card>
 
          <div className="space-y-4 pt-6 text-center">
-            <Link href={`/cliente/ordenes/${orderId}`} className="block">
+            <Link href={`/cliente/ordenes/${orderId}?providerId=${providerId}&services=${encodeURIComponent(services)}&total=${total}`} className="block">
                <Button className="w-full py-7 text-[10px] tracking-[0.4em] uppercase font-black rounded-2xl shadow-2xl shadow-primary/20 flex gap-4">
                   Seguir mi Orden <ArrowRight size={16} />
                </Button>
             </Link>
-            <Link href="/cliente/home" className="block mt-4">
+            <Link href="/cliente" className="block mt-4">
                <button className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-night transition-colors mx-auto">
                   <Home size={14} /> Volver al Inicio
                </button>

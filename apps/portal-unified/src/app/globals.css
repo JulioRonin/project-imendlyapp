@@ -1,42 +1,74 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #060d16;
+  /* ESMERALDA MINIMAL PALETTE */
+  --im-green:      #3DB87A;
+  --im-green-dk:   #2A9460;
+  --im-green-lt:   #E8F7F0;
   
-  /* Brand Colors */
-  --brand-night: #060d16;
-  --brand-navy: #0f3460;
-  --brand-coral: #ff6b47;
-  --brand-teal: #0891b2;
-  --brand-glacial: #bae6fd;
+  --im-silver:     #D1D1D1;
+  --im-silver-lt:  #E8E8E8;
+  --im-white:      #FFFFFF;
+  --im-off-white:  #F7F7F7;
+  
+  --im-black:      #1F1F1F;
+  --im-gray-600:   #4A4A4A;
+  --im-gray-400:   #8A8A8A;
+  --im-gray-200:   #C4C4C4;
 
-  /* Purple & Lavender Aesthetic */
-  --primary: #7c3aed;
-  --primary-light: #ddd6fe;
-  --primary-dark: #5b21b6;
-  --secondary: #a78bfa;
-  --secondary-light: #ede9fe;
+  --im-success:    #3DB87A;
+  --im-warning:    #F59E0B;
+  --im-error:      #EF4444;
+  
+  /* TOKENS */
+  --primary: var(--im-green);
+  --background: var(--im-silver);
+  --foreground: var(--im-black);
+  
+  --radius-xs: 6px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+  
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-primary: var(--im-green);
+  --color-primary-dark: var(--im-green-dk);
+  --color-primary-light: var(--im-green-lt);
   
-  --color-brand-night: var(--brand-night);
-  --color-brand-navy: var(--brand-navy);
-  --color-brand-coral: var(--brand-coral);
-  --color-brand-teal: var(--brand-teal);
-  --color-brand-glacial: var(--brand-glacial);
+  --color-silver: var(--im-silver);
+  --color-silver-light: var(--im-silver-lt);
+  --color-off-white: var(--im-off-white);
+  
+  --color-black-rich: var(--im-black);
+  --color-brand-night: var(--im-black);
+  --color-brand-navy: #060d16;
+  --color-gray-soft: var(--im-gray-400);
+  
+  --font-urbanist: var(--font-urbanist);
 
-  --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
-  --color-primary-dark: var(--primary-dark);
-  --color-secondary: var(--secondary);
-  --color-secondary-light: var(--secondary-light);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #F8F9FB;
+  color: var(--im-black);
+  font-family: var(--font-urbanist), sans-serif;
+  letter-spacing: -0.01em;
+}
+
+@layer base {
+  * {
+    @apply border-black/5 transition-all duration-200;
+  }
 }

@@ -1,21 +1,22 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { ProviderSidebar } from './components/Sidebar';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const metadata: Metadata = {
+  title: 'Portal de Proveedores - I Mendly',
+  description: 'Panel de control para proveedores de servicios I Mendly',
+};
 
 export default function ProviderLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return <div className="min-h-full flex flex-col">{children}</div>;
+}) {
+  return (
+    <div className="flex min-h-screen bg-[#F8F9FB]">
+      <ProviderSidebar />
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {children}
+      </div>
+    </div>
+  );
 }

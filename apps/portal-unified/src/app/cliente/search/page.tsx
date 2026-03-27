@@ -41,11 +41,12 @@ export default function SearchResults() {
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
       <header className="px-8 py-8 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <Link href="/cliente/home">
-          <button className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary transition-all border border-slate-100">
-            <ArrowLeft size={20} />
-          </button>
-        </Link>
+        <button 
+          onClick={() => window.history.back()}
+          className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary transition-all border border-slate-100"
+        >
+          <ArrowLeft size={20} />
+        </button>
         <div className="flex-1 px-6">
            <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest">Resultados para</p>
            <h1 className="text-xl font-black text-brand-night uppercase tracking-tighter">{query || 'Todos los Servicios'}</h1>
@@ -60,7 +61,7 @@ export default function SearchResults() {
            <p className="text-xs font-bold text-slate-400">
              Encontramos <span className="text-brand-night">{filteredProviders.length}</span> profesionales cerca de ti
            </p>
-           <Badge variant="primary" className="py-2 px-4 text-[9px] font-black tracking-widest uppercase">RADIO 20KM</Badge>
+            <Badge variant="success" className="py-2 px-4 text-[9px] font-black tracking-widest uppercase bg-emerald-500 text-white border-none shadow-lg shadow-emerald-500/20">RADIO 20KM</Badge>
         </div>
 
         {filteredProviders.length > 0 ? (
@@ -70,7 +71,7 @@ export default function SearchResults() {
                 <Card className="p-8 rounded-[2.5rem] border-none shadow-[0_20px_64px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_32px_96px_-12px_rgba(124,58,237,0.15)] transition-all duration-500 group bg-white border border-transparent hover:border-primary/10">
                   <div className="flex flex-col md:flex-row gap-8 items-center">
                     <div className="relative">
-                      <Avatar name={p.name} className="w-24 h-24 rounded-3xl shadow-xl ring-4 ring-slate-50" />
+                      <Avatar src={(p as any).image} name={p.name} className="w-24 h-24 rounded-3xl shadow-xl ring-4 ring-slate-50" />
                       <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
                         <Star size={14} fill="white" />
                       </div>
@@ -78,7 +79,7 @@ export default function SearchResults() {
                     
                     <div className="flex-1 text-center md:text-left">
                       <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                        <Badge variant="navy" className="text-[8px] font-black tracking-widest uppercase py-1">{p.category}</Badge>
+                        <Badge variant="default" className="text-[8px] font-black tracking-widest uppercase py-1 bg-brand-night text-white border-none">{p.category}</Badge>
                         <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                           <MapPin size={10} className="text-primary" /> {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
                         </span>

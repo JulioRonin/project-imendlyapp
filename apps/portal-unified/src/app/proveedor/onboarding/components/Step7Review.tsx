@@ -1,15 +1,17 @@
 import { Button } from '@i-mendly/shared/components/Button';
 import { Badge } from '@i-mendly/shared/components/Badge';
 
-export const Step6Review: React.FC = () => {
+export const Step7Review: React.FC = () => {
   return (
     <div className="flex flex-col items-center text-center animate-in zoom-in-95 duration-700">
-      <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center text-4xl mb-8 relative">
-        <span>📦</span>
-        <div className="absolute -bottom-1 -right-1 bg-brand-coral p-2 rounded-full border-4 border-brand-night animate-pulse" />
+      <div className="w-24 h-24 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-8 relative border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+        </svg>
+        <div className="absolute -bottom-1 -right-1 bg-emerald-500 p-2.5 rounded-full border-4 border-brand-night animate-pulse" />
       </div>
 
-      <Badge variant="navy" className="mb-4 px-4 py-1.5 shadow-lg">ESTADO: EN REVISIÓN</Badge>
+      <Badge variant="default" className="mb-4 px-4 py-1.5 shadow-lg bg-brand-night text-white border-brand-night/50">ESTADO: EN REVISIÓN</Badge>
       
       <h2 className="text-4xl font-black mb-4 tracking-tighter">¡Casi listo, Profesional!</h2>
       <p className="text-white/60 text-lg mb-10 max-w-sm font-medium">
