@@ -84,10 +84,18 @@ export default function ProviderDashboard() {
             <p className="text-slate-400 font-medium mt-1">Tienes {myOrders.filter(o => o.status === 'PENDING').length} solicitudes pendientes para evaluar.</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="rounded-xl px-6 h-12 text-xs font-black uppercase tracking-widest">
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/proveedor/configuracion')}
+              className="rounded-xl px-6 h-12 text-xs font-black uppercase tracking-widest"
+            >
               Configuración
             </Button>
-            <Button variant="primary" className="rounded-xl px-8 h-12 shadow-lg text-xs font-black uppercase tracking-widest">
+            <Button 
+              variant="primary" 
+              onClick={() => router.push('/proveedor/agenda')}
+              className="rounded-xl px-8 h-12 shadow-lg text-xs font-black uppercase tracking-widest"
+            >
               Ver Agenda
             </Button>
           </div>
@@ -189,16 +197,20 @@ export default function ProviderDashboard() {
           <div className="space-y-8">
             <section className="space-y-6">
               <h3 className="text-xl font-black text-brand-night tracking-tight uppercase">Tareas Pendientes</h3>
-              <Card variant="dark" className="p-6 rounded-[2rem] overflow-hidden relative">
+              <Card variant="dark" className="p-6 rounded-[2rem] overflow-hidden relative border-none shadow-[0_20px_40px_-10px_rgba(16,185,129,0.3)] bg-gradient-to-br from-brand-night to-[#111827]">
                 <div className="absolute top-0 right-0 p-8 opacity-10">
-                  <AlertCircle size={80} strokeWidth={1} />
+                  <AlertCircle size={80} className="text-primary" strokeWidth={1} />
                 </div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
                 <div className="relative z-10">
-                  <h4 className="font-black text-lg mb-2">Finalizar Perfil</h4>
-                  <p className="text-white/60 text-xs font-medium leading-relaxed mb-6">
-                    Completa la validación de tu seguro para aparecer en búsquedas premium.
+                  <Badge variant="success" className="mb-3 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 bg-primary/20 text-emerald-400 border-none">
+                    Acción Requerida
+                  </Badge>
+                  <h4 className="font-black text-xl text-white mb-2 leading-tight">Revalidar Badge Imendly</h4>
+                  <p className="text-white/70 text-[11px] font-medium leading-relaxed mb-6 pr-4">
+                    Es momento de mantener tu estatus en la cima. Sube tus documentos recientes para probar tu certificación continua y seguir recibiendo las mejores solicitudes. Da clic abajo para revalidar tu información rápidamente.
                   </p>
-                  <Button variant="primary" className="w-full font-black text-[10px] tracking-widest uppercase rounded-xl h-11">
+                  <Button variant="primary" className="w-full font-black text-[10px] tracking-[0.2em] shadow-lg shadow-primary/30 uppercase rounded-xl h-12 bg-primary hover:scale-[1.02] transition-transform">
                     Completar Ahora
                   </Button>
                 </div>

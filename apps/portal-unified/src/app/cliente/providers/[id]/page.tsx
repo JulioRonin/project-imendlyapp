@@ -18,7 +18,8 @@ import {
   Zap,
   CheckCircle2,
   Image as ImageIcon,
-  Quote
+  Quote,
+  Pencil
 } from 'lucide-react';
 import Link from 'next/link';
 import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
@@ -34,19 +35,36 @@ export default function ProviderProfile() {
   }, [id]);
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [customRequestText, setCustomRequestText] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const totalPrice = useMemo(() => {
     if (!provider) return 0;
-    const selected = provider.services.filter(s => selectedServices.includes(s.name));
-    if (selected.length === 0) return provider.price;
-    return selected.reduce((acc, s) => acc + s.price, 0);
+    const selected = (provider.services as any[]).filter(s => selectedServices.includes(s.name));
+    let total = selected.reduce((acc, s) => acc + s.price, 0);
+    // Custom is base price or quote
+    if (selectedServices.includes('Personalizado o Explica tu necesidad')) {
+      total += 450; // base deposit for custom
+    }
+    return total;
   }, [provider, selectedServices]);
 
   const toggleService = (name: string) => {
     setSelectedServices(prev => 
       prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]
     );
+  };
+
+  const isFormValid = selectedServices.length > 0 && selectedDate !== null && selectedTime !== null &&
+    (selectedServices.includes('Personalizado o Explica tu necesidad') ? customRequestText.trim().length > 0 : true);
+
+  const handleBooking = () => {
+    if (!isFormValid) return;
+    const dateStr = `2026-04-${selectedDate?.toString().padStart(2, '0')}`;
+    const services = [...selectedServices, customRequestText ? `(Custom: ${customRequestText})` : ''].filter(Boolean).join(',');
+    router.push(`/cliente/checkout?providerId=${id}&services=${encodeURIComponent(services)}&total=${totalPrice}&date=${dateStr}&time=${encodeURIComponent(selectedTime)}`);
   };
 
   if (!provider) {
@@ -158,7 +176,46 @@ export default function ProviderProfile() {
                     </button>
                   );
                 })}
+
+                {/* Custom Request Option */}
+                <button 
+                  onClick={() => toggleService('Personalizado o Explica tu necesidad')}
+                  className={`p-8 rounded-[2rem] text-left transition-all duration-300 border-2 md:col-span-2 ${
+                    selectedServices.includes('Personalizado o Explica tu necesidad')
+                      ? 'bg-primary/5 border-primary shadow-inner' 
+                      : 'bg-white border-slate-50 shadow-sm hover:border-slate-200'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                        selectedServices.includes('Personalizado o Explica tu necesidad') ? 'bg-primary text-white' : 'bg-slate-50 text-slate-300'
+                      }`}>
+                        <Pencil size={24} />
+                      </div>
+                      <div>
+                        <span className={`text-[11px] font-black uppercase tracking-widest block ${selectedServices.includes('Personalizado o Explica tu necesidad') ? 'text-primary' : 'text-slate-400'}`}>Explícanos a detalle</span>
+                        <span className="text-sm font-bold text-brand-night uppercase tracking-tight">Personalizado o Explica tu necesidad</span>
+                      </div>
+                    </div>
+                    <span className="text-xl font-black text-brand-night tracking-tighter">Cotizar</span>
+                  </div>
+                </button>
               </div>
+
+              {selectedServices.includes('Personalizado o Explica tu necesidad') && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-500 mt-4 h-full">
+                  <textarea 
+                    value={customRequestText}
+                    onChange={(e) => setCustomRequestText(e.target.value)}
+                    placeholder="Describe exactamente qué necesitas. ¿Medidas, materiales, detalles específicos?"
+                    className="w-full bg-white border-2 border-slate-100 rounded-[2rem] p-8 text-lg font-medium text-brand-night focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all shadow-inner h-40 resize-none"
+                  />
+                  <p className="text-[10px] font-black tracking-widest uppercase text-slate-400 mt-2 px-4">
+                    Este monto requerirá cotización final por parte del proveedor tras su revisión.
+                  </p>
+                </div>
+              )}
             </section>
 
             {/* Portfolio Section */}
@@ -177,7 +234,7 @@ export default function ProviderProfile() {
                         <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-2">Proyecto Finalizado</p>
                            <h4 className="text-xl font-black text-white uppercase tracking-tight">{item.title}</h4>
-                        </div>
+                         </div>
                       </div>
                     </div>
                   ))}
@@ -249,24 +306,32 @@ export default function ProviderProfile() {
                 )}
               </div>
               
-              <div className="space-y-4 mb-10 relative z-10">
+              <div className="space-y-4 mb-4 relative z-10">
                 <Button 
-                  onClick={() => router.push(`/cliente/checkout?providerId=${id}&services=${selectedServices.join(',')}&total=${totalPrice}`)}
-                  className="w-full h-18 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95"
+                  onClick={handleBooking}
+                  disabled={!isFormValid}
+                  className={`w-full h-18 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all transform ${!isFormValid ? 'opacity-50 cursor-not-allowed bg-slate-300 hover:bg-slate-300 shadow-none' : 'shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 active:scale-95'}`}
                 >
-                  Reservar Ahora
+                  {isFormValid ? 'Reservar Ahora' : 'Completa Formulario'}
                 </Button>
+                
                 <Button 
                   onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                   variant="outline" 
                   className={`w-full h-18 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all ${
-                    isCalendarOpen ? 'border-primary text-primary bg-primary/5 shadow-inner' : 'border-slate-100 hover:bg-slate-50'
+                    isCalendarOpen ? 'border-primary text-primary bg-primary/5 shadow-inner' : 'border-slate-100 hover:bg-slate-50 text-slate-500'
                   }`}
                 >
                   <CalendarIcon size={16} className="mr-3" />
-                  {isCalendarOpen ? 'Cerrar Agenda' : 'Consultar Disponibilidad'}
+                  {selectedDate && selectedTime ? `${selectedDate} abr, ${selectedTime}` : 'Elegir Fecha y Hora'}
                 </Button>
               </div>
+
+              {!isFormValid && (
+                  <p className="text-[9px] font-black uppercase tracking-widest text-brand-coral text-center mb-10 animate-pulse">
+                     Selecciona un servicio y horario
+                  </p>
+              )}
 
               {/* Collapsible Calendar */}
               <div className={`transition-all duration-700 ease-in-out px-2 ${isCalendarOpen ? 'max-h-[500px] opacity-100 mb-10 scale-100' : 'max-h-0 opacity-0 overflow-hidden scale-95'}`}>
@@ -286,14 +351,15 @@ export default function ProviderProfile() {
                        {[...Array(30)].map((_, i) => {
                           const day = i + 1;
                           const isAvailable = day > 10 && day < 25 && day !== 15 && day !== 18;
-                          const isSelected = day === 21;
+                          const isSelectedDay = selectedDate === day;
                           return (
                              <button 
                                key={i} 
                                disabled={!isAvailable}
+                               onClick={() => setSelectedDate(day)}
                                className={`h-10 rounded-xl text-[10px] font-bold transition-all ${
-                                 isSelected ? 'bg-primary text-white shadow-lg shadow-primary/30' : 
-                                 isAvailable ? 'bg-slate-50 text-brand-night hover:bg-primary/10' : 'bg-transparent text-slate-200 cursor-not-allowed'
+                                 isSelectedDay ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110 z-10' : 
+                                 isAvailable ? 'bg-slate-50 text-brand-night hover:bg-primary/10 hover:scale-105' : 'bg-transparent text-slate-200 cursor-not-allowed'
                                }`}
                              >
                                 {day}
@@ -306,7 +372,14 @@ export default function ProviderProfile() {
                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-4">Horarios Disponibles</p>
                        <div className="grid grid-cols-2 gap-3">
                           {['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'].map((t, i) => (
-                             <button key={i} className={`py-4 rounded-xl text-[10px] font-black border transition-all ${i === 0 ? 'bg-brand-night text-white border-brand-night shadow-lg' : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300'}`}>
+                             <button 
+                               key={i} 
+                               onClick={() => setSelectedTime(t)}
+                               className={`py-4 rounded-xl text-[10px] font-black border transition-all ${
+                                 selectedTime === t ? 'bg-brand-night text-white border-brand-night shadow-lg scale-105' : 
+                                 'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:scale-[1.02]'
+                               }`}
+                             >
                                 {t}
                              </button>
                           ))}
