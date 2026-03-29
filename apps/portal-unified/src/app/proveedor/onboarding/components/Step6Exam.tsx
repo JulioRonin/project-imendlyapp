@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
 import { Badge } from '@i-mendly/shared/components/Badge';
+import { useOnboarding } from './OnboardingContext';
 
 const MODS = [
   { id: 'mod-01', label: 'Valores I mendly', color: '#3DB87A', bg: 'bg-emerald-500', text: 'text-emerald-500' },
@@ -167,6 +167,7 @@ const QS = [
 type ScreenState = 'cover' | 'exam' | 'results';
 
 export const Step6Exam: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
+  const { data, updateData } = useOnboarding();
   const [screen, setScreen] = useState<ScreenState>('cover');
   const [cur, setCur] = useState(0);
   const [secsLeft, setSecsLeft] = useState(2400);
@@ -197,6 +198,23 @@ export const Step6Exam: React.FC<{ onNext: () => void; onBack: () => void }> = (
   const handleFinish = () => {
     setIsExamActive(false);
     setScreen('results');
+    
+    // Calculate results and save to context
+    const scoreVal = Object.entries(answers).reduce((acc, [qid, sel]) => {
+      const q = QS.find(q => q.id === qid);
+      const o = q?.o.find(x => x.l === sel);
+      return acc + (o?.ok ? 1 : 0);
+    }, 0);
+    const pctVal = Math.round((scoreVal / QS.length) * 100);
+    const passedVal = pctVal >= 80;
+
+    updateData({ 
+      exam: { 
+        score: pctVal, 
+        passed: passedVal, 
+        completed_at: new Date().toISOString() 
+      } 
+    });
   };
 
   const pick = (optLetter: string) => {

@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
+import { useOnboarding } from './OnboardingContext';
 
 export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const { data, updateData } = useOnboarding();
+  const selectedDate = data.interview?.date || null;
+  const selectedTime = data.interview?.time || null;
 
   const upcomingDays = [
     { id: 'today', name: 'Hoy', date: 'Jue 26' },
@@ -22,9 +22,12 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
 
   const handleDateSelect = (id: string) => {
     if (selectedDate !== id) {
-      setSelectedDate(id);
-      setSelectedTime(null); // Reset time when day changes
+      updateData({ interview: { date: id, time: undefined } });
     }
+  };
+
+  const handleTimeSelect = (time: string) => {
+    updateData({ interview: { ...data.interview, time } });
   };
 
   return (
@@ -61,7 +64,7 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
               {timesMap[selectedDate]?.map(time => (
                 <button
                   key={time}
-                  onClick={() => setSelectedTime(time)}
+                  onClick={() => handleTimeSelect(time)}
                   className={`py-4 px-6 rounded-2xl border transition-all text-sm font-bold
                     ${selectedTime === time 
                       ? 'border-emerald-500 bg-emerald-500 text-brand-night shadow-[0_4px_15px_rgba(16,185,129,0.3)]' 

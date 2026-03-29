@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
+import { Logo } from '@i-mendly/shared/Logo';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { Input } from '@i-mendly/shared/components/Input';
 import { 
@@ -12,8 +13,8 @@ import {
   CreditCard as CardIcon, Calendar, Lock as LockIcon
 } from 'lucide-react';
 import Link from 'next/link';
-import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 type PaymentStep = 'selection' | 'details';
 type PaymentMethod = 'stripe' | 'conekta_spei' | 'conekta_oxxo';
@@ -25,22 +26,120 @@ export default function CheckoutPage() {
   const servicesParam = searchParams.get('services');
   const totalParam = searchParams.get('total');
   
-  const provider = MOCK_PROVIDERS.find(p => p.id === providerId) || MOCK_PROVIDERS[0];
-  const selectedServices = servicesParam ? servicesParam.split(',') : [];
-  const basePrice = totalParam ? parseInt(totalParam) : provider.price;
-  
+  const [provider, setProvider] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [step, setStep] = useState<PaymentStep>('selection');
   const [method, setMethod] = useState<PaymentMethod>('stripe');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
-  const handleProceed = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // 1. Get current auth user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) setCurrentUser(user);
+
+        // 2. Fetch provider details
+        if (providerId) {
+          const { data, error } = await supabase
+            .from('providers')
+            .select('*, users(full_name, avatar_url), provider_services(*)')
+            .eq('id', providerId)
+            .single();
+
+          if (data) {
+            const normalizedProvider = {
+              ...data,
+              name: data.users?.full_name || data.name,
+              image: data.users?.avatar_url || data.image,
+              services: data.provider_services || []
+            };
+            setProvider(normalizedProvider);
+          }
+        }
+
+        // 3. Fetch user addresses
+        if (user) {
+          const { data: addrData } = await supabase
+            .from('user_addresses')
+            .select('*')
+            .eq('user_id', user.id);
+          
+          if (addrData) {
+            setAddresses(addrData);
+            if (addrData.length > 0) setSelectedAddress(addrData[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching checkout data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [providerId]);
+
+  const selectedServices = servicesParam ? servicesParam.split(',') : [];
+  const basePrice = totalParam ? parseInt(totalParam.replace(/[^0-9]/g, '')) : (provider?.price || 0);
+
+  const handleProceed = async () => {
     if (step === 'selection') {
       setStep('details');
     } else {
+      if (!currentUser) return alert('Debes iniciar sesión para continuar');
+      
       setIsProcessing(true);
-      setTimeout(() => {
-        router.push(`/cliente/orders/success?id=ORD-${Math.floor(Math.random() * 10000)}&providerId=${providerId}&services=${encodeURIComponent(servicesParam || '')}&total=${basePrice}`);
-      }, 2500);
+      setErrorStatus(null);
+      console.log('Starting handleProceed...', { currentUser, providerId, basePrice, method });
+      
+      try {
+        const orderDisplayId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+        const dateStr = searchParams.get('date');
+        const timeStr = searchParams.get('time');
+        const parseScheduledTime = (t: string) => {
+          try {
+            const cleanTime = t.replace(/\./g, '').toLowerCase(); // e.g. "05:00 p.m." -> "05:00 pm"
+            const [time, period] = cleanTime.split(' ');
+            let [h, m] = time.split(':').map(Number);
+            if (period === 'pm' && h < 12) h += 12;
+            if (period === 'am' && h === 12) h = 0;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
+          } catch (e) {
+            return '12:00:00';
+          }
+        };
+        const scheduledDate = dateStr && timeStr ? `${dateStr}T${parseScheduledTime(timeStr)}` : new Date().toISOString();
+        
+        const { data: newOrder, error } = await supabase
+          .from('orders')
+          .insert({
+            display_id: orderDisplayId,
+            client_id: currentUser.id,
+            provider_id: providerId,
+            service_requested: servicesParam || 'Servicio General',
+            status: 'pending',
+            total_amount: basePrice,
+            scheduled_date: scheduledDate,
+            address: selectedAddress ? `${selectedAddress.street}, ${selectedAddress.city}` : 'Dirección pendiente',
+            payment_status: 'pending'
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        console.log('Order created successfully:', newOrder);
+        router.push(`/cliente/ordenes/${newOrder.id}`);
+      } catch (err: any) {
+        console.error('CRITICAL: Error creating order:', err);
+        setErrorStatus(err.message || 'Error desconocido al crear la orden');
+        setIsProcessing(false);
+      }
     }
   };
 
@@ -194,6 +293,31 @@ export default function CheckoutPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center animate-pulse">
+          <Logo size={48} className="mx-auto mb-4" />
+          <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Cargando Checkout...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!provider) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center px-8">
+          <h1 className="text-2xl font-black text-brand-night uppercase mb-4 tracking-tighter">Servicio no encontrado</h1>
+          <p className="text-xs text-slate-400 font-bold mb-8 uppercase tracking-widest">El enlace es inválido o el profesional ya no está disponible.</p>
+          <Button onClick={() => router.push('/cliente')} variant="outline" className="px-10 rounded-2xl text-[10px] tracking-[0.2em] uppercase font-black">
+            Ir al Inicio
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 pb-12">
       <header className="px-8 py-8 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
@@ -242,20 +366,25 @@ export default function CheckoutPage() {
                  <Avatar src={(provider as any).image} name={provider.name} className="w-16 h-16 rounded-2xl shadow-lg" />
                  <div>
                     <h3 className="font-black text-brand-night uppercase text-sm tracking-tight">{provider.name}</h3>
-                    <Badge variant="default" className="text-[8px] uppercase tracking-widest px-2 py-0.5 mt-1">{provider.category}</Badge>
+                    <Badge variant="default" className="text-[8px] uppercase tracking-widest px-2 py-0.5 mt-1">
+                      {provider.categories?.[0] || 'Servicio'}
+                    </Badge>
                  </div>
               </div>
 
               <div className="space-y-4 border-y border-slate-50 py-8 mb-8">
                  {selectedServices.length > 0 ? (
-                    selectedServices.map((s, i) => (
-                      <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
-                         <span className="text-slate-300">{s}</span>
-                         <span className="text-brand-night">
-                            ${provider.services.find((ps: any) => ps.name === s)?.price || 0}
-                         </span>
-                      </div>
-                    ))
+                    selectedServices.map((s, i) => {
+                       const service = (provider.services || []).find((ps: any) => ps.name === s);
+                       return (
+                        <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
+                           <span className="text-slate-300">{s}</span>
+                           <span className="text-brand-night">
+                              ${service?.price || 0}
+                           </span>
+                        </div>
+                       );
+                    })
                  ) : (
                     <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
                        <span className="text-slate-300">Reserva de Servicio</span>
@@ -287,6 +416,14 @@ export default function CheckoutPage() {
               >
                 {isProcessing ? 'Procesando...' : step === 'selection' ? 'Continuar' : 'Confirmar Pago Seguro'}
               </Button>
+
+              {errorStatus && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl">
+                  <p className="text-[10px] font-black text-red-500 uppercase tracking-widest text-center">
+                    {errorStatus}
+                  </p>
+                </div>
+              )}
               
               <p className="text-center text-[9px] font-black text-slate-300 uppercase tracking-widest mt-6 leading-relaxed">
                  Al pagar confirmas que estás de acuerdo con nuestras <br />

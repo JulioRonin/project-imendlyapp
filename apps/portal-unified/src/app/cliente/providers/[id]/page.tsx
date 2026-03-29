@@ -6,6 +6,7 @@ import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Badge } from '@i-mendly/shared/components/Badge';
+import { TopInsignia } from '@/components/TopInsignia';
 import { 
   ArrowLeft, 
   Star, 
@@ -23,27 +24,189 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
-import { useMemo, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { supabase } from '../../../../lib/supabase';
 
-export default function ProviderProfile() {
-  const params = useParams();
+export default function ProviderProfile({ params }: { params: any }) {
   const router = useRouter();
-  const id = params.id as string;
+  const resolvedParams: any = (React as any).use ? (React as any).use(params) : params;
+  const id = resolvedParams?.id as string;
+  const [provider, setProvider] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const provider = useMemo(() => {
-    return MOCK_PROVIDERS.find(p => p.id === id);
+  useEffect(() => {
+    const fetchProviderData = async () => {
+      setIsLoading(true);
+      console.log('Fetching provider with ID:', id);
+      try {
+        // 1. Core provider + user data
+        const { data: providerData, error: pError } = await supabase
+          .from('providers')
+          .select('*, users ( full_name, avatar_url )')
+          .eq('id', id)
+          .maybeSingle();
+
+        if (pError) {
+          console.error('Supabase error fetching provider:', pError);
+          throw pError;
+        }
+
+        if (!providerData) {
+          console.error('No provider data found in DB for ID:', id);
+          setIsLoading(false);
+          return;
+        }
+
+        // 2. Fetch services
+        const { data: servicesData, error: sError } = await supabase
+          .from('provider_services')
+          .select('*')
+          .eq('provider_id', id);
+
+        if (sError) console.warn('Services fetch error:', sError);
+
+        // 3. Fetch portfolio
+        const { data: portfolioData, error: pfError } = await supabase
+          .from('provider_portfolio')
+          .select('*')
+          .eq('provider_id', id);
+
+        if (pfError) console.warn('Portfolio fetch error (ignore if table missing):', pfError);
+        
+        // 4. Fetch reviews
+        const { data: reviewsData, error: rError } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('provider_id', id);
+
+        if (rError) console.warn('Reviews fetch error:', rError);
+
+        // 5. Fetch availability
+        const { data: availData, error: aError } = await supabase
+          .from('provider_availability')
+          .select('*')
+          .eq('provider_id', id)
+          .eq('is_active', true);
+        
+        if (aError) console.warn('Availability fetch error:', aError);
+
+        // 5. Fetch existing orders (to block slots)
+        const { data: ordersData, error: oError } = await supabase
+          .from('orders')
+          .select('scheduled_date')
+          .eq('provider_id', id)
+          .not('status', 'in', '(cancelled)');
+          
+        if (oError) console.warn('Orders fetch error:', oError);
+
+        const user = Array.isArray(providerData.users) ? providerData.users[0] : providerData.users;
+        
+        const formatted = {
+          ...providerData,
+          name: user?.full_name || 'Profesional i-Mendly',
+          image: user?.avatar_url || '',
+          isTop: (providerData as any).is_top || false,
+          categories: providerData.categories || (providerData.category ? [providerData.category] : []),
+          services: [
+            ...(servicesData || []).map((s: any) => ({
+              id: s.id,
+              name: s.name,
+              price: s.price,
+              isRange: s.is_range,
+              maxPrice: s.max_price,
+              unit: s.unit,
+              category: s.category
+            })),
+            { id: 'custom', name: 'Personalizado o Explica tu necesidad', price: 0, isCustom: true }
+          ],
+          portfolio: (portfolioData || []).map((p: any) => ({
+             id: p.id,
+             title: p.title || '',
+             image: p.image_url,
+             description: p.description || ''
+          })),
+          reviews: (reviewsData || []).map((r: any) => ({
+            id: r.id,
+            user: r.user_name || 'Cliente i-Mendly',
+            rating: r.rating,
+            comment: r.comment,
+            date: r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Reciente',
+            photo: r.photo_url
+          })),
+          availability: availData || [],
+          busySlots: (ordersData || []).map(o => new Date(o.scheduled_date)),
+          verified: providerData.is_verified
+        };
+
+        setProvider(formatted);
+      } catch (err) {
+        console.error('Error fetching provider:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) fetchProviderData();
   }, [id]);
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [customRequestText, setCustomRequestText] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 3, 1)); // Default to April 2026 for now
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  // Slot Generation Logic
+  const availableSlots = useMemo(() => {
+    if (!selectedDate || !provider?.availability) return [];
+    
+    const dayOfWeek = selectedDate.getDay();
+    const dayConfig = provider.availability.find((a: any) => a.day_of_week === dayOfWeek);
+    
+    if (!dayConfig || !dayConfig.is_active) return [];
+    
+    const slots = [];
+    const startTimeStr = dayConfig.start_time || '09:00:00';
+    const endTimeStr = dayConfig.end_time || '18:00:00';
+    
+    const [startH, startM] = startTimeStr.split(':').map(Number);
+    const [endH, endM] = endTimeStr.split(':').map(Number);
+    
+    let current = new Date(selectedDate);
+    current.setHours(startH, startM, 0, 0);
+    
+    const end = new Date(selectedDate);
+    end.setHours(endH, endM, 0, 0);
+    
+    // Safety break
+    let iterations = 0;
+    while (current < end && iterations < 24) {
+      iterations++;
+      const timeStr = current.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+      
+      // Check if slot is busy (any overlap in the next hour)
+      const slotStart = current.getTime();
+      const slotEnd = slotStart + 3600000; // 1 hour later
+      
+      const isBusy = provider.busySlots.some((busy: Date) => {
+        const busyTime = busy.getTime();
+        return busyTime >= slotStart && busyTime < slotEnd;
+      });
+      
+      if (!isBusy) {
+        slots.push(timeStr);
+      }
+      
+      current.setMinutes(current.getMinutes() + 60); 
+    }
+    
+    return slots;
+  }, [selectedDate, provider]);
 
   const totalPrice = useMemo(() => {
     if (!provider) return 0;
-    const selected = (provider.services as any[]).filter(s => selectedServices.includes(s.name));
-    let total = selected.reduce((acc, s) => acc + s.price, 0);
+    const selected = (provider.services || []).filter((s: any) => selectedServices.includes(s.name));
+    let total = selected.reduce((acc: number, s: any) => acc + s.price, 0);
     // Custom is base price or quote
     if (selectedServices.includes('Personalizado o Explica tu necesidad')) {
       total += 450; // base deposit for custom
@@ -62,10 +225,21 @@ export default function ProviderProfile() {
 
   const handleBooking = () => {
     if (!isFormValid) return;
-    const dateStr = `2026-04-${selectedDate?.toString().padStart(2, '0')}`;
+    const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
     const services = [...selectedServices, customRequestText ? `(Custom: ${customRequestText})` : ''].filter(Boolean).join(',');
     router.push(`/cliente/checkout?providerId=${id}&services=${encodeURIComponent(services)}&total=${totalPrice}&date=${dateStr}&time=${encodeURIComponent(selectedTime)}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center animate-pulse">
+          <Logo size={48} className="mx-auto mb-4" />
+          <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Cargando Profesional...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!provider) {
     return (
@@ -102,6 +276,11 @@ export default function ProviderProfile() {
             <section className="flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left">
               <div className="relative">
                 <Avatar src={(provider as any).image} name={provider.name} className="w-40 h-40 rounded-[3rem] shadow-2xl ring-8 ring-white" />
+                {provider.isTop && (
+                   <div className="absolute -top-4 -left-4 z-10 scale-150">
+                      <TopInsignia size={48} showLabel={false} />
+                   </div>
+                )}
                 {provider.verified && (
                   <div className="absolute -bottom-2 -right-2 bg-primary text-white p-3 rounded-2xl shadow-xl border-4 border-white">
                     <ShieldCheck size={20} />
@@ -110,21 +289,38 @@ export default function ProviderProfile() {
               </div>
               
               <div className="flex-1 space-y-4">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-2">
+                  <h1 className="text-5xl font-black text-brand-night tracking-tighter uppercase leading-tight">{provider.name}</h1>
+                  {provider.isTop && <TopInsignia size={32} />}
+                </div>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                  <Badge variant="success" className="bg-emerald-50 text-emerald-600 border-emerald-100 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest">
-                    {provider.category}
-                  </Badge>
+                  <div className="flex flex-wrap gap-2.5">
+                    {provider.categories?.map((cat: string) => (
+                      <Badge 
+                        key={cat} 
+                        variant="default" 
+                        className="bg-primary/10 text-primary border-none rounded-full px-5 py-2.5 text-[9px] font-black uppercase tracking-[0.2em] shadow-sm hover:shadow-md transition-all cursor-default"
+                      >
+                        {cat}
+                      </Badge>
+                    ))}
+                  </div>
                   <div className="flex items-center gap-2 bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full border border-amber-100 text-[10px] font-black uppercase tracking-widest">
-                    <Star size={12} fill="currentColor" /> {provider.rating} ({provider.reviews} reseñas)
+                    <Star size={12} fill="currentColor" /> {provider.rating || 0} ({provider.reviews?.length || 0} reseñas)
                   </div>
                 </div>
-                <h1 className="text-5xl font-black text-brand-night tracking-tighter uppercase leading-none">
-                  {provider.name}
-                </h1>
-                <div className="flex items-center justify-center md:justify-start gap-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                  <span className="flex items-center gap-2">
-                    <MapPin size={14} className="text-primary" /> San Pedro, NL
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+                  <span className="flex items-center gap-2 max-w-[400px]">
+                    <MapPin size={14} className="text-primary shrink-0" /> 
+                    <span className="truncate">
+                      {provider.zones?.length > 0 ? provider.zones.join(', ') : 'Cobertura Amplia'}
+                    </span>
                   </span>
+                  <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-slate-200" />
+                  <span className="flex items-center gap-2">
+                    <Zap size={14} className="text-primary" /> Radio {provider.coverage_radius_km || 10} KM
+                  </span>
+                  <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-slate-200" />
                   <span className="flex items-center gap-2">
                     <Clock size={14} className="text-primary" /> {provider.experience} años exp.
                   </span>
@@ -146,61 +342,87 @@ export default function ProviderProfile() {
                 <h2 className="text-xl font-black text-brand-night uppercase tracking-tight">Selecciona Servicios</h2>
                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Puedes elegir varios</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {(provider.services as any[]).map((s, i) => {
-                  const isSelected = selectedServices.includes(s.name);
+              <div className="space-y-12">
+                {(provider.categories && provider.categories.length > 0 ? provider.categories : ['Servicios General']).map((cat: string) => {
+                  const catServices = provider.services.filter((s: any) => 
+                    !s.isCustom && (s.category === cat || (!s.category && cat === provider.categories?.[0]) || (cat === 'Servicios General'))
+                  );
+                  
+                  if (catServices.length === 0) return null;
+
                   return (
-                    <button 
-                      key={i} 
-                      onClick={() => toggleService(s.name)}
-                      className={`p-8 rounded-[2rem] text-left transition-all duration-300 border-2 ${
-                        isSelected 
-                          ? 'bg-primary/5 border-primary shadow-inner' 
-                          : 'bg-white border-slate-50 shadow-sm hover:border-slate-200'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-                            isSelected ? 'bg-primary text-white' : 'bg-slate-50 text-slate-300'
-                          }`}>
-                            <CheckCircle2 size={24} />
-                          </div>
-                          <div>
-                            <span className={`text-[11px] font-black uppercase tracking-widest block ${isSelected ? 'text-primary' : 'text-slate-400'}`}>Precisión Boutique</span>
-                            <span className="text-sm font-bold text-brand-night uppercase tracking-tight">{s.name}</span>
-                          </div>
-                        </div>
-                        <span className="text-xl font-black text-brand-night tracking-tighter">${s.price}</span>
+                    <div key={cat} className="space-y-6">
+                      <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] flex items-center gap-4">
+                        <span className="shrink-0">{cat}</span>
+                        <div className="h-[1px] w-full bg-slate-50" />
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {catServices.map((s: any, i: number) => {
+                          const isSelected = selectedServices.includes(s.name);
+                          return (
+                            <button 
+                              key={i} 
+                              onClick={() => toggleService(s.name)}
+                              className={`p-8 rounded-[2rem] text-left transition-all duration-300 border-2 ${
+                                isSelected 
+                                  ? 'bg-primary/5 border-primary shadow-inner' 
+                                  : 'bg-white border-slate-50 shadow-sm hover:border-slate-200'
+                              }`}
+                            >
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                                    isSelected ? 'bg-primary text-white' : 'bg-slate-50 text-slate-300'
+                                  }`}>
+                                    <CheckCircle2 size={24} />
+                                  </div>
+                                  <div>
+                                    <span className={`text-[11px] font-black uppercase tracking-widest block ${isSelected ? 'text-primary' : 'text-slate-400'}`}>{provider.name}</span>
+                                    <span className="text-sm font-bold text-brand-night uppercase tracking-tight">{s.name}</span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xl font-black text-brand-night tracking-tighter leading-none">
+                                    ${s.price}
+                                    {s.isRange && <span className="text-sm font-bold text-slate-300 ml-1">- ${s.maxPrice}</span>}
+                                  </p>
+                                  <p className="text-[9px] font-bold text-slate-200 uppercase tracking-widest mt-1">Por {s.unit || 'srv'}</p>
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
 
-                {/* Custom Request Option */}
-                <button 
-                  onClick={() => toggleService('Personalizado o Explica tu necesidad')}
-                  className={`p-8 rounded-[2rem] text-left transition-all duration-300 border-2 md:col-span-2 ${
-                    selectedServices.includes('Personalizado o Explica tu necesidad')
-                      ? 'bg-primary/5 border-primary shadow-inner' 
-                      : 'bg-white border-slate-50 shadow-sm hover:border-slate-200'
-                  }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-                        selectedServices.includes('Personalizado o Explica tu necesidad') ? 'bg-primary text-white' : 'bg-slate-50 text-slate-300'
-                      }`}>
-                        <Pencil size={24} />
+                {/* Custom Request Option always at the end */}
+                <div className="pt-4">
+                  <button 
+                    onClick={() => toggleService('Personalizado o Explica tu necesidad')}
+                    className={`p-8 rounded-[2rem] text-left transition-all duration-300 border-2 w-full ${
+                      selectedServices.includes('Personalizado o Explica tu necesidad')
+                        ? 'bg-primary/5 border-primary shadow-inner' 
+                        : 'bg-white border-slate-50 shadow-sm hover:border-slate-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                          selectedServices.includes('Personalizado o Explica tu necesidad') ? 'bg-primary text-white' : 'bg-slate-50 text-slate-300'
+                        }`}>
+                          <Pencil size={24} />
+                        </div>
+                        <div>
+                          <span className={`text-[11px] font-black uppercase tracking-widest block ${selectedServices.includes('Personalizado o Explica tu necesidad') ? 'text-primary' : 'text-slate-400'}`}>Explícanos a detalle</span>
+                          <span className="text-sm font-bold text-brand-night uppercase tracking-tight">Personalizado o Explica tu necesidad</span>
+                        </div>
                       </div>
-                      <div>
-                        <span className={`text-[11px] font-black uppercase tracking-widest block ${selectedServices.includes('Personalizado o Explica tu necesidad') ? 'text-primary' : 'text-slate-400'}`}>Explícanos a detalle</span>
-                        <span className="text-sm font-bold text-brand-night uppercase tracking-tight">Personalizado o Explica tu necesidad</span>
-                      </div>
+                      <span className="text-xl font-black text-brand-night tracking-tighter">Cotizar</span>
                     </div>
-                    <span className="text-xl font-black text-brand-night tracking-tighter">Cotizar</span>
-                  </div>
-                </button>
+                  </button>
+                </div>
               </div>
 
               {selectedServices.includes('Personalizado o Explica tu necesidad') && (
@@ -243,11 +465,11 @@ export default function ProviderProfile() {
             )}
 
             {/* Reviews Section */}
-            {(provider as any).reviewData && (
+            {provider.reviews && provider.reviews.length > 0 && (
               <section className="space-y-8">
                 <h2 className="text-xl font-black text-brand-night uppercase tracking-tight">Experiencias de Clientes</h2>
                 <div className="space-y-6">
-                  {(provider as any).reviewData.map((review: any, i: number) => (
+                  {provider.reviews.map((review: any, i: number) => (
                     <Card key={i} className="p-10 rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                       <div className="flex flex-col md:flex-row gap-8">
                         {review.photo && (
@@ -301,7 +523,7 @@ export default function ProviderProfile() {
                 </h3>
                 {selectedServices.length > 0 && (
                   <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-4">
-                    {selectedServices.length} {selectedServices.length === 1 ? 'ervicio seleccionado' : 'rvicios seleccionados'}
+                    {selectedServices.length} {selectedServices.length === 1 ? 'servicio seleccionado' : 'servicios seleccionados'}
                   </p>
                 )}
               </div>
@@ -323,7 +545,7 @@ export default function ProviderProfile() {
                   }`}
                 >
                   <CalendarIcon size={16} className="mr-3" />
-                  {selectedDate && selectedTime ? `${selectedDate} abr, ${selectedTime}` : 'Elegir Fecha y Hora'}
+                   {selectedDate && selectedTime ? `${selectedDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}, ${selectedTime}` : 'Elegir Fecha y Hora'}
                 </Button>
               </div>
 
@@ -334,59 +556,95 @@ export default function ProviderProfile() {
               )}
 
               {/* Collapsible Calendar */}
-              <div className={`transition-all duration-700 ease-in-out px-2 ${isCalendarOpen ? 'max-h-[500px] opacity-100 mb-10 scale-100' : 'max-h-0 opacity-0 overflow-hidden scale-95'}`}>
-                 <div className="pt-8 border-t border-slate-50">
-                    <div className="flex justify-between items-center mb-6">
-                       <h4 className="text-[10px] font-black text-brand-night uppercase tracking-widest">Abril 2026</h4>
-                       <div className="flex gap-2">
-                          <button className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 hover:text-brand-night transition-colors"><ChevronRight className="rotate-180" size={14} /></button>
-                          <button className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 hover:text-brand-night transition-colors"><ChevronRight size={14} /></button>
-                       </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-7 gap-2 mb-8">
-                       {['D','L','M','M','J','V','S'].map((d, i) => (
-                          <div key={i} className="text-center text-[8px] font-black text-slate-200 uppercase">{d}</div>
-                       ))}
-                       {[...Array(30)].map((_, i) => {
-                          const day = i + 1;
-                          const isAvailable = day > 10 && day < 25 && day !== 15 && day !== 18;
-                          const isSelectedDay = selectedDate === day;
-                          return (
-                             <button 
-                               key={i} 
-                               disabled={!isAvailable}
-                               onClick={() => setSelectedDate(day)}
-                               className={`h-10 rounded-xl text-[10px] font-bold transition-all ${
-                                 isSelectedDay ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110 z-10' : 
-                                 isAvailable ? 'bg-slate-50 text-brand-night hover:bg-primary/10 hover:scale-105' : 'bg-transparent text-slate-200 cursor-not-allowed'
-                               }`}
-                             >
-                                {day}
-                             </button>
-                          );
-                       })}
-                    </div>
+                  <div className={`transition-all duration-700 ease-in-out px-2 ${isCalendarOpen ? 'max-h-[800px] opacity-100 mb-10 scale-100' : 'max-h-0 opacity-0 overflow-hidden scale-95'}`}>
+                     <div className="pt-8 border-t border-slate-50">
+                        <div className="flex justify-between items-center mb-6">
+                           <h4 className="text-[10px] font-black text-brand-night uppercase tracking-widest">
+                             {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                           </h4>
+                           <div className="flex gap-2">
+                              <button 
+                                onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
+                                className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 hover:text-brand-night transition-colors"
+                              >
+                                <ChevronRight className="rotate-180" size={14} />
+                              </button>
+                              <button 
+                                onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
+                                className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 hover:text-brand-night transition-colors"
+                              >
+                                <ChevronRight size={14} />
+                              </button>
+                           </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-7 gap-2 mb-8">
+                           {['D','L','M','M','J','V','S'].map((d, i) => (
+                              <div key={i} className="text-center text-[8px] font-black text-slate-200 uppercase">{d}</div>
+                           ))}
+                            {/* Calendar Days */}
+                            {(() => {
+                              const year = currentMonth.getFullYear();
+                              const month = currentMonth.getMonth();
+                              const firstDayOfMonth = new Date(year, month, 1).getDay();
+                              const daysInMonth = new Date(year, month + 1, 0).getDate();
+                              
+                              const grid = [];
+                              // Empty cells for offset
+                              for (let j = 0; j < firstDayOfMonth; j++) {
+                                grid.push(<div key={`empty-${j}`} />);
+                              }
+                              
+                              // Real days
+                              for (let i = 1; i <= daysInMonth; i++) {
+                                const day = i;
+                                const dateObj = new Date(year, month, day);
+                                const dayOfWeek = dateObj.getDay();
+                                const isWorkingDay = provider.availability?.some((a: any) => a.day_of_week === dayOfWeek && a.is_active);
+                                const isPast = dateObj < new Date(new Date().setHours(0,0,0,0));
+                                const isSelectedDay = selectedDate?.getDate() === day && selectedDate?.getMonth() === month && selectedDate?.getFullYear() === year;
+                                
+                                grid.push(
+                                  <button 
+                                    key={day} 
+                                    disabled={!isWorkingDay || isPast}
+                                    onClick={() => setSelectedDate(dateObj)}
+                                    className={`h-10 rounded-xl text-[10px] font-bold transition-all ${
+                                      isSelectedDay ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110 z-10' : 
+                                      (isWorkingDay && !isPast) ? 'bg-slate-50 text-brand-night hover:bg-primary/10 hover:scale-105' : 'bg-transparent text-slate-200 cursor-not-allowed'
+                                    }`}
+                                  >
+                                     {day}
+                                  </button>
+                                );
+                              }
+                              return grid;
+                            })()}
+                        </div>
 
-                    <div className="space-y-3">
-                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-4">Horarios Disponibles</p>
-                       <div className="grid grid-cols-2 gap-3">
-                          {['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'].map((t, i) => (
-                             <button 
-                               key={i} 
-                               onClick={() => setSelectedTime(t)}
-                               className={`py-4 rounded-xl text-[10px] font-black border transition-all ${
-                                 selectedTime === t ? 'bg-brand-night text-white border-brand-night shadow-lg scale-105' : 
-                                 'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:scale-[1.02]'
-                               }`}
-                             >
-                                {t}
-                             </button>
-                          ))}
-                       </div>
-                    </div>
-                 </div>
-              </div>
+                        {selectedDate && (
+                          <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                             <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-4">Horarios Disponibles</p>
+                             <div className="grid grid-cols-2 gap-3">
+                                {availableSlots.length > 0 ? availableSlots.map((t, i) => (
+                                   <button 
+                                     key={i} 
+                                     onClick={() => setSelectedTime(t)}
+                                     className={`py-4 rounded-xl text-[10px] font-black border transition-all ${
+                                       selectedTime === t ? 'bg-brand-night text-white border-brand-night shadow-lg scale-105' : 
+                                       'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:scale-[1.02]'
+                                     }`}
+                                   >
+                                      {t}
+                                   </button>
+                                )) : (
+                                  <p className="col-span-2 text-[10px] font-bold text-slate-300 italic py-4 text-center">No hay horarios disponibles hoy.</p>
+                                )}
+                             </div>
+                          </div>
+                        )}
+                     </div>
+                  </div>
 
               <div className="pt-8 border-t border-slate-50 space-y-6 relative z-10">
                 <div className="flex items-center gap-4 text-xs font-bold text-brand-night">

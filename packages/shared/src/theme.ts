@@ -7,16 +7,16 @@ export const theme = {
       teal: '#0891B2',  // Teal
       glacial: '#BAE6FD', // Azul glacial claro
     },
-    // Purple & Lavender aesthetic from images
+    // Green Aesthetic (I Mendly)
     primary: {
-      DEFAULT: '#7C3AED',
-      light: '#DDD6FE',
-      dark: '#5B21B6',
+      DEFAULT: '#3DB87A',
+      light: '#E8F7F0',
+      dark: '#2A9460',
     },
     secondary: {
-      DEFAULT: '#A78BFA',
-      light: '#EDE9FE',
-      dark: '#7C3AED',
+      DEFAULT: '#3DB87A',
+      light: '#E8F7F0',
+      dark: '#2A9460',
     }
   },
   typography: {

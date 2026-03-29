@@ -14,14 +14,71 @@ import { BottomNav } from '@i-mendly/shared';
 import Link from 'next/link';
 import { usePlatformStore } from '@/store/usePlatformStore';
 
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+
 export default function OrdersDashboard() {
   const router = useRouter();
+  const [myOrders, setMyOrders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const currentUser = usePlatformStore(state => state.currentUser);
-  const allOrders = usePlatformStore(state => state.orders);
   const updateOrderStatus = usePlatformStore(state => state.updateOrderStatus);
 
-  // Filter orders meant for this client
-  const myOrders = allOrders.filter(o => o.clientEmail === currentUser?.email);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setIsLoading(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('orders')
+          .select(`
+            id,
+            display_id,
+            service_requested,
+            status,
+            total_amount,
+            scheduled_date,
+            provider_id,
+            providers (
+              users (
+                full_name,
+                avatar_url
+              )
+            )
+          `)
+          .eq('client_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          const mappedOrders = data.map((o: any) => ({
+            id: o.display_id,
+            dbId: o.id,
+            serviceName: o.service_requested,
+            providerName: o.providers?.users?.full_name || 'Profesional',
+            providerAvatar: o.providers?.users?.avatar_url,
+            status: o.status.toUpperCase(),
+            date: new Date(o.scheduled_date).toLocaleDateString(),
+            time: new Date(o.scheduled_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            price: Number(o.total_amount)
+          }));
+          setMyOrders(mappedOrders);
+        }
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const handleLogout = () => {
     router.push('/role-selection');
@@ -48,7 +105,14 @@ export default function OrdersDashboard() {
 
       <div className="px-8 max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
         <section className="space-y-6">
-           {myOrders.length === 0 && (
+           {isLoading && (
+             <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                <BarChart3 className="w-10 h-10 text-primary animate-pulse" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Sincronizando Órdenes...</p>
+             </div>
+           )}
+
+           {!isLoading && myOrders.length === 0 && (
              <div className="p-16 border-4 border-dashed border-slate-100 rounded-[3.5rem] flex flex-col items-center text-center">
                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                      <BarChart3 size={32} className="text-slate-200" />
@@ -61,7 +125,11 @@ export default function OrdersDashboard() {
            )}
 
            {myOrders.map((p) => (
-             <div key={p.id} className="block relative">
+             <div 
+               key={p.dbId} 
+               onClick={() => router.push(`/cliente/ordenes/${p.dbId}`)}
+               className="block relative cursor-pointer"
+             >
                 <Card className="p-8 rounded-[2.5rem] border-none shadow-[0_20px_64px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_32px_96px_-12px_rgba(124,58,237,0.15)] transition-all duration-500 group bg-white">
                    <div className="flex flex-col md:flex-row md:items-center gap-6">
                       <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center transition-colors shadow-inner
@@ -105,7 +173,7 @@ export default function OrdersDashboard() {
 
                          <div className="flex items-center gap-4 mt-3">
                             <div className="flex items-center gap-2">
-                               <Avatar name={p.providerName} className="w-6 h-6 rounded-lg" />
+                               <Avatar src={p.providerAvatar} name={p.providerName} className="w-6 h-6 rounded-lg" />
                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{p.providerName}</span>
                             </div>
                             <div className="flex items-center gap-2 text-slate-300">
@@ -156,8 +224,7 @@ export default function OrdersDashboard() {
         </section>
       </div>
 
-      {/* Bottom Nav (Standardized) */}
-      <BottomNav onLogout={handleLogout} />
+      {/* Menú inferior eliminado a petición del cliente */}
     </main>
   );
 }

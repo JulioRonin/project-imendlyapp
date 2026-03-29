@@ -7,9 +7,10 @@ import { Card } from '@i-mendly/shared/components/Card';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { ArrowLeft, Filter, MapPin, Star, Clock, ChevronRight } from 'lucide-react';
+import { TopInsignia } from '@/components/TopInsignia';
 import Link from 'next/link';
-import { MOCK_PROVIDERS } from '@i-mendly/shared/constants/mocks';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 // Helper for distance (Haversine simplified)
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -20,23 +21,80 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
             Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+  return R * c || 0;
 };
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [userLocation] = useState({ lat: 25.6667, lng: -100.4000 }); // San Pedro default
+  const [userLocation] = useState({ lat: 31.7333, lng: -106.4833 }); // Ciudad Juárez default
+  const [providers, setProviders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredProviders = useMemo(() => {
-    return MOCK_PROVIDERS.filter(p => {
-      // @ts-ignore
-      const dist = getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng);
-      const matchesQuery = p.category.toLowerCase().includes(query.toLowerCase()) || 
-                           p.name.toLowerCase().includes(query.toLowerCase());
-      return matchesQuery && dist <= 20; // Only within 20km
-    }).sort((a, b) => (a.price || 0) - (b.price || 0)); // Sort by price by default
-  }, [query, userLocation]);
+  useEffect(() => {
+    const fetchRealProviders = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch ALL providers and their services/users to filter in JS
+        const { data, error } = await supabase
+          .from('providers')
+          .select(`
+            id,
+            categories,
+            category,
+            rating,
+            is_verified,
+            is_top,
+            account_status,
+            users!inner ( full_name, avatar_url ),
+            provider_services ( name, price, max_price, is_range, unit )
+          `);
+
+        if (error) throw error;
+
+        const allFormatted = (data || []).map(p => {
+          const user = Array.isArray(p.users) ? p.users[0] : p.users;
+          const primaryService = p.provider_services?.[0] || { price: 0, unit: 'Servicio', is_range: false, max_price: 0 };
+          const cats = p.categories || (p.category ? [p.category] : []);
+          
+          return {
+            id: p.id,
+            name: user?.full_name || 'Profesional i-Mendly',
+            image: user?.avatar_url || '',
+            categories: cats,
+            rating: p.rating || 4.8,
+            verified: p.is_verified,
+            isTop: p.is_top || false,
+            status: p.account_status,
+            price: primaryService.price,
+            maxPrice: primaryService.max_price,
+            isRange: primaryService.is_range,
+            unit: primaryService.unit || 'Servicio',
+            lat: 31.7333 + (Math.random() - 0.5) * 0.1,
+            lng: -106.4833 + (Math.random() - 0.5) * 0.1
+          };
+        });
+
+        // Filter in JS for maximum flexibility during development
+        const filtered = allFormatted.filter(p => {
+          if (!query) return true;
+          const searchLower = query.toLowerCase();
+          return p.name.toLowerCase().includes(searchLower) || 
+                 p.categories.some((c: string) => c.toLowerCase().includes(searchLower));
+        });
+
+        setProviders(filtered);
+      } catch (err) {
+        console.error('Error fetching search results:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRealProviders();
+  }, [query]);
+
+  const filteredProviders = providers.sort((a, b) => (a.price || 0) - (b.price || 0));
 
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
@@ -72,32 +130,70 @@ export default function SearchResults() {
                   <div className="flex flex-col md:flex-row gap-8 items-center">
                     <div className="relative">
                       <Avatar src={(p as any).image} name={p.name} className="w-24 h-24 rounded-3xl shadow-xl ring-4 ring-slate-50" />
-                      <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
-                        <Star size={14} fill="white" />
-                      </div>
+                      {p.isTop && (
+                        <div className="absolute -top-2 -left-2 z-10 scale-125">
+                          <TopInsignia size={32} showLabel={false} />
+                        </div>
+                      )}
+                      {p.verified && (
+                        <div className="absolute -bottom-2 -right-2 bg-primary text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
+                          <Star size={14} fill="white" />
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex-1 text-center md:text-left">
-                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                        <Badge variant="default" className="text-[8px] font-black tracking-widest uppercase py-1 bg-brand-night text-white border-none">{p.category}</Badge>
-                        <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                          <MapPin size={10} className="text-primary" /> {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
+                        {(p.categories || []).map((cat: string) => (
+                          <Badge 
+                            key={cat}
+                            variant="default" 
+                            className="text-[7.5px] font-black tracking-[0.15em] uppercase py-1.5 px-3 bg-primary/10 text-primary border-none rounded-full shadow-sm hover:bg-primary/20 transition-all cursor-default"
+                          >
+                            {cat}
+                          </Badge>
+                        ))}
+                        <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400/60 uppercase tracking-widest ml-1">
+                          <div className="w-1 h-1 rounded-full bg-slate-200" />
+                          <MapPin size={10} className="text-primary/60" /> {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
                         </span>
                       </div>
-                      <h3 className="text-2xl font-black text-brand-night mb-2 tracking-tighter uppercase">{p.name}</h3>
-                      <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-md">
-                        Especialista en servicios boutique de {p.category.toLowerCase()}. Atención personalizada y garantía de calidad.
+                      
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-2xl font-black text-brand-night tracking-tighter uppercase leading-none">{p.name}</h3>
+                        <div className="flex items-center gap-1.5 bg-amber-50 text-amber-600 px-2 py-0.5 rounded-lg border border-amber-100 text-[10px] font-black">
+                           <Star size={10} fill="currentColor" /> {p.rating}
+                        </div>
+                        {p.verified && (
+                          <div className="flex items-center gap-1 bg-primary/5 text-primary px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-primary/10">
+                            <ChevronRight size={10} className="text-primary/40" /> Certificado
+                          </div>
+                        )}
+                        {p.isTop && (
+                           <TopInsignia size={18} className="ml-2" />
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-semibold leading-relaxed max-w-md uppercase tracking-wide opacity-80">
+                        Especialista en servicios boutique de {(p.categories?.[0] || 'Servicios').toLowerCase()}. Atención personalizada y garantía de calidad.
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-4 min-w-[150px]">
+                    <div className="flex flex-col items-center md:items-end gap-4 min-w-[200px]">
                       <div className="text-right">
-                         <p className="text-[10px] font-black text-brand-night/20 uppercase tracking-widest mb-1">Precio base</p>
-                         <p className="text-3xl font-black text-brand-night tracking-tighter">${p.price}<span className="text-sm font-bold text-slate-300">/hr</span></p>
+                         <p className="text-[10px] font-black text-brand-night/20 uppercase tracking-widest mb-1">Costo Estimado</p>
+                         <div className="flex flex-col items-end">
+                            <p className="text-3xl font-black text-brand-night tracking-tighter leading-none">
+                              ${p.price}
+                              {p.isRange && <span className="text-sm font-bold text-slate-300 mx-1">a ${p.maxPrice}</span>}
+                            </p>
+                            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Por {p.unit}</span>
+                         </div>
                       </div>
-                      <Button className="w-full md:w-auto px-8 py-5 rounded-2xl shadow-lg shadow-primary/10 text-[9px] font-black uppercase tracking-[0.3em]">
-                        Contratar
-                      </Button>
+                      <div className="w-full md:w-auto">
+                        <Button className="w-full md:w-auto px-8 py-5 rounded-2xl shadow-lg shadow-primary/10 text-[9px] font-black uppercase tracking-[0.3em]">
+                          Ver Perfil
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </Card>

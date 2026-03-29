@@ -1,15 +1,28 @@
+"use client";
+
+import React from 'react';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Input } from '@i-mendly/shared/components/Input';
-import { Card } from '@i-mendly/shared/components/Card';
-
-import { useState } from 'react';
+import { useOnboarding } from './OnboardingContext';
 
 export const Step2Identity: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
-  const [fileFront, setFileFront] = useState<File | null>(null);
-  const [fileBack, setFileBack] = useState<File | null>(null);
-  const [fileSelfie, setFileSelfie] = useState<File | null>(null);
+  const { data, updateData } = useOnboarding();
+  
+  const documents = data.documents || {};
+  const fileFront = documents.ine_front || null;
+  const fileBack = documents.ine_back || null;
+  const fileSelfie = documents.selfie_ine || null;
 
-  const getStatusClass = (file: File | null) => 
+  const handleFileChange = (field: string, file: File | null) => {
+    updateData({ 
+      documents: { 
+        ...documents, 
+        [field]: file ? file.name : null 
+      } 
+    });
+  };
+
+  const getStatusClass = (file: any) => 
     file ? "border-solid border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-dashed border-white/20 hover:border-primary/50 text-white";
 
   return (
@@ -18,18 +31,32 @@ export const Step2Identity: React.FC<{ onNext: () => void; onBack: () => void }>
       <p className="text-white/50 mb-8 font-medium">Por tu seguridad y la de nuestros clientes, necesitamos validar tu identidad.</p>
 
       <div className="space-y-6 mb-10">
-        <Input dark label="CURP (18 caracteres)" placeholder="AAAA000000XXXXXX00" maxLength={18} />
-        <Input dark label="RFC (Opcional)" placeholder="AAAA000000XXX" maxLength={13} />
+        <Input 
+          dark 
+          label="CURP (18 caracteres)" 
+          placeholder="AAAA000000XXXXXX00" 
+          maxLength={18} 
+          value={documents.curp || ''}
+          onChange={e => updateData({ documents: { ...documents, curp: e.target.value } })}
+        />
+        <Input 
+          dark 
+          label="RFC (Opcional)" 
+          placeholder="AAAA000000XXX" 
+          maxLength={13} 
+          value={documents.rfc || ''}
+          onChange={e => updateData({ documents: { ...documents, rfc: e.target.value } })}
+        />
         
         <div className="grid grid-cols-2 gap-4">
           <label className={`h-40 flex flex-col items-center justify-center rounded-[2rem] border-2 cursor-pointer transition-all ${getStatusClass(fileFront)}`}>
-            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => e.target.files && setFileFront(e.target.files[0])} />
+            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => e.target.files && handleFileChange('ine_front', e.target.files[0])} />
             {fileFront ? (
                <>
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 mb-3">
                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                  </svg>
-                 <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileFront.name}</span>
+                 <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileFront}</span>
                </>
             ) : (
                <>
@@ -42,13 +69,13 @@ export const Step2Identity: React.FC<{ onNext: () => void; onBack: () => void }>
           </label>
 
           <label className={`h-40 flex flex-col items-center justify-center rounded-[2rem] border-2 cursor-pointer transition-all ${getStatusClass(fileBack)}`}>
-            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => e.target.files && setFileBack(e.target.files[0])} />
+            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => e.target.files && handleFileChange('ine_back', e.target.files[0])} />
             {fileBack ? (
                <>
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 mb-3">
                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                  </svg>
-                 <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileBack.name}</span>
+                 <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileBack}</span>
                </>
             ) : (
                <>
@@ -62,13 +89,13 @@ export const Step2Identity: React.FC<{ onNext: () => void; onBack: () => void }>
         </div>
         
         <label className={`h-40 flex flex-col items-center justify-center rounded-[2rem] border-2 cursor-pointer transition-all ${getStatusClass(fileSelfie)}`}>
-          <input type="file" accept="image/*" capture="user" className="hidden" onChange={(e) => e.target.files && setFileSelfie(e.target.files[0])} />
+          <input type="file" accept="image/*" capture="user" className="hidden" onChange={(e) => e.target.files && handleFileChange('selfie_ine', e.target.files[0])} />
           {fileSelfie ? (
              <>
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 mb-3">
                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                </svg>
-               <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileSelfie.name}</span>
+               <span className="text-xs font-black uppercase tracking-widest px-2 text-center break-all line-clamp-1">{fileSelfie}</span>
              </>
           ) : (
              <>

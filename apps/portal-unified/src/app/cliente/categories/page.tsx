@@ -3,24 +3,26 @@
 import { Logo } from '@i-mendly/shared/Logo';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
-import { ArrowLeft, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler, Scissors, Car } from 'lucide-react';
+import { ArrowLeft, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler, Scissors, Car, Layers, Flame } from 'lucide-react';
 import { BottomNav } from '@i-mendly/shared';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const ALL_CATEGORIES = [
-  { name: 'Electricista', icon: <Zap size={32} strokeWidth={1.5} />, image: '/assets/electrician.png', description: 'Instalaciones, reparaciones y cortocircuitos.' },
+  { name: 'Electricidad', icon: <Zap size={32} strokeWidth={1.5} />, image: '/assets/electrician.png', description: 'Instalaciones, reparaciones y cortocircuitos.' },
   { name: 'Plomería', icon: <Droplets size={32} strokeWidth={1.5} />, image: '/assets/plumbing.png', description: 'Tuberías, fugas y mantenimiento hidráulico.' },
   { name: 'Limpieza', icon: <Sparkles size={32} strokeWidth={1.5} />, image: '/assets/cleaning_professional.png', description: 'Limpieza profunda y mantenimiento de espacios con personal calificado.' },
   { name: 'Climas/AC', icon: <Wind size={32} strokeWidth={1.5} />, image: '/assets/ac_work.png', description: 'Mantenimiento preventivo y correctivo de AC.' },
   { name: 'Pintura', icon: <Paintbrush size={32} strokeWidth={1.5} />, image: '/assets/painting_work.png', description: 'Interiores, exteriores y acabados de lujo.' },
-  { name: 'Carpintería', icon: <Hammer size={32} strokeWidth={1.5} />, image: '/assets/carpentry.png', description: 'Muebles a medida y reparaciones de madera.' },
+  { name: 'Carpintería', icon: <Hammer size={32} strokeWidth={1.5} />, image: '/assets/carpentry.png', description: 'Muebles a medida y reparaciones de madera.', comingSoon: true },
   { name: 'Jardinería', icon: <Flower2 size={32} strokeWidth={1.5} />, image: '/assets/gardening.png', description: 'Diseño de paisajes y cuidado de áreas verdes.' },
   { name: 'Cerrajería', icon: <Lock size={32} strokeWidth={1.5} />, image: '/assets/locksmith.png', description: 'Aperturas de emergencia y chapas de seguridad.' },
   { name: 'Fumigación', icon: <Bug size={32} strokeWidth={1.5} />, image: '/assets/fumigation_professional.png', description: 'Control de plagas especializado con equipo profesional.' },
   { name: 'Carwash', icon: <Car size={32} strokeWidth={1.5} />, image: '/assets/carwash_boutique.png', description: 'Estética automotriz, detallado y limpieza premium a domicilio.' },
-  { name: 'Remodelación', icon: <Ruler size={32} strokeWidth={1.5} />, image: '/assets/electrician_work.png', description: 'Renovación total de espacios y albañilería.' },
+  { name: 'Remodelación', icon: <Ruler size={32} strokeWidth={1.5} />, image: '/assets/electrician_work.png', description: 'Renovación total de espacios y albañilería.', comingSoon: true },
   { name: 'Moda y costura', icon: <Scissors size={32} strokeWidth={1.5} />, image: '/assets/fashion_sewing.png', description: 'Vestidos a medida, ajustes y diseño personalizado.' },
+  { name: 'Pisos', icon: <Layers size={32} strokeWidth={1.5} />, image: '/images/pisos.png', description: 'Instalación profesional de pisos de madera, laminados, cerámicos y pulido.' },
+  { name: 'Herrería', icon: <Flame size={32} strokeWidth={1.5} />, image: '/images/herreria.png', description: 'Trabajos de herrería estructural, forja, portones, protectores y soldadura especializada.' },
 ];
 
 export default function CategoriesPage() {
@@ -59,8 +61,17 @@ export default function CategoriesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-night/95 via-brand-night/20 to-transparent" />
                 </div>
 
+                {/* Coming Soon Badge Overlay */}
+                {cat.comingSoon && (
+                  <div className="absolute top-8 right-8 z-20">
+                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-lg">
+                      Próximamente
+                    </span>
+                  </div>
+                )}
+
                 {/* Content Overlay */}
-                <div className="absolute inset-0 p-10 flex flex-col justify-end z-10">
+                <div className={`absolute inset-0 p-10 flex flex-col justify-end z-10 ${cat.comingSoon ? "opacity-60 grayscale-[50%]" : ""}`}>
                   <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                      <div className="text-white">{cat.icon}</div>
                   </div>

@@ -1,185 +1,301 @@
 "use client";
 
-import { Logo } from '@i-mendly/shared/Logo';
+import { useState, useEffect, use } from 'react';
+import { supabase } from '@/lib/supabase';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import Link from 'next/link';
 import { 
-  AlertCircle, 
-  BarChart3, 
-  UserPlus, 
-  TrendingUp, 
-  Zap,
-  ArrowLeft,
-  FileText,
-  Mail,
-  Phone,
-  CheckCircle2,
+  ArrowLeft, 
+  Calendar, 
+  Clock, 
+  FileText, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Download,
+  CheckCircle,
   XCircle,
-  MessageSquare,
-  ShieldCheck,
+  AlertTriangle,
+  ExternalLink,
   ClipboardList
 } from 'lucide-react';
 
-export default function AspiranteDetailPage({ params }: { params: { id: string } }) {
-  const navItems = [
-    { label: 'Dashboard', icon: <BarChart3 size={18} />, href: '/admin' },
-    { label: 'Disputas', icon: <AlertCircle size={18} />, href: '/admin/disputas' },
-    { label: 'Onboarding', icon: <UserPlus size={18} />, href: '/admin/proveedores/onboarding', active: true },
-    { label: 'Finanzas', icon: <TrendingUp size={18} />, href: '/admin/finanzas' },
-    { label: 'Master Plan', icon: <Zap size={18} />, href: '/admin/master-plan' },
-  ];
+const STAGES = [
+  { id: 'application', label: 'Aplicación', variant: 'silver' },
+  { id: 'revision', label: 'En Revisión', variant: 'warning' },
+  { id: 'interview', label: 'Entrevista', variant: 'indigo' },
+  { id: 'training', label: 'Capacitación', variant: 'purple' },
+  { id: 'active', label: 'Activo', variant: 'success' },
+];
+
+export default function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const [candidate, setCandidate] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+
+  useEffect(() => {
+    fetchCandidate();
+  }, [id]);
+
+  async function fetchCandidate() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('onboarding_applications')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      setCandidate(data);
+    } catch (error) {
+      console.error('Error fetching candidate:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateStatus(newStatus: string) {
+    try {
+      setUpdating(true);
+      const { error } = await supabase
+        .from('onboarding_applications')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+      setCandidate({ ...candidate, status: newStatus });
+    } catch (error) {
+      console.error('Error updating status:', error);
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-silver flex">
+        <AdminSidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-soft animate-pulse font-[600]">Cargando expediente...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!candidate) {
+    return (
+      <div className="min-h-screen bg-silver flex">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <XCircle size={48} className="text-red-400 mb-4" />
+          <h2 className="text-xl font-bold">Aspirante no encontrado</h2>
+          <Link href="/admin/proveedores/onboarding" className="mt-4 text-primary font-bold">Volver al pipe</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const currentStage = STAGES.find(s => s.id === candidate.status);
 
   return (
     <main className="min-h-screen bg-silver font-urbanist flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-black-rich text-white flex flex-col sticky top-0 h-screen p-6">
-        <div className="mb-12">
-          <Logo size={32} variant="dark" />
-        </div>
-        <nav className="flex-1 space-y-2">
-          {navItems.map((item, i) => (
-            <Link key={i} href={item.href}>
-              <div className={`
-                flex items-center gap-3 px-4 py-3 rounded-pill transition-all
-                ${item.active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/50 hover:text-white hover:bg-white/5'}
-              `}>
-                {item.icon}
-                <span className="text-sm font-[500]">{item.label}</span>
-              </div>
-            </Link>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Content Area */}
+      <AdminSidebar />
       <div className="flex-1 max-w-7xl mx-auto px-8 py-12">
-        <header className="mb-12">
-          <Link href="/admin/proveedores/onboarding/aspirantes" className="flex items-center gap-2 text-gray-soft text-xs mb-6 hover:text-black-rich transition-colors group">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Volver al Listado
+        <header className="mb-10">
+          <Link href="/admin/proveedores/onboarding" className="flex items-center gap-2 text-gray-soft text-xs mb-6 hover:text-black-rich transition-colors group">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Volver al Pipe
           </Link>
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-6">
-               <Avatar name="Marcos Rivas" size="xl" className="border-4 border-white shadow-lg" />
-               <div>
-                  <div className="flex items-center gap-3 mb-2">
-                     <h2 className="text-4xl font-[600] tracking-tight text-black-rich">Marcos Rivas</h2>
-                     <Badge variant="silver" className="uppercase text-[10px]">ENTREVISTA</Badge>
-                  </div>
-                  <p className="text-gray-soft text-lg mb-4">Plomero Especialista · Cd. Juárez, MX</p>
-                  <div className="flex gap-4">
-                     <span className="flex items-center gap-2 text-xs text-black-rich/60 font-[500]"><Mail size={14} /> marcos.rivas@email.com</span>
-                     <span className="flex items-center gap-2 text-xs text-black-rich/60 font-[500]"><Phone size={14} /> +52 656 123 4567</span>
-                  </div>
-               </div>
+              <Avatar name={candidate.full_name} size="xl" className="border-4 border-white shadow-xl" />
+              <div>
+                <h2 className="text-4xl font-[800] tracking-tighter text-black-rich mb-2">{candidate.full_name}</h2>
+                <div className="flex gap-3 items-center">
+                  <Badge variant={currentStage?.variant as any || 'silver'} className="px-4 py-1 text-xs">
+                    {currentStage?.label || candidate.status}
+                  </Badge>
+                  <span className="text-gray-soft text-sm font-[600]">Especialidad: <span className="text-black-rich capitalize">{candidate.main_specialty === 'otro' ? candidate.other_specialty_name : candidate.main_specialty}</span></span>
+                </div>
+              </div>
             </div>
             <div className="flex gap-3">
-               <Button variant="secondary" className="rounded-pill">Contactar</Button>
-               <Button variant="primary" className="bg-black-rich hover:bg-black text-white px-8 rounded-pill">Agendar Entrevista</Button>
+              <select 
+                className="bg-white border border-black/10 rounded-xl px-4 py-2 text-sm font-[600] outline-none"
+                value={candidate.status}
+                onChange={(e) => updateStatus(e.target.value)}
+                disabled={updating}
+              >
+                {STAGES.map(s => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+              <Button variant="primary" className="shadow-lg shadow-primary/20">Aprobar Aspirante</Button>
             </div>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-           {/* Details Section */}
-           <div className="lg:col-span-2 space-y-8">
-              <Card variant="default" className="p-8">
-                 <h3 className="text-lg font-[600] text-black-rich tracking-tight mb-8 flex items-center gap-2">
-                    <FileText size={20} className="text-primary" /> Documentación y Verificación
-                 </h3>
-                 <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { name: 'Identificación Oficial (INE)', status: 'Verificado', icon: <ShieldCheck className="text-primary" /> },
-                      { name: 'Comprobante Domicilio', status: 'En espera', icon: <MessageSquare className="text-im-warning" /> },
-                      { name: 'Antecedentes No Penales', status: 'Verificado', icon: <ShieldCheck className="text-primary" /> },
-                      { name: 'Certificación Técnica', status: 'Pendiente subida', icon: <AlertCircle className="text-gray-soft" /> },
-                    ].map((doc, i) => (
-                      <div key={i} className="flex items-center justify-between p-4 bg-silver-light/20 rounded-lg border-[0.5px] border-black/5">
-                         <div className="flex items-center gap-3">
-                            {doc.icon}
-                            <span className="text-xs font-[600] text-black-rich">{doc.name}</span>
-                         </div>
-                         <Badge variant="silver" className="text-[9px]">{doc.status}</Badge>
+          {/* Main Info Column */}
+          <div className="lg:col-span-2 space-y-8">
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-8 uppercase tracking-widest flex items-center gap-2">
+                <FileText size={18} className="text-primary" /> Información de Perfil
+              </h3>
+              <div className="grid grid-cols-2 gap-y-10">
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-1">Email</p>
+                  <p className="text-sm font-[600] flex items-center gap-2"><Mail size={14} className="text-primary/60" /> {candidate.email}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-1">Teléfono</p>
+                  <p className="text-sm font-[600] flex items-center gap-2"><Phone size={14} className="text-primary/60" /> {candidate.phone}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-1">Ubicación</p>
+                  <p className="text-sm font-[600] flex items-center gap-2"><MapPin size={14} className="text-primary/60" /> {candidate.city || 'Ciudad Juárez'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-1">Fecha Nacimiento</p>
+                  <p className="text-sm font-[600]">{candidate.birth_date || 'No proporcionada'}</p>
+                </div>
+                <div className="col-span-2 p-4 bg-silver-light/20 rounded-2xl border border-black/5">
+                   <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-2">Descripción de Especialidad</p>
+                   <p className="text-sm text-black-rich/80 leading-relaxed font-[500]">
+                     {candidate.is_other_specialty ? candidate.other_specialty_description : `Proveedor experto en ${candidate.main_specialty}.`}
+                   </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-8 uppercase tracking-widest flex items-center gap-2">
+                <ClipboardList size={18} className="text-primary" /> Servicios y Cobertura
+              </h3>
+              <div className="space-y-8">
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-3">Sub-servicios Ofrecidos</p>
+                  <div className="flex flex-wrap gap-2">
+                    {candidate.sub_services?.length > 0 ? candidate.sub_services.map((s: string, i: number) => (
+                      <Badge key={i} variant="silver" className="lowercase">{s}</Badge>
+                    )) : <p className="text-sm text-gray-soft italic">Ninguno seleccionado</p>}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-soft font-[700] uppercase tracking-widest mb-3">Zonas de Trabajo</p>
+                  <div className="flex flex-wrap gap-2">
+                    {candidate.zones?.length > 0 ? candidate.zones.map((z: string, i: number) => (
+                      <Badge key={i} variant="indigo" className="capitalize">{z}</Badge>
+                    )) : <p className="text-sm text-gray-soft italic">Ninguna seleccionada</p>}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Side Column - Results & Status */}
+          <div className="space-y-8">
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-6 uppercase tracking-widest">Estado Examen</h3>
+              {candidate.exam_results ? (
+                <div className="text-center p-6 bg-silver-light/30 rounded-2xl border border-black/5">
+                  <div className={`text-4xl font-[900] mb-2 ${candidate.exam_results.passed ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    {candidate.exam_results.score}%
+                  </div>
+                  <Badge variant={candidate.exam_results.passed ? 'success' : 'error'} className="mb-4">
+                    {candidate.exam_results.passed ? 'APROBADO' : 'FALLIDO'}
+                  </Badge>
+                  <p className="text-xs text-gray-soft font-[500]">Completado el {new Date(candidate.exam_results.completed_at).toLocaleDateString()}</p>
+                </div>
+              ) : (
+                <div className="text-center p-8 bg-silver-light/20 rounded-2xl border border-dashed border-black/10">
+                  <AlertTriangle size={24} className="text-amber-400 mx-auto mb-3" />
+                  <p className="text-xs text-gray-soft font-[600]">Examen pendiente de realizar</p>
+                </div>
+              )}
+            </Card>
+
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-6 uppercase tracking-widest">Entrevista</h3>
+              {candidate.interview_details ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <Calendar size={20} className="text-indigo-500" />
+                    <div>
+                      <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Fecha</p>
+                      <p className="text-sm font-[700] text-indigo-900">{candidate.interview_details.date === 'today' ? 'Hoy' : candidate.interview_details.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <Clock size={20} className="text-indigo-500" />
+                    <div>
+                      <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Horario</p>
+                      <p className="text-sm font-[700] text-indigo-900">{candidate.interview_details.time}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-soft italic text-center p-4">No agendada aún</p>
+              )}
+            </Card>
+
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-6 uppercase tracking-widest flex items-center gap-2">
+                <CheckCircle size={18} className="text-emerald-500" /> Recomendaciones de Clientes
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[1, 2].map(i => {
+                  const name = candidate.documents?.[`testimonial${i}_name`];
+                  const contact = candidate.documents?.[`testimonial${i}_contact`];
+                  const text = candidate.documents?.[`testimonial${i}_text`];
+                  
+                  if (!name && !text) return null;
+
+                  return (
+                    <div key={i} className="p-5 bg-silver-light/20 rounded-2xl border border-black/5 flex flex-col h-full">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <p className="text-sm font-[800] text-black-rich">{name || 'Sin nombre'}</p>
+                          <p className="text-[10px] text-primary font-bold uppercase tracking-widest">{contact || 'Sin contacto'}</p>
+                        </div>
+                        <div className="flex text-emerald-500 gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className="text-xs">★</span>
+                          ))}
+                        </div>
                       </div>
-                    ))}
-                 </div>
-              </Card>
+                      <p className="text-xs text-black-rich/70 italic leading-relaxed flex-grow">
+                        "{text || 'Sin testimonio'}"
+                      </p>
+                    </div>
+                  );
+                })}
+                {!candidate.documents?.testimonial1_name && !candidate.documents?.testimonial2_name && (
+                  <p className="text-sm text-gray-soft italic col-span-2 text-center p-4">No se proporcionaron recomendaciones.</p>
+                )}
+              </div>
+            </Card>
 
-              <Card variant="default" className="p-8">
-                 <h3 className="text-lg font-[600] text-black-rich tracking-tight mb-8 flex items-center gap-2">
-                    <ClipboardList size={20} className="text-primary" /> Notas de Reclutamiento
-                 </h3>
-                 <div className="space-y-6">
-                    <div className="p-6 bg-silver-light/20 rounded-lg border-l-4 border-primary">
-                       <p className="text-xs text-gray-soft font-[600] mb-2 uppercase tracking-widest text-[9px]">24 Mar, 2026 · Admin RH</p>
-                       <p className="text-sm leading-relaxed text-black-rich">
-                          "Se revisó el perfil técnico. Marcos tiene 12 años de experiencia. Su historial en otras plataformas es excelente. 
-                          Procede a fase de entrevista técnica en campo para validación de herramientas."
-                       </p>
+            <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
+              <h3 className="text-lg font-[800] text-black-rich mb-6 uppercase tracking-widest">Documentación</h3>
+              <div className="space-y-3">
+                {candidate.documents ? Object.entries(candidate.documents).map(([key, val]: any) => (
+                  <div key={key} className="flex items-center justify-between p-3 bg-silver-light/20 rounded-xl border border-black/5 hover:bg-silver-light/40 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <FileText size={16} className="text-primary/60" />
+                      <span className="text-xs font-[600] capitalize text-black-rich/80">{key.replace(/_/g, ' ')}</span>
                     </div>
-                    <Button variant="ghost" size="sm" className="w-full border-dashed border-black/10 text-gray-soft rounded-pill">+ Añadir nueva nota</Button>
-                 </div>
-              </Card>
-
-              {/* Action Resolution Card */}
-              <Card variant="dark" className="p-10">
-                 <h3 className="text-xl font-[600] mb-4 tracking-tight">Acción de Estatus</h3>
-                 <p className="text-sm opacity-60 mb-8 leading-relaxed">
-                    Decide el siguiente paso para el aspirante. Si lo apruebas, pasará a la etapa de **Capacitación** (Onboarding técnico). 
-                    Si lo rechazas, se enviará una notificación formal de agradecimiento.
-                 </p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button variant="ghost" className="border-white/10 text-white hover:bg-primary gap-2 rounded-pill">
-                       <CheckCircle2 size={18} /> Aprobar para Capacitación
-                    </Button>
-                    <Button variant="ghost" className="border-white/10 text-white hover:bg-im-error gap-2 rounded-pill">
-                       <XCircle size={18} /> Rechazar Candidato
-                    </Button>
-                 </div>
-              </Card>
-           </div>
-
-           {/* Metrics Sidebar */}
-           <div className="space-y-8">
-              <Card variant="default" className="p-8">
-                 <h3 className="text-lg font-[600] text-black-rich tracking-tight mb-8">Score de Aplicación</h3>
-                 <div className="flex flex-col items-center py-8">
-                    <div className="relative w-32 h-32 flex items-center justify-center">
-                       <svg className="absolute inset-0 w-full h-full -rotate-90">
-                          <circle cx="64" cy="64" r="58" className="stroke-silver-light" strokeWidth="8" fill="none" />
-                          <circle cx="64" cy="64" r="58" className="stroke-primary" strokeWidth="8" strokeDasharray={`${85 * 3.64} 364`} strokeLinecap="round" fill="none" />
-                       </svg>
-                       <p className="text-3xl font-[600] text-black-rich">85%</p>
-                    </div>
-                    <p className="mt-6 text-sm text-gray-soft font-[500]">Perfil Técnico: **A+**</p>
-                 </div>
-                 <div className="w-full h-[1px] bg-black/5 my-8" />
-                 <div className="space-y-4">
-                    <p className="text-[10px] text-gray-soft font-[600] uppercase tracking-widest text-center">Comparativa con Global</p>
-                    <div className="flex items-center gap-4">
-                       <div className="flex-1 h-1.5 bg-silver-light rounded-pill overflow-hidden">
-                          <div className="h-full bg-primary" style={{ width: '92%' }} />
-                       </div>
-                       <span className="text-[10px] font-[600]">92 ptos</span>
-                    </div>
-                 </div>
-              </Card>
-
-              <Card variant="silver" className="p-8 border-none bg-black-rich text-white overflow-hidden relative">
-                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 blur-[40px] rounded-pill -mr-12 -mt-12" />
-                 <h4 className="text-sm font-[600] mb-4">Verificación de Antecedentes</h4>
-                 <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-primary">
-                       <CheckCircle2 size={14} /> Historial Limpio (Poder Judicial)
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-primary">
-                       <CheckCircle2 size={14} /> Referencias Laborales (3/3)
-                    </div>
-                 </div>
-              </Card>
-           </div>
+                    <Download size={14} className="text-gray-soft group-hover:text-primary transition-colors" />
+                  </div>
+                )) : <p className="text-sm text-gray-soft italic text-center p-4">Sin documentos</p>}
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </main>

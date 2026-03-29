@@ -1,17 +1,22 @@
-import { useState } from 'react';
+"use client";
+
+import React from 'react';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Badge } from '@i-mendly/shared/components/Badge';
+import { Input } from '@i-mendly/shared/components/Input';
+import { useOnboarding } from './OnboardingContext';
 
 export const Step3Docs: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
-  const [files, setFiles] = useState<Record<string, File | null>>({
-    doc1: null,
-    doc2: null,
-    doc3: null,
-    doc4: null,
-  });
+  const { data, updateData } = useOnboarding();
+  const documents = data.documents || {};
 
   const handleFileChange = (id: string, file: File | null) => {
-    setFiles(prev => ({ ...prev, [id]: file }));
+    updateData({ 
+      documents: { 
+        ...documents, 
+        [id]: file ? file.name : null 
+      } 
+    });
   };
 
   const docs = [
@@ -60,7 +65,8 @@ export const Step3Docs: React.FC<{ onNext: () => void; onBack: () => void }> = (
 
       <div className="space-y-4 mb-10">
         {docs.map((doc) => {
-          const isUploaded = !!files[doc.id];
+          const fileName = documents[doc.id];
+          const isUploaded = !!fileName;
           return (
             <label key={doc.id} className={`flex items-center justify-between p-4 rounded-3xl border-2 cursor-pointer transition-all ${isUploaded ? "border-emerald-500 bg-emerald-500/10" : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"}`}>
               <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => e.target.files && handleFileChange(doc.id, e.target.files[0])} />
@@ -72,7 +78,7 @@ export const Step3Docs: React.FC<{ onNext: () => void; onBack: () => void }> = (
                 <div>
                   <p className="text-sm font-bold text-white mb-1">{doc.name}</p>
                   <p className={`text-[10px] font-black uppercase tracking-widest ${isUploaded ? "text-emerald-400" : "text-white/60"}`}>
-                    {isUploaded ? `Subido: ${files[doc.id]?.name}` : "Pendiente"}
+                    {isUploaded ? `Subido: ${fileName}` : "Pendiente"}
                   </p>
                 </div>
               </div>
@@ -90,10 +96,66 @@ export const Step3Docs: React.FC<{ onNext: () => void; onBack: () => void }> = (
         })}
       </div>
 
-      <div className="bg-emerald-500/10 border border-emerald-500/30 p-5 rounded-2xl mb-10 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-        <p className="text-sm text-emerald-400 font-bold leading-relaxed flex items-center gap-3">
-          <span className="text-xl">📱</span> Puedes tomar fotos directo desde la app. Recomendamos buena iluminación para acelerar la verificación.
-        </p>
+      {/* Recommendations Section */}
+      <div className="mb-10 pt-4 border-t border-white/5">
+        <h3 className="text-sm font-black text-white/40 uppercase tracking-widest mb-4">Recomendaciones de clientes (Opcional)</h3>
+        <p className="text-xs text-white/50 mb-4 font-medium">Agrega un par de recomendaciones de clientes que puedan dar fe de tu trabajo.</p>
+        
+        <div className="space-y-6">
+          {/* Recommendation 1 */}
+          <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input 
+                dark 
+                label="Nombre del Cliente" 
+                placeholder="Ej. María G." 
+                value={documents.testimonial1_name || ''}
+                onChange={e => updateData({ documents: { ...documents, testimonial1_name: e.target.value } })}
+              />
+              <Input 
+                dark 
+                label="Contacto (WhatsApp/Tel)" 
+                placeholder="Ej. 656 123 4567" 
+                value={documents.testimonial1_contact || ''}
+                onChange={e => updateData({ documents: { ...documents, testimonial1_contact: e.target.value } })}
+              />
+            </div>
+            <textarea 
+              className="w-full bg-brand-night/50 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-emerald-500 transition-all resize-none text-sm font-medium"
+              rows={2}
+              placeholder="Ej. Excelente trabajo, muy puntual y limpio..."
+              value={documents.testimonial1_text || ''}
+              onChange={e => updateData({ documents: { ...documents, testimonial1_text: e.target.value } })}
+            />
+          </div>
+
+          {/* Recommendation 2 */}
+          <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5 space-y-4 opacity-80 hover:opacity-100 transition-opacity">
+            <div className="grid grid-cols-2 gap-4">
+              <Input 
+                dark 
+                label="Nombre del Cliente" 
+                placeholder="Ej. Juan P." 
+                value={documents.testimonial2_name || ''}
+                onChange={e => updateData({ documents: { ...documents, testimonial2_name: e.target.value } })}
+              />
+              <Input 
+                dark 
+                label="Contacto (WhatsApp/Tel)" 
+                placeholder="Ej. 656 987 6543" 
+                value={documents.testimonial2_contact || ''}
+                onChange={e => updateData({ documents: { ...documents, testimonial2_contact: e.target.value } })}
+              />
+            </div>
+            <textarea 
+              className="w-full bg-brand-night/50 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-emerald-500 transition-all resize-none text-sm font-medium"
+              rows={2}
+              placeholder="Ej. Muy profesional y detallista en los acabados..."
+              value={documents.testimonial2_text || ''}
+              onChange={e => updateData({ documents: { ...documents, testimonial2_text: e.target.value } })}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-4">

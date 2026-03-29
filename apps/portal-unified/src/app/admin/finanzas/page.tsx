@@ -6,7 +6,6 @@ import { Card } from '@i-mendly/shared/components/Card';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { Button } from '@i-mendly/shared/components/Button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { 
   AlertCircle, 
   BarChart3, 
@@ -25,6 +24,7 @@ import {
   LogOut,
   Settings
 } from 'lucide-react';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 
 const CATEGORY_PERFORMANCE = [
   { name: 'Plomería', sales: '$240,000', commission: '15%', revenue: '$36,000' },
@@ -33,65 +33,22 @@ const CATEGORY_PERFORMANCE = [
   { name: 'Cerrajería', sales: '$85,000', commission: '14%', revenue: '$11,900' },
   { name: 'Pintura', sales: '$72,000', commission: '10%', revenue: '$7,200' },
 ];
+
+const categories = [
+  { name: 'Plomería', sales: '$245,000', volume: 145, commission: '15%', revenue: '$36,750' },
+  { name: 'Electricidad', sales: '$182,000', volume: 122, commission: '12%', revenue: '$21,840' },
+  { name: 'Limpieza', sales: '$112,000', volume: 98, commission: '18%', revenue: '$20,160' },
+  { name: 'Pintura', sales: '$95,000', volume: 85, commission: '15%', revenue: '$14,250' },
+  { name: 'Cerrajería', sales: '$72,000', volume: 54, commission: '20%', revenue: '$14,400' },
+];
+
 export default function FinancePage() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'ventas' | 'volumen'>('ventas');
   const [selectedMonth, setSelectedMonth] = useState('Marzo 2026');
 
-  const handleLogout = () => {
-    router.push('/role-selection');
-  };
-
-  const navItems = [
-    { label: 'Dashboard', icon: <BarChart3 size={18} />, href: '/admin' },
-    { label: 'Disputas', icon: <AlertCircle size={18} />, href: '/admin/disputas' },
-    { label: 'Onboarding', icon: <UserPlus size={18} />, href: '/admin/proveedores/onboarding' },
-    { label: 'Finanzas', icon: <TrendingUp size={18} />, href: '/admin/finanzas', active: true },
-    { label: 'Master Plan', icon: <Zap size={18} />, href: '/admin/master-plan' },
-    { label: 'Configuración', icon: <Settings size={18} />, href: '/admin/configuraciones' },
-  ];
-
-  const categories = [
-    { name: 'Plomería', sales: '$245,000', volume: 145, commission: '15%', revenue: '$36,750' },
-    { name: 'Electricidad', sales: '$182,000', volume: 122, commission: '12%', revenue: '$21,840' },
-    { name: 'Limpieza', sales: '$112,000', volume: 98, commission: '18%', revenue: '$20,160' },
-    { name: 'Pintura', sales: '$95,000', volume: 85, commission: '15%', revenue: '$14,250' },
-    { name: 'Cerrajería', sales: '$72,000', volume: 54, commission: '20%', revenue: '$14,400' },
-  ];
-
   return (
     <main className="min-h-screen bg-silver font-urbanist flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-black-rich text-white flex flex-col sticky top-0 h-screen p-6">
-        <div className="mb-12">
-          <Logo size={32} variant="dark" />
-        </div>
-        <nav className="flex-1 space-y-2">
-          {navItems.map((item, i) => (
-            <Link key={i} href={item.href}>
-              <div className={`
-                flex items-center gap-3 px-4 py-3 rounded-pill transition-all
-                ${item.active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/50 hover:text-white hover:bg-white/5'}
-              `}>
-                {item.icon}
-                <span className="text-sm font-[500]">{item.label}</span>
-              </div>
-            </Link>
-          ))}
-        </nav>
-        
-        <div className="pt-6 border-t border-white/10 mt-6">
-           <button 
-             onClick={handleLogout}
-             className="flex items-center gap-3 px-4 py-3 rounded-pill w-full text-im-error hover:bg-im-error/10 transition-all font-[600] text-sm"
-           >
-             <LogOut size={18} />
-             Cerrar Sesión
-           </button>
-        </div>
-      </aside>
-
-      {/* Content Area */}
+      <AdminSidebar />
       <div className="flex-1 max-w-7xl mx-auto px-8 py-12">
         <header className="mb-12 flex justify-between items-center">
           <div>

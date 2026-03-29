@@ -10,27 +10,110 @@ import { Input } from "@i-mendly/shared/components/Input";
 import Link from "next/link";
 import { usePlatformStore } from "@/store/usePlatformStore";
 
+import { supabase } from "@/lib/supabase";
+
 export default function LoginPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const login = usePlatformStore(state => state.login);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchUserWithRetry = async (user: any, retries = 5, delay = 500) => {
+    for (let i = 0; i < retries; i++) {
+      const { data, error: queryError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      if (data) return data;
+      if (i < retries - 1) await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    // FALLBACK: If retry fails, manually create the profile to ensure the user can enter
+    console.warn("Retrying profile fetch failed, attempting manual fallback creation.");
+    const role = user.user_metadata?.role || 'client';
+    const fullName = user.user_metadata?.full_name || 'Nuevo Usuario';
+
+    const { data: newData, error: insertError } = await supabase
+      .from('users')
+      .upsert({
+        id: user.id,
+        role: role,
+        full_name: fullName
+      })
+      .select('role')
+      .single();
+
+    if (insertError) {
+      throw new Error("No se pudo sincronizar tu perfil. Por favor, contacta a soporte.");
+    }
+
+    return newData;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth delay for premium feel
-    setTimeout(() => {
-      // Mock E2E logic based on user request
-      if (email.toLowerCase() === 'indigo@gmail.com') {
-        login(email, 'proveedor');
-        router.push("/proveedor/dashboard");
+    setError(null);
+
+    try {
+      if (isLogin) {
+        // LOGIN
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (authError) throw authError;
+
+        // Fetch user role from public.users with retry and fallback
+        const userData = await fetchUserWithRetry(data.user);
+
+        login(email, userData.role as any);
+        
+        if (userData.role === 'provider') {
+          router.push("/proveedor/dashboard");
+        } else if (userData.role === 'admin') {
+          router.push("/admin");
+        } else {
+          router.push("/cliente");
+        }
       } else {
-        login(email, 'cliente');
-        router.push("/cliente");
+        // REGISTER
+        const { data, error: authError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+              role: 'client',
+            }
+          }
+        });
+
+        if (authError) throw authError;
+        
+        if (data.user && data.session) {
+          // Wait for profile sync
+          const userData = await fetchUserWithRetry(data.user);
+          login(email, userData.role as any);
+          router.push("/cliente");
+        } else {
+          // Confirm email if needed
+          alert("¡Registro exitoso! Por favor verifica tu correo electrónico para activar tu cuenta.");
+          setIsLogin(true);
+        }
       }
-    }, 1500);
+    } catch (err: any) {
+      setError(err.message || "Ocurrió un error inesperado.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,12 +150,20 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-xs font-bold text-center animate-in shake duration-300">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-5">
               {!isLogin && (
                 <Input
                   label="Nombre Completo"
                   placeholder="JUAN PÉREZ"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   required
                   className="bg-slate-50/50 border-transparent h-14 rounded-2xl text-[11px] font-bold uppercase tracking-tight"
                 />
@@ -90,6 +181,8 @@ export default function LoginPage() {
                 label="Contraseña"
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="bg-slate-50/50 border-transparent h-14 rounded-2xl text-[11px] font-bold uppercase tracking-tight"
               />

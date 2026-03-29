@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Home, LogOut, Globe, Shield } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
@@ -7,9 +8,79 @@ import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Input } from '@i-mendly/shared/components/Input';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { usePlatformStore } from '@/store/usePlatformStore';
 
 export default function ProfessionalLoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const login = usePlatformStore(state => state.login);
+
+  const fetchUserWithRetry = async (user: any, retries = 5, delay = 500) => {
+    for (let i = 0; i < retries; i++) {
+      const { data, error: queryError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      if (data) return data;
+      if (i < retries - 1) await new Promise(resolve => setTimeout(resolve, delay));
+    }
+
+    // FALLBACK: If retry fails, manually create the profile
+    console.warn("Retrying profile fetch failed for professional, attempting manual fallback creation.");
+    const role = user.user_metadata?.role || 'provider';
+    const fullName = user.user_metadata?.full_name || 'Nuevo Profesional';
+
+    const { data: newData, error: insertError } = await supabase
+      .from('users')
+      .upsert({
+        id: user.id,
+        role: role,
+        full_name: fullName
+      })
+      .select('role')
+      .single();
+
+    if (insertError) {
+      throw new Error("No se pudo sincronizar tu perfil profesional. Por favor, contacta a soporte.");
+    }
+
+    return newData;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Fetch user role from public.users with retry
+      const userData = await fetchUserWithRetry(data.user);
+
+      if (userData.role !== 'provider' && userData.role !== 'admin') {
+        throw new Error("Este acceso es exclusivo para profesionales registrados.");
+      }
+
+      login(email, userData.role as any);
+      router.push("/proveedor/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Ocurrió un error al iniciar sesión.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen relative flex items-center justify-center p-8 overflow-hidden font-urbanist bg-brand-night">
@@ -41,15 +112,23 @@ export default function ProfessionalLoginPage() {
                 <div className="h-[1px] flex-1 bg-white/10" />
               </div>
               
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold text-center animate-in shake duration-300">
+                  {error}
+                </div>
+              )}
+              
               <form 
                 className="space-y-5" 
-                onSubmit={(e) => { e.preventDefault(); router.push('/proveedor'); }}
+                onSubmit={handleSubmit}
               >
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-1">Email Profesional</label>
                   <Input 
                     type="email" 
                     placeholder="NOMBRE@COMPANIA.COM" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required 
                     className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
                   />
@@ -59,13 +138,19 @@ export default function ProfessionalLoginPage() {
                   <Input 
                     type="password" 
                     placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required 
                     className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
                   />
                 </div>
-                <Button type="submit" className="w-full h-18 py-8 text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-white hover:bg-primary/80 transition-all rounded-3xl shadow-[0_20px_48px_rgba(124,58,237,0.3)] border-none mt-6 group overflow-hidden relative">
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full h-18 py-8 text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-white hover:bg-primary/80 transition-all rounded-3xl shadow-[0_20px_48px_rgba(124,58,237,0.3)] border-none mt-6 group overflow-hidden relative"
+                >
                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                   Entrar al Portal
+                   {loading ? "Cargando..." : "Entrar al Portal"}
                 </Button>
               </form>
             </div>

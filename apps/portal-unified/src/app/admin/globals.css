@@ -11,12 +11,12 @@
   --brand-teal: #0891b2;
   --brand-glacial: #bae6fd;
 
-  /* Purple & Lavender Aesthetic */
-  --primary: #7c3aed;
-  --primary-light: #ddd6fe;
-  --primary-dark: #5b21b6;
-  --secondary: #a78bfa;
-  --secondary-light: #ede9fe;
+  /* Green Aesthetic (I Mendly) */
+  --primary: #3DB87A;
+  --primary-light: #E8F7F0;
+  --primary-dark: #2A9460;
+  --secondary: #3DB87A;
+  --secondary-light: #E8F7F0;
 }
 
 @theme inline {

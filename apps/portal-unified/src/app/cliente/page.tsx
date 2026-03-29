@@ -26,9 +26,10 @@ import {
   Home
 } from 'lucide-react';
 import { BottomNav } from '@i-mendly/shared';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 const CATEGORIES = [
   { name: 'Electricidad', icon: Zap, color: 'text-amber-500', slug: 'Electricidad' },
@@ -39,8 +40,9 @@ const CATEGORIES = [
 
 const SUGGESTIONS = [
   'Electricista', 'Plomería', 'Limpieza', 'Climas/AC', 'Pintura', 
-  'Carpintería', 'Jardinería', 'Cerrajería', 'Fumigación', 'Remodelación', 'Moda y costura'
+  'Carpintería', 'Jardinería', 'Cerrajería', 'Fumigación', 'Remodelación', 'Moda y costura', 'Pisos', 'Herrería'
 ];
+
 
 export default function ClientHome() {
   const router = useRouter();
@@ -48,6 +50,34 @@ export default function ClientHome() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [location, setLocation] = useState("México");
   const [isLocating, setIsLocating] = useState(false);
+  const [profileIncomplete, setProfileIncomplete] = useState(false);
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Check users table for phone
+      const { data: userData } = await supabase
+        .from('users')
+        .select('phone')
+        .eq('id', user.id)
+        .single();
+
+      // Check user_addresses table
+      const { data: addrData } = await supabase
+        .from('user_addresses')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      if (!userData?.phone || !addrData || addrData.length === 0) {
+        setProfileIncomplete(true);
+      }
+    };
+
+    checkProfile();
+  }, []);
 
   const handleSearch = (term?: string) => {
     const finalTerm = term || searchTerm;
@@ -56,7 +86,8 @@ export default function ClientHome() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     router.push('/login');
   };
 
@@ -75,8 +106,28 @@ export default function ClientHome() {
 
   return (
     <main className="min-h-screen bg-[#FDFDFD] pb-32">
+      {/* Profile Incomplete Banner */}
+      {profileIncomplete && (
+        <div className="bg-brand-night text-white py-3 px-8 flex items-center justify-between animate-in slide-in-from-top duration-700 sticky top-0 z-[60]">
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary animate-pulse">
+              <Shield size={16} />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em]">
+              Tu perfil está incompleto. <span className="text-primary hidden sm:inline ml-2 opacity-80">El teléfono y la dirección son obligatorios para solicitar servicios.</span>
+            </p>
+          </div>
+          <Link 
+            href="/cliente/profile"
+            className="text-[10px] font-black uppercase tracking-widest bg-primary px-5 py-2 rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+          >
+            Completar Ahora
+          </Link>
+        </div>
+      )}
+
       {/* Header Boutique */}
-      <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-50">
+      <nav className={`flex items-center justify-between px-8 py-6 max-w-7xl mx-auto sticky ${profileIncomplete ? 'top-[52px]' : 'top-0'} z-50 bg-white/80 backdrop-blur-xl border-b border-slate-50`}>
         <Logo size={32} />
         
         <div className="hidden md:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
@@ -103,7 +154,10 @@ export default function ClientHome() {
             <div className="group relative">
               <Avatar name="Julio" size="md" className="cursor-pointer ring-2 ring-primary/5 hover:ring-primary/20 transition-all shadow-sm" />
               <div className="absolute top-full right-0 mt-4 w-48 bg-white rounded-2xl shadow-2xl border border-slate-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
-                <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-3">
+                <button 
+                  onClick={() => router.push('/cliente/profile')}
+                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-3"
+                >
                   <User size={16} /> Ver Perfil
                 </button>
                 <button 
