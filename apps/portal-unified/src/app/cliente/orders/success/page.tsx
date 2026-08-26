@@ -1,12 +1,14 @@
 "use client";
 
+import { Suspense } from 'react';
+
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Card } from '@i-mendly/shared/components/Card';
 import { CheckCircle2, Home, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id') || 'ORD-0000';
   const providerId = searchParams.get('providerId') || '';
@@ -49,5 +51,14 @@ export default function PaymentSuccessPage() {
          </div>
       </div>
     </main>
+  );
+}
+
+// useSearchParams requiere un límite de Suspense para el prerender de producción
+export default function PaymentSuccessPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <PaymentSuccessPage />
+    </Suspense>
   );
 }

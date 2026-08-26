@@ -8,7 +8,7 @@ import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { ArrowLeft, CheckCircle2, Clock, MapPin, MessageCircle, XCircle, ChevronRight, FileText, ShieldCheck, Smartphone, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../../lib/supabase';
 
 const CANCEL_REASONS = [
@@ -26,7 +26,7 @@ const STAGES = [
   { id: 'finalizado', label: 'Finalizado', description: 'Servicio completado. Liberación de fondos pendiente.', active: false, done: false },
 ];
 
-export default function OrderDetailsPage() {
+function OrderDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const orderId = params.id as string;
@@ -292,5 +292,14 @@ export default function OrderDetailsPage() {
         </div>
       )}
     </main>
+  );
+}
+
+// useSearchParams requiere un límite de Suspense para el prerender de producción
+export default function OrderDetailsPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <OrderDetailsPage />
+    </Suspense>
   );
 }

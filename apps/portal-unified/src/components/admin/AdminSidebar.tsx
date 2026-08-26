@@ -10,9 +10,10 @@ import {
   UserPlus, 
   Users, 
   TrendingUp, 
-  Zap, 
+  Zap,
   Settings,
-  LogOut
+  LogOut,
+  Newspaper
 } from 'lucide-react';
 
 export function AdminSidebar() {
@@ -25,6 +26,7 @@ export function AdminSidebar() {
 
   const navItems = [
     { label: 'Dashboard', icon: <BarChart3 size={18} />, href: '/admin' },
+    { label: 'Tablero', icon: <Newspaper size={18} />, href: '/admin/tablero' },
     { label: 'Disputas', icon: <AlertCircle size={18} />, href: '/admin/disputas' },
     { label: 'Onboarding', icon: <UserPlus size={18} />, href: '/admin/proveedores/onboarding' },
     { label: 'Profesionales', icon: <Users size={18} />, href: '/admin/professionals' },
