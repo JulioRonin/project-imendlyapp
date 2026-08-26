@@ -249,6 +249,35 @@ export default function ClientHome() {
         </div>
       </section>
 
+      {/* Tablero de Proyectos — publica y recibe ofertas */}
+      <section className="px-8 pb-24 max-w-7xl mx-auto">
+        <Card className="relative overflow-hidden p-10 md:p-14 rounded-[3rem] border-none bg-brand-night text-white shadow-float">
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-primary/15 blur-2xl" />
+          <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck size={16} className="text-primary" />
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Nuevo · Tablero de proyectos</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight mb-3">¿Tienes un proyecto en mente?<br />Publícalo y deja que te busquen.</h2>
+              <p className="text-sm font-medium text-white/60 max-w-lg">Una pérgola, una cocina, una remodelación. Publica lo que necesitas y recibe hasta 5 ofertas de proveedores verificados de tu zona — con anticipo protegido y Garantía I mendly.</p>
+            </div>
+            <div className="flex flex-col gap-3 md:w-56">
+              <Link href="/cliente/proyectos/nuevo">
+                <Button variant="primary" className="w-full h-14 rounded-2xl bg-primary text-white hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest">
+                  Publicar proyecto
+                </Button>
+              </Link>
+              <Link href="/cliente/proyectos">
+                <Button variant="ghost" className="w-full h-14 rounded-2xl border border-white/15 text-white/80 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest">
+                  Ver mis proyectos
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Card>
+      </section>
+
       {/* Categories Section */}
       <section className="px-8 pb-32 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-12 px-2">

@@ -13,13 +13,13 @@ import {
   CreditCard as CardIcon, Calendar, Lock as LockIcon
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../lib/supabase';
 
 type PaymentStep = 'selection' | 'details';
 type PaymentMethod = 'stripe' | 'conekta_spei' | 'conekta_oxxo';
 
-export default function CheckoutPage() {
+function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const providerId = searchParams.get('providerId');
@@ -433,5 +433,14 @@ export default function CheckoutPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// useSearchParams requiere un límite de Suspense para el prerender de producción
+export default function CheckoutPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <CheckoutPage />
+    </Suspense>
   );
 }

@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   LogOut,
-  Briefcase
+  Briefcase,
+  Newspaper
 } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
 
@@ -21,6 +22,7 @@ const cn = (...classes: (any)[]) => classes.filter(Boolean).join(' ');
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/proveedor', icon: LayoutDashboard },
+  { label: 'Tablero', href: '/proveedor/tablero', icon: Newspaper },
   { label: 'Agenda', href: '/proveedor/agenda', icon: Calendar },
   { label: 'Servicios', href: '/proveedor/servicios', icon: Briefcase },
   { label: 'Órdenes', href: '/proveedor/ordenes', icon: ClipboardList },

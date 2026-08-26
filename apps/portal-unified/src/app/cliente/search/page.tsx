@@ -9,7 +9,7 @@ import { Badge } from '@i-mendly/shared/components/Badge';
 import { ArrowLeft, Filter, MapPin, Star, Clock, ChevronRight } from 'lucide-react';
 import { TopInsignia } from '@/components/TopInsignia';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../lib/supabase';
 
 // Helper for distance (Haversine simplified)
@@ -24,7 +24,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * c || 0;
 };
 
-export default function SearchResults() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const [userLocation] = useState({ lat: 31.7333, lng: -106.4833 }); // Ciudad Juárez default
@@ -223,3 +223,12 @@ const Search = ({ size, className }: { size: number, className: string }) => (
     <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
   </svg>
 );
+
+// useSearchParams requiere un límite de Suspense para el prerender de producción
+export default function SearchResultsWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <SearchResults />
+    </Suspense>
+  );
+}
