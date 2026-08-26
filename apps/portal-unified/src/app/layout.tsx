@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 import { Splash } from "@/components/Splash";
+import { DevModeBanner } from "@/components/DevBypass";
 
 export default function RootLayout({
   children,
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Splash />
         {children}
+        <DevModeBanner />
       </body>
     </html>
   );

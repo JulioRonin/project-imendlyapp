@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserRole = 'cliente' | 'proveedor' | null;
+export type UserRole = 'cliente' | 'proveedor' | 'admin' | null;
 export type OrderStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTER_OFFER' | 'PAID';
 
 export interface Order {

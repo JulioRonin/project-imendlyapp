@@ -10,6 +10,7 @@ import { Input } from '@i-mendly/shared/components/Input';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { usePlatformStore } from '@/store/usePlatformStore';
+import { DevBypassPanel } from '@/components/DevBypass';
 
 export default function ProfessionalLoginPage() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function ProfessionalLoginPage() {
       }
 
       login(email, userData.role as any);
-      router.push("/proveedor/dashboard");
+      router.push("/proveedor");
     } catch (err: any) {
       setError(err.message || "Ocurrió un error al iniciar sesión.");
     } finally {
@@ -178,6 +179,8 @@ export default function ProfessionalLoginPage() {
               </div>
             </div>
           </div>
+
+          <DevBypassPanel />
         </Card>
 
         <div className="mt-12 flex justify-center">
