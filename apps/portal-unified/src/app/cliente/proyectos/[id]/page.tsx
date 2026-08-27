@@ -3,16 +3,22 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Button } from '@i-mendly/shared/components/Button';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import {
-  ArrowLeft, BadgeCheck, Calendar, Check, ClipboardList, Clock,
-  Loader2, MapPin, ShieldCheck, Star, Users, X
+  ArrowLeft, BadgeCheck, Calendar, Check, Clock,
+  Loader2, MapPin, ShieldCheck, Users, X
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import { PROJECT_STATUS_LABELS, timingLabel, timeAgo, formatMXN, genDisplayId } from '../../../../lib/tablero';
+import { ClientNav } from '@/components/client/ClientNav';
+import { RatingPill } from '@/components/client/ui';
+
+const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
+  success: 'bg-[#E9F7EF] text-primary',
+  warning: 'bg-amber-50 text-amber-700',
+  error: 'bg-red-50 text-red-600',
+  default: 'bg-black/[0.05] text-[#70756E]',
+};
 
 export default function ProyectoDetallePage() {
   const params = useParams();
@@ -122,18 +128,35 @@ export default function ProyectoDetallePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Cargando proyecto...</p>
+      <main className="min-h-screen bg-[#F3F4F1] pb-36">
+        <div className="max-w-3xl mx-auto px-6 pt-6 space-y-4">
+          <div className="v2-rise h-12 w-2/3 rounded-full v2-shimmer" />
+          <div className="v2-rise v2-d1 h-56 rounded-[2.25rem] v2-shimmer" />
+          <div className="v2-rise v2-d2 h-64 rounded-[1.75rem] v2-shimmer" />
+          <div className="v2-rise v2-d3 h-64 rounded-[1.75rem] v2-shimmer" />
+        </div>
+        <ClientNav />
       </main>
     );
   }
 
   if (!project) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6 px-8">
-        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Proyecto no encontrado</p>
-        <Link href="/cliente/proyectos"><Button variant="ghost" className="text-primary text-[10px] font-black uppercase">Volver a mis proyectos</Button></Link>
+      <main className="min-h-screen bg-[#F3F4F1] pb-36 flex flex-col items-center justify-center gap-6 px-6 text-center">
+        <span className="v2-rise w-20 h-20 rounded-[1.4rem] bg-[#E9F7EF] text-primary flex items-center justify-center">
+          <X size={30} />
+        </span>
+        <div className="v2-rise v2-d1">
+          <h1 className="text-[19px] font-semibold tracking-tight text-[#151714] mb-1">Proyecto no encontrado</h1>
+          <p className="text-[14px] font-medium text-[#70756E]">Puede que se haya eliminado o el enlace sea incorrecto.</p>
+        </div>
+        <Link
+          href="/cliente/proyectos"
+          className="v2-rise v2-d2 h-14 px-8 rounded-full bg-primary text-white text-[13px] font-bold flex items-center justify-center shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+        >
+          Volver a mis proyectos
+        </Link>
+        <ClientNav />
       </main>
     );
   }
@@ -141,163 +164,226 @@ export default function ProyectoDetallePage() {
   const st = PROJECT_STATUS_LABELS[project.status] ?? { label: project.status, tone: 'default' as const };
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-24">
-      <header className="px-8 py-10 flex items-center gap-4 sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <Link href="/cliente/proyectos" className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-primary">
-          <ArrowLeft size={20} />
-        </Link>
-        <div className="flex-1">
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">{project.display_id}</span>
-          <h1 className="text-xl font-black text-brand-night uppercase tracking-tighter leading-tight">{project.title}</h1>
+    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+      {/* Header interno v2 */}
+      <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl">
+        <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
+          <Link
+            href="/cliente/proyectos"
+            aria-label="Volver"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+          >
+            <ArrowLeft size={19} />
+          </Link>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+              {project.display_id}
+            </p>
+            <h1 className="text-[20px] font-semibold tracking-tight text-[#151714] leading-tight truncate">
+              {project.title}
+            </h1>
+          </div>
+          <span className={`shrink-0 inline-flex items-center h-8 px-3.5 rounded-full text-[11px] font-bold ${STATUS_PILL[st.tone]}`}>
+            {st.label}
+          </span>
         </div>
-        <Badge variant={st.tone} className="text-[9px] font-black uppercase px-3 py-1.5">{st.label}</Badge>
       </header>
 
-      <div className="px-8 max-w-3xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto px-6 mt-2 space-y-5">
         {justPublished && project.status === 'pending_review' && (
-          <Card className="p-6 rounded-[2rem] border-none bg-amber-50 flex items-start gap-4">
-            <Clock size={22} className="text-amber-500 flex-none mt-0.5" />
+          <div className="v2-rise v2-d1 rounded-[1.75rem] bg-amber-50 p-6 flex items-start gap-4">
+            <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-amber-500 flex items-center justify-center v2-shadow-soft">
+              <Clock size={20} />
+            </span>
             <div>
-              <p className="text-xs font-black text-amber-700 uppercase tracking-wide mb-1">Tu proyecto está en revisión</p>
-              <p className="text-xs font-medium text-amber-600">Nuestro equipo lo revisa antes de publicarlo (normalmente en menos de 2 horas hábiles). En cuanto se apruebe, los proveedores verificados de tu zona podrán enviarte ofertas.</p>
+              <p className="text-[14px] font-semibold text-amber-800 mb-1">Tu proyecto está en revisión</p>
+              <p className="text-[12.5px] font-medium text-amber-700">
+                Nuestro equipo lo revisa antes de publicarlo (normalmente en menos de 2 horas hábiles).
+                En cuanto se apruebe, los proveedores verificados de tu zona podrán enviarte ofertas.
+              </p>
             </div>
-          </Card>
+          </div>
         )}
 
         {project.status === 'rejected' && project.moderation_note && (
-          <Card className="p-6 rounded-[2rem] border-none bg-red-50 flex items-start gap-4">
-            <X size={22} className="text-red-500 flex-none mt-0.5" />
+          <div className="v2-rise v2-d1 rounded-[1.75rem] bg-red-50 p-6 flex items-start gap-4">
+            <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-red-500 flex items-center justify-center v2-shadow-soft">
+              <X size={20} />
+            </span>
             <div>
-              <p className="text-xs font-black text-red-700 uppercase tracking-wide mb-1">Tu proyecto necesita ajustes</p>
-              <p className="text-xs font-medium text-red-600">{project.moderation_note}</p>
+              <p className="text-[14px] font-semibold text-red-700 mb-1">Tu proyecto necesita ajustes</p>
+              <p className="text-[12.5px] font-medium text-red-600">{project.moderation_note}</p>
             </div>
-          </Card>
+          </div>
         )}
 
         {/* Detalle del proyecto */}
-        <Card className="p-8 rounded-[2.5rem] border-none shadow-card bg-white space-y-5">
-          <p className="text-sm font-medium text-slate-500 whitespace-pre-wrap">{project.description}</p>
+        <section className="v2-rise v2-d2 bg-white rounded-[2.25rem] v2-shadow-soft p-7 space-y-5">
+          <p className="text-[14.5px] font-medium text-[#70756E] whitespace-pre-wrap">{project.description}</p>
+
           {project.photos?.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
               {project.photos.map((url: string, i: number) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={url} alt={`Foto ${i + 1}`} className="w-24 h-24 rounded-2xl object-cover" />
+                <img key={i} src={url} alt={`Foto ${i + 1}`} className="w-24 h-24 shrink-0 rounded-[1.25rem] object-cover" />
               ))}
             </div>
           )}
-          <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-slate-50">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded-full">{project.category}</span>
-            <div className="flex items-center gap-1.5 text-slate-400">
+
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2.5 pt-4 border-t border-black/[0.05]">
+            <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F3F4F1] text-[12px] font-semibold text-[#70756E]">
+              {project.category}
+            </span>
+            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#A8ADA6]">
               <MapPin size={13} />
-              <span className="text-[10px] font-bold uppercase">{project.zone}{project.neighborhood ? ` · ${project.neighborhood}` : ''}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-slate-400">
+              {project.zone}{project.neighborhood ? ` · ${project.neighborhood}` : ''}
+            </span>
+            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#A8ADA6]">
               <Calendar size={13} />
-              <span className="text-[10px] font-bold uppercase">{timingLabel(project.timing)}</span>
-            </div>
+              {timingLabel(project.timing)}
+            </span>
             {(project.budget_min || project.budget_max) && (
-              <span className="ml-auto text-xs font-black text-emerald-500 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
+              <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#E9F7EF] text-primary text-[12.5px] font-bold tabular-nums">
                 {project.budget_min ? formatMXN(project.budget_min) : ''}{project.budget_min && project.budget_max ? ' – ' : ''}{project.budget_max ? formatMXN(project.budget_max) : ''}
               </span>
             )}
           </div>
-        </Card>
+        </section>
 
         {/* Ofertas */}
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-black text-brand-night uppercase tracking-widest flex items-center gap-2">
-            <Users size={16} className="text-primary" /> Ofertas recibidas
-          </h2>
-          <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{project.offers_count}/{project.max_offers}</span>
+        <div className="v2-rise v2-d3 flex items-end justify-between pt-2">
+          <h2 className="text-xl font-semibold tracking-tight text-[#151714]">Ofertas recibidas</h2>
+          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#E9F7EF] text-primary text-[12px] font-bold tabular-nums">
+            <Users size={13} /> {project.offers_count}/{project.max_offers}
+          </span>
         </div>
 
-        {error && <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-xs font-bold text-red-600">{error}</div>}
+        {error && (
+          <div className="p-5 rounded-[1.25rem] bg-red-50 text-[12.5px] font-semibold text-red-600">{error}</div>
+        )}
 
         {offers.length === 0 && project.status === 'open' && (
-          <div className="p-12 border-4 border-dashed border-slate-100 rounded-[3rem] text-center">
-            <p className="text-slate-300 font-bold uppercase tracking-widest text-xs">Aún no hay ofertas — los proveedores de tu zona ya fueron notificados</p>
+          <div className="v2-rise v2-d4 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-12 flex flex-col items-center text-center">
+            <span className="w-16 h-16 rounded-[1.25rem] bg-[#E9F7EF] text-primary flex items-center justify-center mb-5">
+              <Users size={26} />
+            </span>
+            <h3 className="text-[16px] font-semibold tracking-tight text-[#151714] mb-1.5">Aún no hay ofertas</h3>
+            <p className="text-[13.5px] font-medium text-[#70756E] max-w-xs">
+              Los proveedores verificados de tu zona ya fueron notificados. Te avisaremos en cuanto llegue la primera.
+            </p>
           </div>
         )}
 
-        {offers.map(offer => {
+        {offers.map((offer, i) => {
           const prov = offer.providers;
           const name = prov?.users?.full_name || 'Proveedor';
           const isAccepted = offer.status === 'accepted';
           const isDeclined = offer.status === 'declined';
           return (
-            <Card key={offer.id} className={`p-7 rounded-[2.5rem] border-none shadow-card bg-white space-y-4 ${isDeclined ? 'opacity-50' : ''} ${isAccepted ? 'ring-2 ring-primary' : ''}`}>
-              <div className="flex items-center gap-4">
-                <Avatar src={prov?.users?.avatar_url} name={name} className="w-14 h-14 rounded-2xl" />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-black text-brand-night uppercase tracking-tight">{name}</h3>
-                    {prov?.is_verified && <BadgeCheck size={16} className="text-primary" />}
+            <article
+              key={offer.id}
+              className={`v2-rise v2-d${Math.min(i + 4, 8)} bg-white rounded-[1.75rem] v2-shadow-lift p-6 space-y-4 v2-float ${isDeclined ? 'opacity-50' : ''} ${isAccepted ? 'ring-2 ring-primary' : ''}`}
+            >
+              {/* Cabecera del proveedor */}
+              <div className="flex items-center gap-3.5">
+                <Avatar src={prov?.users?.avatar_url} name={name} size="md" className="shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-[15.5px] font-semibold tracking-tight text-[#151714] truncate">{name}</h3>
+                    {prov?.is_verified && <BadgeCheck size={16} className="shrink-0 text-primary" />}
                   </div>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <div className="flex items-center gap-1">
-                      <Star size={12} className="text-amber-400 fill-amber-400" />
-                      <span className="text-xs font-black text-slate-500">{Number(prov?.rating || 0).toFixed(1)}</span>
-                      <span className="text-[10px] font-bold text-slate-300">({prov?.reviews_count || 0})</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-300 uppercase">{prov?.category}</span>
-                  </div>
+                  <p className="text-[12.5px] font-medium text-[#A8ADA6] truncate">
+                    {prov?.category} · {prov?.reviews_count || 0} reseñas
+                  </p>
                 </div>
-                <div className="text-right">
-                  {offer.offer_type === 'price' ? (
-                    <>
-                      <p className="text-xl font-black text-brand-night">{formatMXN(offer.amount)}{offer.amount_max ? ` – ${formatMXN(offer.amount_max)}` : ''}</p>
-                      {offer.estimated_days && <p className="text-[10px] font-bold text-slate-300 uppercase">{offer.estimated_days} días est.</p>}
-                    </>
-                  ) : (
-                    <Badge variant="default" className="text-[9px] font-black uppercase px-3 py-1.5">Visita gratis para cotizar</Badge>
-                  )}
-                </div>
+                <RatingPill value={Number(prov?.rating) || 0} className="shrink-0" />
               </div>
 
-              <p className="text-sm font-medium text-slate-500 bg-slate-50 rounded-2xl p-4">{offer.message}</p>
+              {/* El monto es protagonista */}
+              {offer.offer_type === 'price' ? (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-0.5">Oferta</p>
+                  <p className="text-[27px] font-bold tracking-tight text-[#151714] tabular-nums leading-none">
+                    {formatMXN(offer.amount)}{offer.amount_max ? ` – ${formatMXN(offer.amount_max)}` : ''}
+                  </p>
+                </div>
+              ) : (
+                <span className="inline-flex items-center h-9 px-4 rounded-full bg-[#E9F7EF] text-primary text-[13px] font-bold">
+                  Visita gratis para cotizar
+                </span>
+              )}
 
-              <div className="flex flex-wrap items-center gap-3">
+              {offer.message && (
+                <p className="text-[13.5px] font-medium text-[#70756E] bg-[#FAFBF8] rounded-[1.25rem] p-4">
+                  {offer.message}
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
                 {offer.offer_type === 'price' && (
-                  <span className="text-[10px] font-black uppercase tracking-wide text-slate-400 bg-slate-50 px-3 py-1 rounded-full">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F3F4F1] text-[12px] font-semibold text-[#70756E]">
                     {offer.includes_materials ? 'Incluye materiales' : 'Sin materiales'}
                   </span>
                 )}
+                {offer.offer_type === 'price' && offer.estimated_days && (
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F3F4F1] text-[12px] font-semibold text-[#70756E] tabular-nums">
+                    {offer.estimated_days} días est.
+                  </span>
+                )}
                 {offer.deposit_percent > 0 && offer.offer_type === 'price' && (
-                  <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-primary bg-primary/5 px-3 py-1 rounded-full">
+                  <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[#E9F7EF] text-primary text-[12px] font-bold">
                     <ShieldCheck size={12} /> Anticipo {offer.deposit_percent}% protegido
                   </span>
                 )}
-                <span className="text-[10px] font-bold text-slate-300 ml-auto">{timeAgo(offer.created_at)}</span>
+                <span className="ml-auto text-[12px] font-medium text-[#A8ADA6]">{timeAgo(offer.created_at)}</span>
               </div>
 
               {project.status === 'open' && offer.status === 'active' && (
-                <Button
+                <button
+                  type="button"
                   onClick={() => acceptOffer(offer)}
                   disabled={accepting !== null}
-                  variant="primary"
-                  className="w-full h-13 py-4 rounded-2xl bg-brand-night text-white hover:bg-slate-800 border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                  className="w-full h-14 rounded-full bg-[#151714] text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press hover:bg-black transition-colors disabled:opacity-60"
                 >
                   {accepting === offer.id ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   Aceptar esta oferta
-                </Button>
+                </button>
               )}
               {isAccepted && (
-                <div className="flex items-center gap-2 justify-center py-2 text-primary">
-                  <Check size={16} /><span className="text-[10px] font-black uppercase tracking-widest">Oferta aceptada</span>
+                <div className="flex items-center justify-center gap-2 h-12 rounded-full bg-[#E9F7EF] text-primary">
+                  <Check size={16} />
+                  <span className="text-[13px] font-bold">Oferta aceptada</span>
                   {project.order_id && (
-                    <Link href={`/cliente/ordenes/${project.order_id}`} className="ml-2 underline text-[10px] font-black uppercase tracking-widest">Ver orden</Link>
+                    <Link
+                      href={`/cliente/ordenes/${project.order_id}`}
+                      className="ml-1 text-[13px] font-bold underline underline-offset-2"
+                    >
+                      Ver orden
+                    </Link>
                   )}
                 </div>
               )}
-            </Card>
+            </article>
           );
         })}
 
-        <Card className="p-6 rounded-[2rem] border-none bg-primary/5 flex items-start gap-4">
-          <ShieldCheck size={22} className="text-primary flex-none mt-0.5" />
-          <p className="text-xs font-medium text-slate-500"><strong className="text-brand-night font-black uppercase text-[11px] tracking-wide">Garantía I mendly · </strong>Al aceptar una oferta y pagar dentro de la plataforma, tu anticipo y tu pago quedan protegidos y el trabajo cuenta con garantía. Los tratos fuera de la plataforma no tienen protección ni respaldo.</p>
-        </Card>
+        {/* Garantía */}
+        <div className="v2-rise v2-d8 rounded-[2.25rem] bg-[#E9F7EF] p-7 flex items-start gap-4">
+          <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
+            <ShieldCheck size={22} />
+          </span>
+          <div>
+            <p className="text-[14px] font-semibold text-[#151714] mb-1">Garantía I mendly</p>
+            <p className="text-[12.5px] font-medium text-[#70756E]">
+              Al aceptar una oferta y pagar dentro de la plataforma, tu anticipo y tu pago quedan
+              protegidos y el trabajo cuenta con garantía. Los tratos fuera de la plataforma no
+              tienen protección ni respaldo.
+            </p>
+          </div>
+        </div>
       </div>
+
+      <ClientNav />
     </main>
   );
 }
