@@ -6,10 +6,11 @@ import { Home, ClipboardList, Newspaper, User, Plus } from 'lucide-react';
 
 const ITEMS = [
   { href: '/cliente', icon: Home, label: 'Inicio', exact: true },
-  { href: '/cliente/orders', icon: ClipboardList, label: 'Órdenes' },
+  // 'ordenes' cubre la ruta de detalle /cliente/ordenes/[id]
+  { href: '/cliente/orders', icon: ClipboardList, label: 'Órdenes', also: '/cliente/ordenes' },
   { href: '/cliente/proyectos', icon: Newspaper, label: 'Proyectos' },
   { href: '/cliente/profile', icon: User, label: 'Perfil' },
-];
+] as { href: string; icon: typeof Home; label: string; exact?: boolean; also?: string }[];
 
 /** Nav inferior flotante del portal cliente — pill con blur y FAB central. */
 export function ClientNav() {
@@ -17,7 +18,9 @@ export function ClientNav() {
   const router = useRouter();
 
   const isActive = (item: (typeof ITEMS)[number]) =>
-    item.exact ? pathname === item.href : pathname.startsWith(item.href);
+    item.exact
+      ? pathname === item.href
+      : pathname.startsWith(item.href) || (item.also ? pathname.startsWith(item.also) : false);
 
   const left = ITEMS.slice(0, 2);
   const right = ITEMS.slice(2);
