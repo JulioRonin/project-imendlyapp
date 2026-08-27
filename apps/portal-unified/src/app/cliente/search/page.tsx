@@ -1,16 +1,23 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { ArrowLeft, Filter, MapPin, Star, Clock, ChevronRight } from 'lucide-react';
-import { TopInsignia } from '@/components/TopInsignia';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { ArrowLeft, MapPin, SearchX, BadgeCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../lib/supabase';
+import { ClientNav } from '@/components/client/ClientNav';
+import { Chip, RatingPill } from '@/components/client/ui';
+
+const CATEGORIES = [
+  { name: 'Electricidad', slug: 'Electricidad' },
+  { name: 'Plomería', slug: 'Plomería' },
+  { name: 'Climas', slug: 'Climas/AC' },
+  { name: 'Pintura', slug: 'Pintura' },
+  { name: 'Albañilería', slug: 'Albañilería' },
+  { name: 'Limpieza', slug: 'Limpieza' },
+  { name: 'Carpintería', slug: 'Carpintería' },
+  { name: 'Fumigación', slug: 'Fumigación' },
+];
 
 // Helper for distance (Haversine simplified)
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -18,7 +25,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
             Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R * c || 0;
@@ -26,6 +33,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 
 function SearchResults() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const query = searchParams.get('q') || '';
   const [userLocation] = useState({ lat: 31.7333, lng: -106.4833 }); // Ciudad Juárez default
   const [providers, setProviders] = useState<any[]>([]);
@@ -56,7 +64,7 @@ function SearchResults() {
           const user = Array.isArray(p.users) ? p.users[0] : p.users;
           const primaryService = p.provider_services?.[0] || { price: 0, unit: 'Servicio', is_range: false, max_price: 0 };
           const cats = p.categories || (p.category ? [p.category] : []);
-          
+
           return {
             id: p.id,
             name: user?.full_name || 'Profesional i-Mendly',
@@ -79,7 +87,7 @@ function SearchResults() {
         const filtered = allFormatted.filter(p => {
           if (!query) return true;
           const searchLower = query.toLowerCase();
-          return p.name.toLowerCase().includes(searchLower) || 
+          return p.name.toLowerCase().includes(searchLower) ||
                  p.categories.some((c: string) => c.toLowerCase().includes(searchLower));
         });
 
@@ -96,138 +104,164 @@ function SearchResults() {
 
   const filteredProviders = providers.sort((a, b) => (a.price || 0) - (b.price || 0));
 
+  const activeCategory = CATEGORIES.find(
+    c => c.slug.toLowerCase() === query.toLowerCase() || c.name.toLowerCase() === query.toLowerCase()
+  );
+
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
-      <header className="px-8 py-8 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <button 
-          onClick={() => window.history.back()}
-          className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary transition-all border border-slate-100"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex-1 px-6">
-           <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest">Resultados para</p>
-           <h1 className="text-xl font-black text-brand-night uppercase tracking-tighter">{query || 'Todos los Servicios'}</h1>
+    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+      {/* ── Header interno v2 (patrón 5) ── */}
+      <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-4">
+          <button
+            onClick={() => window.history.back()}
+            aria-label="Regresar"
+            className="shrink-0 w-11 h-11 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+          >
+            <ArrowLeft size={19} />
+          </button>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+              Resultados
+            </p>
+            <h1 className="text-[19px] font-semibold tracking-tight text-[#151714] truncate">
+              {query || 'Todos los servicios'}
+            </h1>
+          </div>
         </div>
-        <button className="w-12 h-12 rounded-2xl bg-brand-night text-white shadow-xl flex items-center justify-center">
-          <Filter size={18} />
-        </button>
       </header>
 
-      <div className="px-8 max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between py-4">
-           <p className="text-xs font-bold text-slate-400">
-             Encontramos <span className="text-brand-night">{filteredProviders.length}</span> profesionales cerca de ti
-           </p>
-            <Badge variant="success" className="py-2 px-4 text-[9px] font-black tracking-widest uppercase bg-emerald-500 text-white border-none shadow-lg shadow-emerald-500/20">RADIO 20KM</Badge>
-        </div>
-
-        {filteredProviders.length > 0 ? (
-          <div className="space-y-6">
-            {filteredProviders.map((p) => (
-              <Link key={p.id} href={`/cliente/providers/${p.id}`} className="block">
-                <Card className="p-8 rounded-[2.5rem] border-none shadow-[0_20px_64px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_32px_96px_-12px_rgba(124,58,237,0.15)] transition-all duration-500 group bg-white border border-transparent hover:border-primary/10">
-                  <div className="flex flex-col md:flex-row gap-8 items-center">
-                    <div className="relative">
-                      <Avatar src={(p as any).image} name={p.name} className="w-24 h-24 rounded-3xl shadow-xl ring-4 ring-slate-50" />
-                      {p.isTop && (
-                        <div className="absolute -top-2 -left-2 z-10 scale-125">
-                          <TopInsignia size={32} showLabel={false} />
-                        </div>
-                      )}
-                      {p.verified && (
-                        <div className="absolute -bottom-2 -right-2 bg-primary text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
-                          <Star size={14} fill="white" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 text-center md:text-left">
-                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
-                        {(p.categories || []).map((cat: string) => (
-                          <Badge 
-                            key={cat}
-                            variant="default" 
-                            className="text-[7.5px] font-black tracking-[0.15em] uppercase py-1.5 px-3 bg-primary/10 text-primary border-none rounded-full shadow-sm hover:bg-primary/20 transition-all cursor-default"
-                          >
-                            {cat}
-                          </Badge>
-                        ))}
-                        <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400/60 uppercase tracking-widest ml-1">
-                          <div className="w-1 h-1 rounded-full bg-slate-200" />
-                          <MapPin size={10} className="text-primary/60" /> {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-black text-brand-night tracking-tighter uppercase leading-none">{p.name}</h3>
-                        <div className="flex items-center gap-1.5 bg-amber-50 text-amber-600 px-2 py-0.5 rounded-lg border border-amber-100 text-[10px] font-black">
-                           <Star size={10} fill="currentColor" /> {p.rating}
-                        </div>
-                        {p.verified && (
-                          <div className="flex items-center gap-1 bg-primary/5 text-primary px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-primary/10">
-                            <ChevronRight size={10} className="text-primary/40" /> Certificado
-                          </div>
-                        )}
-                        {p.isTop && (
-                           <TopInsignia size={18} className="ml-2" />
-                        )}
-                      </div>
-                      <p className="text-[10px] text-slate-400 font-semibold leading-relaxed max-w-md uppercase tracking-wide opacity-80">
-                        Especialista en servicios boutique de {(p.categories?.[0] || 'Servicios').toLowerCase()}. Atención personalizada y garantía de calidad.
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col items-center md:items-end gap-4 min-w-[200px]">
-                      <div className="text-right">
-                         <p className="text-[10px] font-black text-brand-night/20 uppercase tracking-widest mb-1">Costo Estimado</p>
-                         <div className="flex flex-col items-end">
-                            <p className="text-3xl font-black text-brand-night tracking-tighter leading-none">
-                              ${p.price}
-                              {p.isRange && <span className="text-sm font-bold text-slate-300 mx-1">a ${p.maxPrice}</span>}
-                            </p>
-                            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Por {p.unit}</span>
-                         </div>
-                      </div>
-                      <div className="w-full md:w-auto">
-                        <Button className="w-full md:w-auto px-8 py-5 rounded-2xl shadow-lg shadow-primary/10 text-[9px] font-black uppercase tracking-[0.3em]">
-                          Ver Perfil
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
+      <div className="max-w-5xl mx-auto">
+        {/* ── Chips de categorías ── */}
+        <div className="v2-rise v2-d1 px-6 pt-2">
+          <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x pb-1">
+            <Chip
+              label="Todos"
+              active={!activeCategory && !query}
+              onClick={() => router.push('/cliente/search')}
+            />
+            {CATEGORIES.map(c => (
+              <Chip
+                key={c.slug}
+                label={c.name}
+                active={activeCategory?.slug === c.slug}
+                onClick={() => router.push(`/cliente/search?q=${encodeURIComponent(c.slug)}`)}
+              />
             ))}
           </div>
-        ) : (
-          <div className="py-20 text-center">
-             <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8">
-                <Search size={40} className="text-slate-200" />
-             </div>
-             <h3 className="text-2xl font-black text-brand-night tracking-tight mb-2 uppercase">Sin resultados</h3>
-             <p className="text-slate-400 font-medium">No encontramos proveedores de "{query}" en un radio de 20km.</p>
-             <Link href="/cliente/categories" className="inline-block mt-8">
-                <Button variant="outline" className="px-10 rounded-2xl text-[10px] font-black uppercase tracking-widest">Ver Categorías</Button>
-             </Link>
-          </div>
-        )}
+        </div>
+
+        <div className="px-6 mt-5">
+          {isLoading ? (
+            /* ── Skeletons ── */
+            <div className="space-y-3.5">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="flex items-center gap-4 bg-white rounded-[1.75rem] p-4 v2-shadow-soft">
+                  <div className="w-24 h-24 shrink-0 rounded-[1.5rem] v2-shimmer" />
+                  <div className="flex-1 space-y-2.5">
+                    <div className="h-4 w-2/3 rounded-full v2-shimmer" />
+                    <div className="h-3 w-1/3 rounded-full v2-shimmer" />
+                    <div className="h-3 w-1/2 rounded-full v2-shimmer" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredProviders.length > 0 ? (
+            <>
+              <p className="text-[13px] font-medium text-[#70756E] mb-4">
+                <span className="font-bold text-[#151714]">{filteredProviders.length}</span>{' '}
+                {filteredProviders.length === 1 ? 'profesional' : 'profesionales'} cerca de ti
+              </p>
+
+              {/* ── Tarjetas de resultado compactas ── */}
+              <div className="space-y-3.5">
+                {filteredProviders.map((p, i) => (
+                  <Link
+                    key={p.id}
+                    href={`/cliente/providers/${p.id}`}
+                    className={`block ${i < 8 ? `v2-rise v2-d${i + 1}` : ''}`}
+                  >
+                    <article className="flex items-center gap-4 bg-white rounded-[1.75rem] p-4 v2-shadow-soft v2-press v2-float">
+                      {/* Imagen / iniciales */}
+                      <div className="relative w-24 h-24 shrink-0 rounded-[1.5rem] overflow-hidden bg-[#151714]">
+                        {p.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#151714] flex items-center justify-center">
+                            <span className="text-white/85 text-xl font-bold">
+                              {p.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="text-[15.5px] font-semibold tracking-tight text-[#151714] truncate">
+                            {p.name}
+                          </h3>
+                          {p.verified && (
+                            <BadgeCheck size={15} className="shrink-0 text-primary" />
+                          )}
+                        </div>
+                        <p className="text-[12.5px] font-medium text-[#70756E] truncate">
+                          {(p.categories || []).slice(0, 2).join(' · ') || 'Servicios'}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[13.5px] font-bold text-primary tabular-nums">
+                            desde ${p.price}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#A8ADA6]">
+                            <MapPin size={11} />
+                            {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Rating */}
+                      <RatingPill
+                        value={Number(p.rating) || 0}
+                        className="shrink-0 border border-black/[0.05]"
+                      />
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* ── Estado vacío (patrón 6) ── */
+            <div className="v2-rise py-20 text-center">
+              <div className="w-24 h-24 rounded-[1.75rem] bg-[#E9F7EF] text-primary flex items-center justify-center mx-auto mb-7">
+                <SearchX size={38} strokeWidth={1.8} />
+              </div>
+              <h3 className="text-[21px] font-semibold tracking-tight text-[#151714] mb-2">
+                Sin resultados
+              </h3>
+              <p className="text-[14px] font-medium text-[#70756E] max-w-xs mx-auto">
+                No encontramos proveedores de “{query}” en un radio de 20 km.
+              </p>
+              <Link
+                href="/cliente/categories"
+                className="inline-flex items-center justify-center h-14 px-8 mt-8 rounded-full bg-primary text-white text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+              >
+                Explorar categorías
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
+
+      <ClientNav />
     </main>
   );
 }
 
-// Internal mock for safety if not in constant
-const Search = ({ size, className }: { size: number, className: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-  </svg>
-);
-
 // useSearchParams requiere un límite de Suspense para el prerender de producción
 export default function SearchResultsWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#F3F4F1]" />}>
       <SearchResults />
     </Suspense>
   );

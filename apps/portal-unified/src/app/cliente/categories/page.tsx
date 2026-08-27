@@ -1,11 +1,7 @@
 "use client";
 
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { ArrowLeft, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler, Scissors, Car, Layers, Flame } from 'lucide-react';
-import { BottomNav } from '@i-mendly/shared';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Zap, Droplets, Sparkles, Wind, Paintbrush, Hammer, Flower2, Lock, Bug, Ruler, Scissors, Car, Layers, Flame } from 'lucide-react';
+import { ClientNav } from '@/components/client/ClientNav';
 import Link from 'next/link';
 
 const ALL_CATEGORIES = [
@@ -26,74 +22,86 @@ const ALL_CATEGORIES = [
 ];
 
 export default function CategoriesPage() {
-  const router = useRouter();
-
-  const handleLogout = () => {
-    router.push('/role-selection');
-  };
-
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
-      {/* Dynamic Header */}
-      <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <Link href="/cliente">
-          <button className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary hover:scale-110 transition-all border border-slate-100">
-            <ArrowLeft size={20} strokeWidth={3} />
-          </button>
-        </Link>
-        <div className="text-center">
-            <p className="text-[10px] font-black tracking-[0.5em] text-brand-night/20 uppercase mb-1">I Mendly</p>
-            <h1 className="text-xl font-black text-brand-night uppercase tracking-tighter">Explorar Categorías</h1>
-        </div>
-        <div className="w-12" /> {/* Spacer */}
-      </header>
+    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+      <div className="max-w-7xl mx-auto">
+        {/* ── Hero verde compacto ── */}
+        <header className="v2-rise relative v2-hero-grad text-white rounded-b-[2.75rem] md:rounded-[2.75rem] md:mt-5 md:mx-6 overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-28 -left-16 w-64 h-64 rounded-full bg-black/10 blur-3xl pointer-events-none" />
 
-      <div className="px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {ALL_CATEGORIES.map((cat, i) => (
-            <Link key={i} href={`/cliente/search?q=${cat.name}`}>
-              <Card className="group relative h-96 rounded-[3.5rem] border-none overflow-hidden shadow-[0_24px_48px_-12px_rgba(0,0,0,0.08)] hover:shadow-[0_48px_128px_-12px_rgba(124,58,237,0.2)] transition-all duration-700 cursor-pointer p-0 bg-white">
-                {/* Image Background */}
-                <div 
-                  className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
-                  style={{ backgroundImage: `url('${cat.image}')` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-night/95 via-brand-night/20 to-transparent" />
-                </div>
-
-                {/* Coming Soon Badge Overlay */}
-                {cat.comingSoon && (
-                  <div className="absolute top-8 right-8 z-20">
-                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-lg">
-                      Próximamente
-                    </span>
-                  </div>
-                )}
-
-                {/* Content Overlay */}
-                <div className={`absolute inset-0 p-10 flex flex-col justify-end z-10 ${cat.comingSoon ? "opacity-60 grayscale-[50%]" : ""}`}>
-                  <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                     <div className="text-white">{cat.icon}</div>
-                  </div>
-                  
-                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter leading-none">{cat.name}</h2>
-                  <p className="text-white/40 text-xs font-medium leading-relaxed max-w-[80%] opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                    {cat.description}
-                  </p>
-                  
-                  <div className="mt-8 flex items-center gap-4">
-                     <div className="h-[2px] w-8 bg-primary rounded-full" />
-                     <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Explorar</span>
-                  </div>
-                </div>
-              </Card>
+          <div className="relative px-6 md:px-12 pt-6 pb-16">
+            <Link
+              href="/cliente"
+              aria-label="Regresar al inicio"
+              className="inline-flex w-11 h-11 rounded-full bg-white/15 backdrop-blur items-center justify-center v2-press mb-7"
+            >
+              <ArrowLeft size={19} />
             </Link>
-          ))}
+
+            <p className="v2-rise v2-d1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 mb-2">
+              Explora
+            </p>
+            <h1 className="v2-rise v2-d2 text-[32px] md:text-4xl font-bold tracking-tight leading-[1.1] mb-2">
+              Categorías
+            </h1>
+            <p className="v2-rise v2-d3 text-[14.5px] font-medium text-white/75 max-w-md">
+              Encuentra al certificado ideal para cada rincón de tu casa.
+            </p>
+          </div>
+        </header>
+
+        {/* ── Grid empalmado sobre el hero ── */}
+        <div className="relative z-10 -mt-8 px-6 md:px-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ALL_CATEGORIES.map((cat, i) => (
+              <Link
+                key={cat.name}
+                href={`/cliente/search?q=${encodeURIComponent(cat.name)}`}
+                className={i < 8 ? `v2-rise v2-d${Math.min(i + 1, 8)}` : ''}
+              >
+                <article className="group h-full flex items-center gap-5 bg-white rounded-[1.75rem] p-5 v2-shadow-soft v2-press v2-float">
+                  {/* Imagen / ícono en squircle de tinte verde */}
+                  <div className="relative w-[4.5rem] h-[4.5rem] shrink-0 rounded-[1.25rem] bg-[#E9F7EF] overflow-hidden flex items-center justify-center text-primary">
+                    {cat.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                      />
+                    ) : (
+                      cat.icon
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-[16px] font-semibold tracking-tight text-[#151714] truncate">
+                        {cat.name}
+                      </h2>
+                      {cat.comingSoon && (
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] bg-[#F3F4F1] rounded-full px-2.5 py-1">
+                          Pronto
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[12.5px] font-medium text-[#70756E] leading-snug mt-0.5 line-clamp-2">
+                      {cat.description}
+                    </p>
+                  </div>
+
+                  <span className="shrink-0 w-9 h-9 rounded-full bg-[#F3F4F1] text-[#151714] flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+                    <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </article>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
-      
-      {/* Bottom Nav (Standardized) */}
-      <BottomNav onLogout={handleLogout} />
+
+      <ClientNav />
     </main>
   );
 }
