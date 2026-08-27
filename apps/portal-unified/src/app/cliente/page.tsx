@@ -1,48 +1,48 @@
 "use client";
 
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { 
-  Sparkles, 
-  Search, 
-  MapPin, 
-  LogOut, 
-  ChevronRight, 
-  Zap, 
-  Droplets, 
-  Wind, 
+import {
+  Search,
+  MapPin,
+  LogOut,
+  ChevronRight,
+  Zap,
+  Droplets,
+  Wind,
   Paintbrush,
+  Hammer,
+  Bug,
+  Armchair,
+  Sparkles,
   User,
   Bell,
   Navigation,
   Shield,
   ShieldCheck,
-  BarChart3,
-  MessageCircle,
-  Home
+  BadgeCheck,
 } from 'lucide-react';
-import { BottomNav } from '@i-mendly/shared';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { Avatar } from '@i-mendly/shared/components/Avatar';
+import { ClientNav } from '@/components/client/ClientNav';
+import { Chip, SectionHead, IconTile, RatingPill, Reveal } from '@/components/client/ui';
 
 const CATEGORIES = [
-  { name: 'Electricidad', icon: Zap, color: 'text-amber-500', slug: 'Electricidad' },
-  { name: 'Plomería', icon: Droplets, color: 'text-blue-500', slug: 'Plomería' },
-  { name: 'Climas', icon: Wind, color: 'text-cyan-500', slug: 'Climas/AC' },
-  { name: 'Pintura', icon: Paintbrush, color: 'text-purple-500', slug: 'Pintura' },
+  { name: 'Electricidad', icon: Zap, slug: 'Electricidad' },
+  { name: 'Plomería', icon: Droplets, slug: 'Plomería' },
+  { name: 'Climas', icon: Wind, slug: 'Climas/AC' },
+  { name: 'Pintura', icon: Paintbrush, slug: 'Pintura' },
+  { name: 'Albañilería', icon: Hammer, slug: 'Albañilería' },
+  { name: 'Limpieza', icon: Sparkles, slug: 'Limpieza' },
+  { name: 'Carpintería', icon: Armchair, slug: 'Carpintería' },
+  { name: 'Fumigación', icon: Bug, slug: 'Fumigación' },
 ];
 
 const SUGGESTIONS = [
-  'Electricista', 'Plomería', 'Limpieza', 'Climas/AC', 'Pintura', 
+  'Electricista', 'Plomería', 'Limpieza', 'Climas/AC', 'Pintura',
   'Carpintería', 'Jardinería', 'Cerrajería', 'Fumigación', 'Remodelación', 'Moda y costura', 'Pisos', 'Herrería'
 ];
-
 
 export default function ClientHome() {
   const router = useRouter();
@@ -51,6 +51,9 @@ export default function ClientHome() {
   const [location, setLocation] = useState("México");
   const [isLocating, setIsLocating] = useState(false);
   const [profileIncomplete, setProfileIncomplete] = useState(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [featured, setFeatured] = useState<any[]>([]);
+  const [activeChip, setActiveChip] = useState('Todos');
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -60,9 +63,11 @@ export default function ClientHome() {
       // Check users table for phone
       const { data: userData } = await supabase
         .from('users')
-        .select('phone')
+        .select('phone, full_name')
         .eq('id', user.id)
         .single();
+
+      if (userData?.full_name) setFirstName(userData.full_name.split(' ')[0]);
 
       // Check user_addresses table
       const { data: addrData } = await supabase
@@ -76,7 +81,18 @@ export default function ClientHome() {
       }
     };
 
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from('providers')
+        .select('id, category, rating, reviews_count, is_verified, base_price, users ( full_name, avatar_url )')
+        .eq('is_verified', true)
+        .order('rating', { ascending: false })
+        .limit(6);
+      if (data) setFeatured(data);
+    };
+
     checkProfile();
+    fetchFeatured();
   }, []);
 
   const handleSearch = (term?: string) => {
@@ -96,7 +112,7 @@ export default function ClientHome() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((pos) => {
         // Simulated location naming
-        setLocation("Monterrey, NL");
+        setLocation("Ciudad Juárez");
         setIsLocating(false);
       }, () => setIsLocating(false));
     } else {
@@ -104,313 +120,281 @@ export default function ClientHome() {
     }
   };
 
+  const chipFilter = (label: string) => {
+    setActiveChip(label);
+    if (label !== 'Todos') router.push(`/cliente/search?q=${encodeURIComponent(label)}`);
+  };
+
   return (
-    <main className="min-h-screen bg-[#FDFDFD] pb-32">
-      {/* Profile Incomplete Banner */}
+    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+      {/* Aviso de perfil incompleto */}
       {profileIncomplete && (
-        <div className="bg-brand-night text-white py-3 px-8 flex items-center justify-between animate-in slide-in-from-top duration-700 sticky top-0 z-[60]">
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary animate-pulse">
-              <Shield size={16} />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em]">
-              Tu perfil está incompleto. <span className="text-primary hidden sm:inline ml-2 opacity-80">El teléfono y la dirección son obligatorios para solicitar servicios.</span>
+        <div className="v2-rise bg-[#151714] text-white py-3 px-6 flex items-center justify-between gap-4 sticky top-0 z-[60]">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="w-8 h-8 shrink-0 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+              <Shield size={15} />
+            </span>
+            <p className="text-[12px] font-semibold truncate">
+              Completa tu perfil <span className="text-white/50 hidden sm:inline">— teléfono y dirección para solicitar servicios</span>
             </p>
           </div>
-          <Link 
+          <Link
             href="/cliente/profile"
-            className="text-[10px] font-black uppercase tracking-widest bg-primary px-5 py-2 rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+            className="shrink-0 text-[12px] font-bold bg-primary px-4 py-2 rounded-full v2-press"
           >
-            Completar Ahora
+            Completar
           </Link>
         </div>
       )}
 
-      {/* Header Boutique */}
-      <nav className={`flex items-center justify-between px-8 py-6 max-w-7xl mx-auto sticky ${profileIncomplete ? 'top-[52px]' : 'top-0'} z-50 bg-white/80 backdrop-blur-xl border-b border-slate-50`}>
-        <Logo size={32} />
-        
-        <div className="hidden md:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
-          <Link href="/cliente/orders" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-night transition-colors">
-            Seguimiento de Órdenes
-          </Link>
-          <Link href="/cliente/reports" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-night transition-colors">
-            Reportes
-          </Link>
-        </div>
+      <div className="max-w-7xl mx-auto">
+        {/* ── HERO verde con saludo y buscador ── */}
+        <header className="v2-rise relative v2-hero-grad text-white rounded-b-[2.75rem] md:rounded-[2.75rem] md:mt-5 md:mx-6 overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-black/10 blur-3xl pointer-events-none" />
 
-        <div className="flex items-center gap-6">
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
-            <MapPin size={12} className="text-primary" />
-            {location}
-          </div>
-          
-          <div className="h-8 w-[1px] bg-slate-100 hidden sm:block" />
-          
-          <div className="flex items-center gap-4">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-brand-night hover:bg-slate-50 transition-all">
-              <Bell size={20} strokeWidth={1.5} />
-            </button>
-            <div className="group relative">
-              <Avatar name="Julio" size="md" className="cursor-pointer ring-2 ring-primary/5 hover:ring-primary/20 transition-all shadow-sm" />
-              <div className="absolute top-full right-0 mt-4 w-48 bg-white rounded-2xl shadow-2xl border border-slate-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
-                <button 
-                  onClick={() => router.push('/cliente/profile')}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-3"
-                >
-                  <User size={16} /> Ver Perfil
-                </button>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-[10px] font-black uppercase tracking-widest text-red-500 flex items-center gap-3"
-                >
-                  <LogOut size={16} /> Cerrar Sesión
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative px-8 pt-20 pb-24 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-6 py-2.5 rounded-full mb-8 shadow-sm border border-emerald-100/50 animate-in fade-in slide-in-from-top-4 duration-700">
-          <Sparkles size={14} className="animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Nueva versión 1.0 disponible en {location}</span>
-        </div>
-        <h1 className="text-5xl md:text-7xl font-black text-brand-night leading-[1.1] mb-8 tracking-tighter max-w-4xl mx-auto">
-          Servicios del hogar <span className="text-primary italic">con confianza</span> y certeza.
-        </h1>
-        <p className="text-lg md:text-xl text-brand-night/60 mb-12 max-w-2xl mx-auto font-medium">
-          Conectamos a los mejores profesionales certificados con quienes buscan calidad, rapidez y seguridad en cada rincón de su hogar.
-        </p>
-
-        {/* Search & Location Block */}
-        <div className="max-w-3xl mx-auto relative">
-          <div className="flex flex-col md:flex-row gap-4 p-2 bg-white rounded-[2.5rem] shadow-[0_32px_128px_-12px_rgba(0,0,0,0.12)] border border-slate-50 relative z-20">
-            <div className="flex-1 relative group">
-              <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" />
-              <input 
-                type="text"
-                placeholder="¿Qué servicio necesitas?"
-                value={searchTerm}
-                onFocus={() => setShowSuggestions(true)}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-16 pl-14 pr-6 bg-transparent text-brand-night font-bold placeholder:text-slate-300 outline-none"
-              />
-            </div>
-            <div className="h-16 w-[1px] bg-slate-100 hidden md:block" />
-            <button 
-              onClick={handleLocate}
-              disabled={isLocating}
-              className="flex items-center gap-3 px-8 h-16 rounded-2xl md:rounded-[2rem] hover:bg-slate-50 text-slate-400 font-bold transition-all whitespace-nowrap"
-            >
-              <Navigation size={18} className={isLocating ? 'animate-spin text-primary' : ''} />
-              <span className="text-[11px] font-black uppercase tracking-widest">
-                {isLocating ? 'Buscando...' : 'Mi ubicación'}
-              </span>
-            </button>
-            <Button 
-              onClick={() => handleSearch()}
-              size="lg" 
-              className="h-16 px-10 rounded-2xl md:rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20"
-            >
-              Buscar
-            </Button>
-          </div>
-
-          {/* Dynamic Suggestions Dropdown */}
-          {showSuggestions && searchTerm.length > 0 && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowSuggestions(false)} />
-              <Card className="absolute top-full left-0 right-0 mt-4 p-4 rounded-[2rem] shadow-2xl border-none z-20 animate-in fade-in slide-in-from-top-4 duration-300 bg-white/95 backdrop-blur-xl">
-                 <div className="space-y-1">
-                   {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).map((s, i) => (
-                     <button 
-                       key={i}
-                       onClick={() => {
-                         setSearchTerm(s);
-                         setShowSuggestions(false);
-                         handleSearch(s);
-                       }}
-                       className="w-full text-left px-6 py-4 rounded-xl hover:bg-primary/5 text-sm font-bold text-brand-night flex items-center justify-between group transition-colors"
-                     >
-                       <span>{s}</span>
-                       <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all text-primary" />
-                     </button>
-                   ))}
-                   {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-                     <p className="px-6 py-8 text-center text-slate-400 text-xs font-medium italic">Presiona enter para buscar "{searchTerm}"</p>
-                   )}
-                 </div>
-              </Card>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* Tablero de Proyectos — publica y recibe ofertas */}
-      <section className="px-8 pb-24 max-w-7xl mx-auto">
-        <Card className="relative overflow-hidden p-10 md:p-14 rounded-[3rem] border-none bg-brand-night text-white shadow-float">
-          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-primary/15 blur-2xl" />
-          <div className="relative flex flex-col md:flex-row md:items-center gap-8">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-4">
-                <ShieldCheck size={16} className="text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Nuevo · Tablero de proyectos</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight mb-3">¿Tienes un proyecto en mente?<br />Publícalo y deja que te busquen.</h2>
-              <p className="text-sm font-medium text-white/60 max-w-lg">Una pérgola, una cocina, una remodelación. Publica lo que necesitas y recibe hasta 5 ofertas de proveedores verificados de tu zona — con anticipo protegido y Garantía I mendly.</p>
-            </div>
-            <div className="flex flex-col gap-3 md:w-56">
-              <Link href="/cliente/proyectos/nuevo">
-                <Button variant="primary" className="w-full h-14 rounded-2xl bg-primary text-white hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest">
-                  Publicar proyecto
-                </Button>
-              </Link>
-              <Link href="/cliente/proyectos">
-                <Button variant="ghost" className="w-full h-14 rounded-2xl border border-white/15 text-white/80 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest">
-                  Ver mis proyectos
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* Categories Section */}
-      <section className="px-8 pb-32 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-12 px-2">
-          <div className="space-y-1">
-            <h2 className="text-3xl font-black text-brand-night tracking-tight uppercase">Categorías</h2>
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Servicios más solicitados</p>
-          </div>
-          <Link href="/cliente/categories" className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:gap-3 transition-all">
-            Ver todas <ChevronRight size={14} />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {CATEGORIES.map((cat, i) => (
-            <div 
-              key={i} 
-              onClick={() => handleSearch(cat.slug)}
-              className="group hover:scale-[1.02] transition-all duration-500 cursor-pointer"
-            >
-              <Card className="h-full border-none shadow-[0_20px_48px_-12px_rgba(0,0,0,0.05)] p-10 flex flex-col items-center text-center gap-6 group-hover:bg-primary transition-all duration-500">
-                <div className={`w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-500 ${cat.color} group-hover:text-white`}>
-                  <cat.icon size={28} strokeWidth={1.5} />
+          <div className="relative px-6 md:px-12 pt-7 pb-16">
+            {/* Fila superior */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="group relative">
+                <Avatar name={firstName || 'Cliente'} size="md" className="cursor-pointer ring-2 ring-white/30" />
+                <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-[1.25rem] v2-shadow-float p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                  <button
+                    onClick={() => router.push('/cliente/profile')}
+                    className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#F3F4F1] text-[13px] font-semibold text-[#151714] flex items-center gap-3"
+                  >
+                    <User size={15} /> Ver perfil
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-[13px] font-semibold text-red-500 flex items-center gap-3"
+                  >
+                    <LogOut size={15} /> Cerrar sesión
+                  </button>
                 </div>
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-night group-hover:text-white transition-colors">{cat.name}</p>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </section>
+              </div>
 
-      {/* Featured Service Card Demo */}
-      <section className="px-8 pb-40 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Card 1: Professional Profile */}
-          <Card className="hover:scale-[1.02] cursor-pointer rounded-[3.5rem] p-12 border-none shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] bg-white group transition-all duration-500">
-            <div className="flex justify-between items-start mb-10">
-              <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-5 py-2 rounded-full border border-emerald-100/50">
-                <ShieldCheck size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Verificado</span>
-              </div>
-              <span className="text-4xl font-black text-brand-night leading-none tracking-tighter">$450<span className="text-[10px] font-bold opacity-20 uppercase tracking-tighter ml-1">/h</span></span>
-            </div>
-            <div className="relative mb-8 w-24 h-24">
-              <Avatar src="/assets/electrician.png" name="Juan Pérez" size="lg" className="w-full h-full ring-8 ring-slate-50 shadow-xl" />
-              <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-xl shadow-lg border-4 border-white">
-                <Zap size={16} fill="white" />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleLocate}
+                  className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/15 backdrop-blur text-[12px] font-semibold v2-press"
+                >
+                  {isLocating
+                    ? <Navigation size={13} className="animate-spin" />
+                    : <MapPin size={13} />}
+                  {isLocating ? 'Ubicando…' : location}
+                </button>
+                <button aria-label="Notificaciones" className="w-10 h-10 rounded-full bg-white/15 backdrop-blur flex items-center justify-center v2-press">
+                  <Bell size={17} />
+                </button>
               </div>
             </div>
-            <h3 className="text-3xl font-black text-brand-night mb-2 tracking-tight uppercase group-hover:text-primary transition-colors">Juan Pérez</h3>
-            <p className="text-[11px] font-black text-slate-300 mb-8 uppercase tracking-[0.2em]">Electricista Certificado Master</p>
-            <p className="text-sm text-brand-night/60 leading-relaxed mb-10 font-medium opacity-80 group-hover:opacity-100 transition-opacity">
-              Especialista en sistemas de alta tensión y domótica residencial con certificación internacional.
+
+            {/* Saludo */}
+            <p className="v2-rise v2-d1 text-[15px] font-medium text-white/75 mb-1">
+              Hola{firstName ? `, ${firstName}` : ''} 👋
             </p>
-            <div className="flex items-center gap-2 text-brand-night/30 font-black text-[10px] uppercase tracking-widest bg-slate-50 w-fit px-5 py-2 rounded-full">
-              <Sparkles size={14} className="text-amber-400" /> 4.9 (124 reseñas)
-            </div>
-          </Card>
+            <h1 className="v2-rise v2-d2 text-[34px] md:text-5xl font-bold tracking-tight leading-[1.08] mb-8 max-w-xl">
+              ¿Qué arreglamos hoy en tu casa?
+            </h1>
 
-          {/* Card 2: Featured Service (Photorealistic + Glassmorphism) */}
-          <Card variant="navy" className="group relative overflow-hidden rounded-[3.5rem] p-0 border-none shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)] min-h-[500px] flex items-center justify-center">
-            <img 
-              src="/assets/ac_maintenance_boutique.png" 
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] opacity-60" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-night/20 via-transparent to-brand-night/60" />
-            
-            <div className="relative z-10 w-[85%] p-12 backdrop-blur-2xl bg-white/10 border border-white/20 rounded-[3rem] transition-all duration-700 flex flex-col items-center text-center shadow-2xl">
-               <Badge 
-                 variant="warning" 
-                 className="mb-8 font-black uppercase tracking-[0.3em] px-6 py-2.5 bg-amber-400 text-brand-night border-none shadow-2xl inline-flex"
-               >
-                 OFERTA LIMITADA
-               </Badge>
-               <h3 className="text-4xl font-black mb-4 uppercase tracking-tighter leading-tight text-white drop-shadow-2xl">
-                 Mantenimiento <br/>de Climas
-               </h3>
-               <p className="text-white/80 mb-10 leading-relaxed text-sm font-medium drop-shadow-md max-w-[280px]">
-                 Protocolo de revisión premium para sistemas de aire acondicionado central y mini-split.
-               </p>
-               <Link href="/cliente/search?q=Climas/AC" className="w-full">
-                 <Button className="w-full py-7 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] bg-white !text-emerald-600 hover:bg-emerald-50 border-none shadow-[0_20px_48px_rgba(0,0,0,0.4)] transition-all transform active:scale-95">
-                   Reservar Ahora
-                 </Button>
-               </Link>
-            </div>
-          </Card>
-
-          {/* Card 3: Trust & Glass (Cristal Labrado) */}
-          <Card className="flex flex-col justify-between bg-[#F8F9FA] rounded-[3.5rem] p-12 overflow-hidden relative border-none shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] border-l border-white group">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(124,58,237,0.05),_transparent_70%)]" />
-            
-            <div className="relative z-10">
-              <div className="w-16 h-16 rounded-[2rem] bg-white shadow-xl flex items-center justify-center mb-10 text-primary group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
-                <Shield size={32} strokeWidth={1.5} />
+            {/* Buscador */}
+            <div className="v2-rise v2-d3 relative max-w-2xl">
+              <div className="flex items-center gap-2 bg-white rounded-full p-2 v2-shadow-float">
+                <div className="flex-1 flex items-center gap-3 pl-4 min-w-0">
+                  <Search size={19} className="shrink-0 text-[#A8ADA6]" />
+                  <input
+                    type="text"
+                    placeholder="Busca un servicio o proyecto"
+                    value={searchTerm}
+                    onFocus={() => setShowSuggestions(true)}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    className="w-full h-12 bg-transparent text-[#151714] text-[15px] font-semibold placeholder:text-[#A8ADA6] placeholder:font-medium outline-none"
+                  />
+                </div>
+                <button
+                  onClick={() => handleSearch()}
+                  className="shrink-0 h-12 px-6 rounded-full bg-[#151714] text-white text-[13px] font-bold v2-press"
+                >
+                  Buscar
+                </button>
               </div>
-              <h3 className="text-3xl font-black text-brand-night mb-6 uppercase tracking-tight leading-none">Garantía <br/>Escrow</h3>
-              <p className="text-brand-night/50 text-base leading-relaxed mb-10 font-bold opacity-80 pr-2">
-                Seguridad absoluta en cada transacción. Liberamos el pago solo tras tu plena satisfacción con el servicio final.
-              </p>
-              <div className="flex gap-2">
-                {[1,2,3].map(i => (
-                  <div key={i} className="w-8 h-1 bg-primary/10 rounded-full group-hover:bg-primary/30 transition-colors" />
-                ))}
-              </div>
-            </div>
-            
-            <div className="relative z-10 mt-auto">
-               <Logo className="opacity-[0.04] grayscale -mb-16 -mr-16 rotate-12 group-hover:scale-125 transition-transform duration-1000" size={240} />
-            </div>
-          </Card>
-        </div>
-      </section>
 
-      {/* Footer Boutique */}
-      <footer className="bg-brand-night text-white/40 py-24 px-8 text-center border-t border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(255,255,255,0.03),_transparent_70%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <Logo size={40} className="mx-auto mb-8 grayscale opacity-50 contrast-125" />
-          <div className="flex justify-center gap-12 mb-12 text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
-            <a href="#" className="hover:text-primary transition-colors">Servicios</a>
-            <a href="#" className="hover:text-primary transition-colors">Zonas</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacidad</a>
-            <a href="#" className="hover:text-primary transition-colors">Soporte</a>
+              {/* Sugerencias */}
+              {showSuggestions && searchTerm.length > 0 && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowSuggestions(false)} />
+                  <div className="absolute top-full left-0 right-0 mt-3 p-2 rounded-[1.75rem] v2-shadow-float z-20 v2-scale bg-white">
+                    {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).map((s, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setSearchTerm(s);
+                          setShowSuggestions(false);
+                          handleSearch(s);
+                        }}
+                        className="w-full text-left px-5 py-3.5 rounded-[1.15rem] hover:bg-[#F3F4F1] text-[14px] font-semibold text-[#151714] flex items-center justify-between group transition-colors"
+                      >
+                        <span>{s}</span>
+                        <ChevronRight size={15} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-primary" />
+                      </button>
+                    ))}
+                    {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+                      <p className="px-5 py-6 text-center text-[#A8ADA6] text-[13px] font-medium">
+                        Presiona Enter para buscar “{searchTerm}”
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] mb-4 text-primary">I mendly · 2026</p>
-          <p className="text-xs max-w-sm mx-auto opacity-30 font-medium leading-relaxed">
-            Plataforma confidencial para gestión de servicios domésticos premium. <br/>Calidad, rapidez y seguridad garantizada.
-          </p>
+        </header>
+
+        {/* ── Chips de categorías, empalmadas sobre el hero ── */}
+        <div className="v2-rise v2-d4 relative z-10 -mt-7 px-6 md:px-12">
+          <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x pb-1">
+            <Chip label="Todos" active={activeChip === 'Todos'} onClick={() => chipFilter('Todos')} />
+            {CATEGORIES.map(c => (
+              <Chip key={c.slug} label={c.name} active={activeChip === c.name} onClick={() => chipFilter(c.slug)} />
+            ))}
+          </div>
         </div>
-      </footer>
-      
-      {/* Bottom Nav (Standardized) */}
-      <BottomNav onLogout={handleLogout} />
+
+        {/* ── Proveedores destacados — tarjetas image-forward ── */}
+        {featured.length > 0 && (
+          <section className="v2-rise v2-d5 mt-10 pl-6 md:pl-12">
+            <div className="pr-6 md:pr-12">
+              <SectionHead title="Certificados destacados" action="Ver todos" href="/cliente/search?q=" />
+            </div>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pr-6 md:pr-12 pb-2">
+              {featured.map((p, i) => {
+                const name = p.users?.full_name || 'Proveedor';
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/cliente/providers/${p.id}`}
+                    className="snap-start shrink-0 w-[78%] sm:w-[340px] group"
+                  >
+                    <article className="relative h-[420px] rounded-[2.25rem] overflow-hidden v2-shadow-lift v2-press v2-float bg-[#151714]">
+                      {p.users?.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.users.avatar_url}
+                          alt={name}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 v2-hero-grad flex items-center justify-center">
+                          <span className="text-white/90 text-7xl font-bold">
+                            {name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+
+                      {p.is_verified && (
+                        <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white rounded-full pl-2.5 pr-3.5 h-9 text-[12px] font-semibold">
+                          <BadgeCheck size={14} className="text-white" /> Certificado
+                        </span>
+                      )}
+                      <RatingPill value={Number(p.rating) || 0} className="absolute top-4 right-4" />
+
+                      <div className="absolute inset-x-0 bottom-0 p-5">
+                        <h3 className="text-white text-[21px] font-bold tracking-tight leading-tight">{name}</h3>
+                        <p className="text-white/60 text-[13px] font-medium mb-4">
+                          {p.category} · {p.reviews_count} reseñas
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="h-12 px-6 inline-flex items-center rounded-full bg-white text-[#151714] text-[13px] font-bold v2-press">
+                            Ver perfil
+                          </span>
+                          {p.base_price > 0 && (
+                            <span className="text-white/80 text-[13px] font-semibold tabular-nums">
+                              desde ${Number(p.base_price).toFixed(0)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ── Banner ink: Tablero de Proyectos ── */}
+        <Reveal className="mt-12 px-6 md:px-12">
+          <div className="relative overflow-hidden rounded-[2.25rem] bg-[#151714] text-white p-8 md:p-12 v2-shadow-float">
+            <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
+            <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+              <div className="flex-1">
+                <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-primary mb-4">
+                  <ShieldCheck size={14} /> Tablero de proyectos
+                </span>
+                <h2 className="text-[26px] md:text-3xl font-bold tracking-tight leading-tight mb-3">
+                  Publica tu proyecto y deja que te busquen
+                </h2>
+                <p className="text-[14px] font-medium text-white/55 max-w-lg">
+                  Una pérgola, una cocina, una remodelación. Recibe hasta 5 ofertas de
+                  proveedores verificados — con anticipo protegido y Garantía I mendly.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 md:w-56">
+                <Link
+                  href="/cliente/proyectos/nuevo"
+                  className="h-14 rounded-full bg-primary text-white text-[13px] font-bold flex items-center justify-center shadow-lg shadow-primary/30 v2-press hover:bg-primary-dark transition-colors"
+                >
+                  Publicar proyecto
+                </Link>
+                <Link
+                  href="/cliente/proyectos"
+                  className="h-14 rounded-full border border-white/15 text-white/85 text-[13px] font-semibold flex items-center justify-center v2-press hover:bg-white/10 transition-colors"
+                >
+                  Ver mis proyectos
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── Grid de categorías ── */}
+        <Reveal className="mt-12 px-6 md:px-12">
+          <SectionHead title="Categorías" action="Explorar" href="/cliente/categories" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            {CATEGORIES.map(cat => (
+              <IconTile
+                key={cat.slug}
+                icon={<cat.icon size={24} strokeWidth={2} />}
+                label={cat.name}
+                onClick={() => router.push(`/cliente/search?q=${encodeURIComponent(cat.slug)}`)}
+              />
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ── Franja de confianza ── */}
+        <Reveal className="mt-12 px-6 md:px-12">
+          <div className="rounded-[2.25rem] bg-[#E9F7EF] p-7 md:p-9 flex flex-col sm:flex-row sm:items-center gap-5">
+            <span className="w-14 h-14 shrink-0 rounded-[1.15rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
+              <ShieldCheck size={26} />
+            </span>
+            <div className="flex-1">
+              <h3 className="text-[17px] font-bold tracking-tight text-[#151714] mb-1">
+                Garantía I mendly de hasta $10,000 MXN
+              </h3>
+              <p className="text-[13.5px] font-medium text-[#70756E]">
+                Paga dentro de la app y tu anticipo queda protegido. Si algo sale mal,
+                lo corregimos con otro certificado o te reembolsamos.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
+      <ClientNav />
     </main>
   );
 }

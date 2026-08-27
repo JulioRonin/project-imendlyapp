@@ -72,3 +72,83 @@ body {
     @apply border-black/5 transition-all duration-200;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   UI CLIENTE v2 — "Esmeralda Aire"
+   Tokens y motion del rediseño del portal cliente.
+   Spec: docs/design/ui-cliente-v2.md
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --v2-ground: #F3F4F1;
+  --v2-card: #FFFFFF;
+  --v2-card-soft: #FAFBF8;
+  --v2-ink: #151714;
+  --v2-muted: #70756E;
+  --v2-faint: #A8ADA6;
+  --v2-line: rgba(21, 23, 20, 0.06);
+  --v2-tint: #E9F7EF;
+}
+
+.v2-hero-grad {
+  background: linear-gradient(150deg, #43C688 0%, #2FA36B 45%, #1E7A4E 100%);
+}
+
+.v2-shadow-soft  { box-shadow: 0 2px 10px rgba(21, 23, 20, 0.04); }
+.v2-shadow-lift  { box-shadow: 0 12px 32px -16px rgba(21, 23, 20, 0.12); }
+.v2-shadow-float { box-shadow: 0 24px 48px -20px rgba(21, 23, 20, 0.16); }
+
+/* ---- Motion ---- */
+@keyframes v2-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes v2-scale {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes v2-shimmer {
+  from { background-position: -400px 0; }
+  to   { background-position: 400px 0; }
+}
+
+.v2-rise  { animation: v2-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v2-scale { animation: v2-scale 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v2-d1 { animation-delay: 70ms; }
+.v2-d2 { animation-delay: 140ms; }
+.v2-d3 { animation-delay: 210ms; }
+.v2-d4 { animation-delay: 280ms; }
+.v2-d5 { animation-delay: 350ms; }
+.v2-d6 { animation-delay: 420ms; }
+.v2-d7 { animation-delay: 490ms; }
+.v2-d8 { animation-delay: 560ms; }
+
+.v2-press {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.v2-press:active { transform: scale(0.965); }
+
+.v2-float {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .v2-float:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px -20px rgba(21, 23, 20, 0.16);
+  }
+}
+
+.v2-shimmer {
+  background: linear-gradient(90deg, #ECEDEA 0%, #F6F7F4 40%, #ECEDEA 80%);
+  background-size: 800px 100%;
+  animation: v2-shimmer 1.4s linear infinite;
+}
+
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-rise, .v2-scale, .v2-shimmer { animation: none; opacity: 1; transform: none; }
+  .v2-press, .v2-float { transition: none; }
+}
