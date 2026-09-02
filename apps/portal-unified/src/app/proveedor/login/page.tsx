@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, LogOut, Globe, Shield } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft, ShieldCheck, Briefcase } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { usePlatformStore } from '@/store/usePlatformStore';
@@ -27,7 +24,7 @@ export default function ProfessionalLoginPage() {
         .select('role')
         .eq('id', user.id)
         .single();
-      
+
       if (data) return data;
       if (i < retries - 1) await new Promise(resolve => setTimeout(resolve, delay));
     }
@@ -84,111 +81,107 @@ export default function ProfessionalLoginPage() {
   };
 
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-8 overflow-hidden font-urbanist bg-brand-night">
-      {/* Decorative Blur */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary opacity-[0.1] blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#FF6B47] opacity-[0.05] blur-[120px] rounded-full pointer-events-none" />
+    <main className="min-h-[100dvh] bg-linen flex flex-col lg:flex-row">
+      {/* ── Foto a sangre ── */}
+      <section className="relative h-[44vh] min-h-[320px] lg:h-auto lg:min-h-[100dvh] lg:w-[52%] rounded-b-[2.75rem] lg:rounded-none overflow-hidden shrink-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/carpentry.png" alt="Taller de carpintería" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/15 to-transparent" />
 
-      <div className="relative z-10 w-full max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <div className="flex justify-center mb-16">
-           <Logo size={100} orientation="vertical" variant="dark" />
+        <div className="v3-blur-in absolute top-6 left-6 lg:top-10 lg:left-10">
+          <Logo size={30} variant="dark" />
         </div>
 
-        <Card variant="glass" className="p-12 md:p-16 rounded-[4rem] border-white/10 shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)] backdrop-blur-2xl bg-white/5">
-          <div className="text-center mb-14">
-            <h1 className="text-5xl font-black text-white tracking-tighter mb-4 uppercase drop-shadow-2xl">
-              Profesionales
-            </h1>
-            <p className="text-primary text-[11px] font-black uppercase tracking-[0.5em] opacity-90">
-              Gestión y Crecimiento de tu Oficio
-            </p>
+        <div className="v3-blur-in absolute inset-x-5 bottom-5 lg:inset-x-10 lg:bottom-10 glass rounded-[1.9rem] p-6 lg:p-8 max-w-lg" style={{ animationDelay: '200ms' }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-2">Para profesionales</p>
+          <h2 className="text-[24px] lg:text-[32px] font-semibold tracking-tight leading-tight text-ink">
+            Tu oficio, con clientes reales y cobro garantizado.
+          </h2>
+          <p className="mt-2 text-[13.5px] font-medium text-muted">
+            Solicitudes en tu zona, anticipo protegido y pago al día siguiente.
+          </p>
+          <p className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-sage">
+            <ShieldCheck size={15} /> Red de profesionales certificados
+          </p>
+        </div>
+      </section>
+
+      {/* ── Formulario ── */}
+      <section className="flex-1 flex items-center justify-center px-6 py-10 lg:px-16 lg:py-14">
+        <div className="w-full max-w-md">
+          <div className="v3-blur-in" style={{ animationDelay: '120ms' }}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">Ya tengo cuenta</p>
+            <h1 className="mt-2 text-[34px] lg:text-[42px] font-semibold tracking-tight leading-[1.02] text-ink">Entrar al portal</h1>
+            <p className="mt-2 text-[14px] font-medium text-muted">Gestiona tu agenda, ofertas y pagos desde un solo lugar.</p>
           </div>
 
-          <div className="space-y-12">
-            {/* Login Section */}
-            <div className="space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="h-[1px] flex-1 bg-white/10" />
-                <h2 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] whitespace-nowrap">Ya tengo cuenta</h2>
-                <div className="h-[1px] flex-1 bg-white/10" />
-              </div>
-              
-              {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold text-center animate-in shake duration-300">
-                  {error}
-                </div>
-              )}
-              
-              <form 
-                className="space-y-5" 
-                onSubmit={handleSubmit}
-              >
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-1">Email Profesional</label>
-                  <Input 
-                    type="email" 
-                    placeholder="NOMBRE@COMPANIA.COM" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required 
-                    className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-1">Contraseña</label>
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required 
-                    className="bg-white/10 border-white/5 text-white placeholder:text-white/20 h-16 rounded-2xl text-[12px] font-bold uppercase tracking-tight focus:bg-white/15 focus:border-primary/50 transition-all" 
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full h-18 py-8 text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-white hover:bg-primary/80 transition-all rounded-3xl shadow-[0_20px_48px_rgba(124,58,237,0.3)] border-none mt-6 group overflow-hidden relative"
-                >
-                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                   {loading ? "Cargando..." : "Entrar al Portal"}
-                </Button>
-              </form>
+          {error && (
+            <div className="v2-rise mt-6 p-4 rounded-[1.25rem] bg-error/10 text-error text-[13px] font-semibold text-center">
+              {error}
             </div>
+          )}
 
-            {/* Registration Section */}
-            <div className="space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="h-[1px] flex-1 bg-white/10" />
-                <h2 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] whitespace-nowrap">Soy nuevo</h2>
-                <div className="h-[1px] flex-1 bg-white/10" />
-              </div>
-
-              <div className="bg-white/5 p-10 rounded-[3rem] border border-white/5 text-center relative overflow-hidden group hover:bg-white/[0.07] transition-all">
-                <div className="absolute top-0 right-0 p-8 opacity-5 text-white">
-                  <Shield size={64} strokeWidth={1} />
-                </div>
-                <p className="text-white/80 text-sm mb-10 leading-relaxed font-medium relative z-10 px-4">
-                  Únete a la red más exclusiva de prestadores de servicios y digitaliza tu operación con nuestra infraestructura premium.
-                </p>
-                <Link href="/proveedor/onboarding">
-                  <Button className="w-full h-16 text-[10px] font-black uppercase tracking-[0.3em] bg-transparent border-white/20 text-white hover:bg-white hover:text-brand-night transition-all rounded-2xl relative z-10 shadow-2xl">
-                    Postularme Ahora
-                  </Button>
-                </Link>
-              </div>
+          <form
+            className="v2-rise v2-d2 mt-8 space-y-4"
+            onSubmit={handleSubmit}
+          >
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-2 ml-1">Correo profesional</label>
+              <input
+                type="email"
+                placeholder="nombre@correo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full h-14 px-5 bg-sand rounded-[1.25rem] border-0 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30"
+              />
             </div>
-          </div>
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-2 ml-1">Contraseña</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full h-14 px-5 bg-sand rounded-[1.25rem] border-0 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 w-full h-14 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-60"
+            >
+              {loading ? "Entrando…" : <>Entrar al portal <ArrowUpRight size={17} /></>}
+            </button>
+          </form>
+
+          {/* Soy nuevo */}
+          <Link
+            href="/proveedor/onboarding"
+            className="v2-rise v2-d4 group mt-6 flex items-center gap-4 bg-cream rounded-[1.75rem] p-5 v2-shadow-soft v2-press"
+          >
+            <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-primary-light text-primary flex items-center justify-center">
+              <Briefcase size={19} />
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[15px] font-semibold text-ink">¿Eres nuevo? Postúlate</p>
+              <p className="text-[12.5px] font-medium text-muted mt-0.5">Únete a la red de profesionales certificados I mendly.</p>
+            </div>
+            <span className="w-10 h-10 shrink-0 rounded-full bg-ink text-white flex items-center justify-center transition-transform duration-500 group-hover:rotate-45">
+              <ArrowUpRight size={16} />
+            </span>
+          </Link>
 
           <DevBypassPanel />
-        </Card>
 
-        <div className="mt-12 flex justify-center">
-          <Link href="/role-selection" className="flex items-center gap-3 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] hover:text-white transition-colors group">
-            <Home size={16} className="group-hover:-translate-y-0.5 transition-transform" /> Volver a Roles
-          </Link>
+          <div className="v2-rise v2-d5 mt-8 flex justify-center">
+            <Link href="/role-selection" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
+              <ArrowLeft size={14} /> Volver a la selección de rol
+            </Link>
+          </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

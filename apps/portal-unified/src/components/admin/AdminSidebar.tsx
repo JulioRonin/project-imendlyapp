@@ -4,12 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Logo } from '@i-mendly/shared/Logo';
-import { 
-  BarChart3, 
-  AlertCircle, 
-  UserPlus, 
-  Users, 
-  TrendingUp, 
+import {
+  BarChart3,
+  AlertCircle,
+  UserPlus,
+  Users,
+  TrendingUp,
   Zap,
   Settings,
   LogOut,
@@ -36,39 +36,45 @@ export function AdminSidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-black-rich text-white flex flex-col sticky top-0 h-screen p-6 shrink-0 z-50">
-      <div className="mb-12">
-        <Logo size={32} variant="dark" />
+    <aside className="w-64 shrink-0 sticky top-0 h-screen bg-cream border-r border-line flex flex-col p-5 z-50">
+      <div className="px-3 pt-2 pb-8">
+        <Logo size={30} />
+        <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-faint">Panel de operación</p>
       </div>
-      <nav className="flex-1 space-y-2">
+
+      <nav className="flex-1 space-y-1">
         {navItems.map((item, i) => {
           // Check if exactly matching or if it's a sub-path (e.g., /admin/professionals/new)
-          const isActive = item.href === '/admin' 
-            ? pathname === '/admin' 
+          const isActive = item.href === '/admin'
+            ? pathname === '/admin'
             : pathname.startsWith(item.href);
 
           return (
-            <Link key={i} href={item.href}>
-              <div className={`
-                flex items-center gap-3 px-4 py-3 rounded-pill transition-all
-                ${isActive ? 'bg-primary text-white shadow-lg shadow-primary/20 font-semibold' : 'text-white/50 hover:text-white hover:bg-white/5'}
-              `}>
-                {item.icon}
-                <span className="text-sm font-[500]">{item.label}</span>
-              </div>
+            <Link
+              key={i}
+              href={item.href}
+              className={`flex items-center gap-3 h-11 px-4 rounded-[1rem] text-[13px] font-semibold transition-colors duration-300 v2-press ${
+                isActive
+                  ? 'bg-primary-light text-primary'
+                  : 'text-muted hover:text-ink hover:bg-sand/60'
+              }`}
+            >
+              <span className={isActive ? 'text-primary' : 'text-faint'}>{item.icon}</span>
+              <span className="flex-1">{item.label}</span>
+              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
             </Link>
           );
         })}
       </nav>
-      
-      <div className="pt-6 border-t border-white/10 mt-6">
-         <button 
-           onClick={handleLogout}
-           className="flex items-center gap-3 px-4 py-3 rounded-pill w-full text-im-error hover:bg-im-error/10 transition-all font-[600] text-sm"
-         >
-           <LogOut size={18} />
-           Cerrar Sesión
-         </button>
+
+      <div className="pt-4 mt-4 border-t border-line">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 h-11 px-4 rounded-[1rem] text-[13px] font-semibold text-error hover:bg-error/5 transition-colors v2-press"
+        >
+          <LogOut size={17} />
+          Cerrar sesión
+        </button>
       </div>
     </aside>
   );
