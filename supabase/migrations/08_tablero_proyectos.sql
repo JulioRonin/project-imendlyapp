@@ -153,6 +153,28 @@ RETURNS BOOLEAN AS $$
   SELECT EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin');
 $$ LANGUAGE sql SECURITY DEFINER;
 
+-- Las comprobaciones cruzadas entre projects y project_offers van en
+-- funciones SECURITY DEFINER: si una política consultara la otra tabla
+-- directamente, cada consulta dispararía la RLS de la contraria en
+-- ciclo ("infinite recursion detected in policy"). Al ejecutarse con
+-- los privilegios del dueño, estas funciones no reevalúan RLS y el
+-- ciclo se rompe; solo responden sí/no sobre el usuario de la sesión.
+CREATE OR REPLACE FUNCTION public.owns_project(p_project_id UUID)
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.projects
+    WHERE id = p_project_id AND client_id = auth.uid()
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+CREATE OR REPLACE FUNCTION public.has_offer_on_project(p_project_id UUID)
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.project_offers
+    WHERE project_id = p_project_id AND provider_id = auth.uid()
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_offers ENABLE ROW LEVEL SECURITY;
 
@@ -167,10 +189,7 @@ CREATE POLICY "Providers browse open projects" ON public.projects
 
 DROP POLICY IF EXISTS "Providers see projects they offered on" ON public.projects;
 CREATE POLICY "Providers see projects they offered on" ON public.projects
-  FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.project_offers po
-            WHERE po.project_id = id AND po.provider_id = auth.uid())
-  );
+  FOR SELECT USING (public.has_offer_on_project(id));
 
 DROP POLICY IF EXISTS "Admin all projects" ON public.projects;
 CREATE POLICY "Admin all projects" ON public.projects
@@ -183,17 +202,11 @@ CREATE POLICY "Providers manage own offers" ON public.project_offers
 
 DROP POLICY IF EXISTS "Project owner sees offers" ON public.project_offers;
 CREATE POLICY "Project owner sees offers" ON public.project_offers
-  FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.projects p
-            WHERE p.id = project_id AND p.client_id = auth.uid())
-  );
+  FOR SELECT USING (public.owns_project(project_id));
 
 DROP POLICY IF EXISTS "Project owner resolves offers" ON public.project_offers;
 CREATE POLICY "Project owner resolves offers" ON public.project_offers
-  FOR UPDATE USING (
-    EXISTS (SELECT 1 FROM public.projects p
-            WHERE p.id = project_id AND p.client_id = auth.uid())
-  );
+  FOR UPDATE USING (public.owns_project(project_id));
 
 DROP POLICY IF EXISTS "Admin all offers" ON public.project_offers;
 CREATE POLICY "Admin all offers" ON public.project_offers

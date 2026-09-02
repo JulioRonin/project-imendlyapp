@@ -1,28 +1,38 @@
 @import "tailwindcss";
 
+/* Paleta unificada "Arcilla & Lino" — ver docs/design/design-system.md.
+   Los nombres antiguos (brand-night, coral, teal…) se conservan para no
+   romper clases existentes, pero apuntan a la paleta nueva. */
 :root {
-  --background: #f8fafc;
-  --foreground: #060d16;
-  
-  /* Brand Colors */
-  --brand-night: #060d16;
-  --brand-navy: #0f3460;
-  --brand-coral: #ff6b47;
-  --brand-teal: #0891b2;
-  --brand-glacial: #bae6fd;
+  --background: #F4F0E8;
+  --foreground: #1F1C18;
 
-  /* Green Aesthetic (I Mendly) */
-  --primary: #3DB87A;
-  --primary-light: #E8F7F0;
-  --primary-dark: #2A9460;
-  --secondary: #3DB87A;
-  --secondary-light: #E8F7F0;
+  --brand-night: #1F1C18;
+  --brand-navy: #2B241F;
+  --brand-coral: #C8663E;
+  --brand-teal: #7F9A78;
+  --brand-glacial: #E9EFE5;
+
+  --primary: #C8663E;
+  --primary-light: #F6E6DD;
+  --primary-dark: #B0552F;
+  --secondary: #7F9A78;
+  --secondary-light: #E9EFE5;
+
+  --linen: #F4F0E8;
+  --sand: #EAE3D8;
+  --cream: #FBF8F2;
+  --ink: #1F1C18;
+  --muted: #7B7267;
+  --faint: #ADA398;
+  --line: rgba(31, 28, 24, 0.07);
+  --clay-deep: #8A4529;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-brand-night: var(--brand-night);
   --color-brand-navy: var(--brand-navy);
   --color-brand-coral: var(--brand-coral);
@@ -34,6 +44,18 @@
   --color-primary-dark: var(--primary-dark);
   --color-secondary: var(--secondary);
   --color-secondary-light: var(--secondary-light);
+
+  --color-linen: var(--linen);
+  --color-sand: var(--sand);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-clay-deep: var(--clay-deep);
+  --color-sage: var(--secondary);
+  --color-sage-light: var(--secondary-light);
+  --color-black-rich: var(--ink);
 }
 
 body {

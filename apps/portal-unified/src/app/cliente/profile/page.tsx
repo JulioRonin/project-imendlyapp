@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, User, Phone, Mail, MapPin, CreditCard, Plus, ShieldCheck, ChevronRight, Edit2, CheckCircle2, Trash2, Loader2, Info } from 'lucide-react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
+import {
+  ArrowLeft, User, Phone, Mail, MapPin, CreditCard, Plus,
+  ShieldCheck, ChevronRight, Edit2, Trash2, Loader2, Info, LogOut,
+} from 'lucide-react';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { BottomNav } from '@i-mendly/shared';
+import { ClientNav } from '@/components/client/ClientNav';
+import { Reveal } from '@/components/client/ui';
 
 import { supabase } from '@/lib/supabase';
+
+const inputCls =
+  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FBF8F2] text-[#1F1C18] text-[14px] font-semibold placeholder:text-[#ADA398] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow disabled:text-[#7B7267]';
 
 export default function ClientProfilePage() {
   const router = useRouter();
@@ -18,7 +21,7 @@ export default function ClientProfilePage() {
   const [isAddingPayment, setIsAddingPayment] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  
+
   // Form States
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
@@ -69,14 +72,14 @@ export default function ClientProfilePage() {
       if (addrData) {
         setAddresses(addrData);
       }
-      
+
       // 3. Mock logic for completeness check
       setProfileComplete({
         hasPhone: !!userData?.phone,
         hasAddress: (addrData?.length || 0) > 0,
         hasPayment: false // Start empty as requested
       });
-      
+
       setLoading(false);
     };
 
@@ -90,7 +93,7 @@ export default function ClientProfilePage() {
 
   const handleSaveInfo = async () => {
     if (!userId) return;
-    
+
     setLoading(true);
     const { error } = await supabase
       .from('users')
@@ -149,7 +152,7 @@ export default function ClientProfilePage() {
 
   const handleDeleteAddress = async (addrId: string) => {
     if (!confirm("¿Eliminar esta dirección?")) return;
-    
+
     setLoading(true);
     const { error } = await supabase
       .from('user_addresses')
@@ -167,278 +170,380 @@ export default function ClientProfilePage() {
   // Removed mock PAYMENT_METHODS as per user request
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-32">
-      {/* Profile Incomplete Notice */}
-      {(!profileComplete.hasPhone || !profileComplete.hasAddress || !profileComplete.hasPayment) && (
-        <div className="px-8 mt-4 animate-in fade-in slide-in-from-top-2 duration-700">
-          <Card className="p-6 bg-amber-50 border-amber-200 border shadow-none rounded-[2rem] flex items-center gap-5">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-sm shrink-0">
-              <Info size={24} />
-            </div>
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
+      {/* ── Header interno v2 ── */}
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
+        <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            aria-label="Volver"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
+          >
+            <ArrowLeft size={19} />
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Mi cuenta</p>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Perfil</h1>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-3xl mx-auto px-6 mt-2 space-y-8">
+        {/* ── Aviso de perfil incompleto ── */}
+        {(!profileComplete.hasPhone || !profileComplete.hasAddress || !profileComplete.hasPayment) && (
+          <div className="v2-rise v2-d1 bg-amber-50 rounded-[1.75rem] p-5 flex items-center gap-4">
+            <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-white text-amber-500 flex items-center justify-center v2-shadow-soft">
+              <Info size={22} />
+            </span>
             <div>
-              <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-1">Perfil Incompleto</p>
-              <p className="text-[11px] text-amber-600 font-bold">
+              <p className="text-[13.5px] font-bold tracking-tight text-amber-700 mb-0.5">Perfil incompleto</p>
+              <p className="text-[12.5px] font-medium text-amber-700/80 leading-relaxed">
                 Para poder reservar servicios, necesitamos tu {
                   [!profileComplete.hasPhone && 'teléfono', !profileComplete.hasAddress && 'dirección', !profileComplete.hasPayment && 'cuenta bancaria'].filter(Boolean).join(', ')
                 }.
               </p>
             </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Header Boutique */}
-      <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <button 
-          onClick={() => router.back()}
-          className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-brand-night hover:text-primary hover:scale-110 transition-all border border-slate-100"
-        >
-          <ArrowLeft size={20} strokeWidth={3} />
-        </button>
-        <div className="text-center">
-            <p className="text-[10px] font-black tracking-[0.5em] text-brand-night/20 uppercase mb-1">Mi Cuenta</p>
-            <h1 className="text-xl font-black text-brand-night uppercase tracking-tighter">Perfil de Usuario</h1>
-        </div>
-        <div className="w-12" /> {/* Spacer */}
-      </header>
-
-      <div className="px-8 max-w-3xl mx-auto space-y-12">
-        
-        {/* Top Profile Summary */}
-        <section className="flex flex-col items-center">
-          <div className="relative mb-6">
-            <Avatar name={personalInfo.name} size="lg" className="w-32 h-32 text-4xl shadow-2xl ring-8 ring-white" />
-            <button className="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-xl shadow-lg border-2 border-white flex items-center justify-center hover:scale-110 transition-transform">
-              <User size={18} />
-            </button>
           </div>
-          <h2 className="text-3xl font-black text-brand-night uppercase tracking-tighter mb-2">{personalInfo.name}</h2>
-          <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full border border-emerald-100/50">
-            <ShieldCheck size={14} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Cuenta Verificada</span>
-          </div>
+        )}
+
+        {/* ── Cabecera de perfil ── */}
+        <section className="v2-rise v2-d2 flex flex-col items-center text-center">
+          <Avatar
+            name={personalInfo.name}
+            size="xl"
+            className="w-28 h-28 text-3xl ring-4 ring-[#F6E6DD] v2-shadow-lift mb-5"
+          />
+          <h2 className="text-[22px] font-bold tracking-tight text-[#1F1C18] mb-1">{personalInfo.name}</h2>
+          <p className="text-[14px] font-medium text-[#7B7267] mb-4">{personalInfo.email}</p>
+          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#F6E6DD] text-[#2A9460] text-[11px] font-bold">
+            <ShieldCheck size={13} /> Cuenta verificada
+          </span>
         </section>
 
-        {/* Personal Information */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">Información Básica</h3>
-            <button 
-              onClick={() => isEditingInfo ? handleSaveInfo() : setIsEditingInfo(true)}
-              className="text-primary hover:text-primary/70 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-colors"
-            >
-              {isEditingInfo ? (
-                <><CheckCircle2 size={14} /> Guardar</>
-              ) : (
-                <><Edit2 size={14} /> Editar</>
+        {/* ── Información básica ── */}
+        <Reveal>
+          <section>
+            <div className="flex items-center justify-between mb-4 px-1">
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Información básica</h3>
+              {!isEditingInfo && (
+                <button
+                  onClick={() => setIsEditingInfo(true)}
+                  className="flex items-center gap-1.5 text-[13px] font-semibold text-primary v2-press"
+                >
+                  <Edit2 size={14} /> Editar
+                </button>
               )}
-            </button>
-          </div>
-
-          <Card className="p-8 rounded-[2rem] border-none shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] bg-white space-y-6">
-            <div>
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Nombre Completo</label>
-              <div className="relative">
-                <Input 
-                  value={personalInfo.name} 
-                  onChange={(e) => setPersonalInfo({...personalInfo, name: e.target.value})}
-                  disabled={!isEditingInfo}
-                  className={`pl-12 h-14 ${!isEditingInfo ? 'bg-slate-50 border-transparent text-brand-night font-bold' : ''}`}
-                />
-                <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Teléfono Celular</label>
-                <div className="relative">
-                  <Input 
-                    value={personalInfo.phone}
-                    onChange={(e) => setPersonalInfo({...personalInfo, phone: e.target.value})}
-                    disabled={!isEditingInfo}
-                    className={`pl-12 h-14 ${!isEditingInfo ? 'bg-slate-50 border-transparent text-brand-night font-bold' : ''}`}
-                  />
-                  <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                </div>
-              </div>
 
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Correo Electrónico</label>
-                <div className="relative">
-                  <Input 
-                    value={personalInfo.email}
-                    onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
-                    disabled={!isEditingInfo}
-                    className={`pl-12 h-14 ${!isEditingInfo ? 'bg-slate-50 border-transparent text-slate-500 font-medium' : ''}`}
-                  />
-                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                </div>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* Payment Methods */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">Métodos de Pago</h3>
-            <button 
-              onClick={() => setIsAddingPayment(true)}
-              className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors"
-            >
-              <Plus size={18} strokeWidth={2.5} />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {paymentMethods.map((method: any) => (
-              <Card key={method.id} className="p-6 rounded-[2rem] border border-slate-100 shadow-sm bg-white flex items-center justify-between hover:shadow-md transition-shadow group">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-10 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100">
-                    {method.icon}
+            <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+              {isEditingInfo ? (
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
+                      Nombre completo
+                    </label>
+                    <input
+                      value={personalInfo.name}
+                      onChange={(e) => setPersonalInfo({...personalInfo, name: e.target.value})}
+                      className={inputCls}
+                    />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-brand-night uppercase tracking-wider mb-1">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
+                      Teléfono celular
+                    </label>
+                    <input
+                      value={personalInfo.phone}
+                      onChange={(e) => setPersonalInfo({...personalInfo, phone: e.target.value})}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
+                      Correo electrónico
+                    </label>
+                    <input
+                      value={personalInfo.email}
+                      onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingInfo(false)}
+                      className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveInfo}
+                      className="flex-1 h-14 rounded-full bg-primary text-white text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+                    >
+                      {loading ? <Loader2 size={18} className="animate-spin mx-auto" /> : 'Guardar cambios'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-4 px-6 py-5">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                      <User size={19} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-medium text-[#ADA398]">Nombre completo</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate">{personalInfo.name || '—'}</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-black/[0.06] flex items-center gap-4 px-6 py-5">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                      <Phone size={19} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-medium text-[#ADA398]">Teléfono celular</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate tabular-nums">{personalInfo.phone || 'Sin registrar'}</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-black/[0.06] flex items-center gap-4 px-6 py-5">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                      <Mail size={19} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-medium text-[#ADA398]">Correo electrónico</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate">{personalInfo.email || '—'}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        </Reveal>
+
+        {/* ── Métodos de pago ── */}
+        <Reveal delay={60}>
+          <section>
+            <div className="flex items-center justify-between mb-4 px-1">
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Métodos de pago</h3>
+              <button
+                onClick={() => setIsAddingPayment(true)}
+                aria-label="Agregar método de pago"
+                className="w-10 h-10 rounded-full bg-[#F6E6DD] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
+              >
+                <Plus size={18} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+              {paymentMethods.map((method: any, i: number) => (
+                <div key={method.id} className={`flex items-center gap-4 px-6 py-5 group ${i > 0 ? 'border-t border-black/[0.06]' : ''}`}>
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                    <CreditCard size={19} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14.5px] font-semibold text-[#1F1C18]">
                       {method.type} terminada en {method.last4}
-                    </h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Expira {method.exp} {method.isDefault && <span className="ml-2 text-primary">· Principal</span>}
+                    </p>
+                    <p className="text-[12px] font-medium text-[#7B7267]">
+                      Expira {method.exp} {method.isDefault && <span className="text-primary font-semibold">· Principal</span>}
                     </p>
                   </div>
+                  <button className="text-[#ADA398] hover:text-red-500 transition-colors p-2 v2-press" aria-label="Eliminar método">
+                    <Trash2 size={17} />
+                  </button>
                 </div>
-                <button className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-                  <Trash2 size={18} />
-                </button>
-              </Card>
-            ))}
+              ))}
 
-            {isAddingPayment && (
-              <Card className="p-8 rounded-[2rem] border-2 border-dashed border-primary/20 bg-primary/5">
-                <h4 className="text-xs font-black text-brand-night uppercase tracking-widest mb-6">Agregar Nueva Tarjeta / Cuenta</h4>
-                <form onSubmit={handleSavePaymentMethod} className="space-y-4">
-                  <Input placeholder="Número de Tarjeta (16 dígitos)" className="h-14 bg-white" required />
-                  <div className="flex gap-4">
-                    <Input placeholder="MM/YY" className="h-14 bg-white" required />
-                    <Input placeholder="CVC" type="password" className="h-14 bg-white" required />
-                  </div>
-                  <Input placeholder="Nombre del Titular" className="h-14 bg-white" required />
-                  <div className="flex gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setIsAddingPayment(false)} className="flex-1 rounded-2xl h-14">Cancelar</Button>
-                    <Button type="submit" className="flex-1 rounded-2xl h-14 bg-brand-night hover:bg-black text-[11px] font-black uppercase tracking-widest">Guardar Cuenta</Button>
-                  </div>
-                </form>
-              </Card>
-            )}
-          </div>
-        </section>
+              {isAddingPayment ? (
+                <div className={`p-6 ${paymentMethods.length > 0 ? 'border-t border-black/[0.06]' : ''}`}>
+                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1F1C18] mb-5">Agregar nueva tarjeta / cuenta</h4>
+                  <form onSubmit={handleSavePaymentMethod} className="space-y-3.5">
+                    <input placeholder="Número de tarjeta (16 dígitos)" className={inputCls} required />
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <input placeholder="MM/YY" className={inputCls} required />
+                      <input placeholder="CVC" type="password" className={inputCls} required />
+                    </div>
+                    <input placeholder="Nombre del titular" className={inputCls} required />
+                    <div className="flex gap-3 pt-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingPayment(false)}
+                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 h-14 rounded-full bg-primary text-white text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+                      >
+                        Guardar cuenta
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                paymentMethods.length === 0 && (
+                  <button
+                    onClick={() => setIsAddingPayment(true)}
+                    className="w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF8F2] transition-colors"
+                  >
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                      <Plus size={19} strokeWidth={2.5} />
+                    </span>
+                    <span className="flex-1">
+                      <span className="block text-[14.5px] font-semibold text-[#1F1C18]">Agregar método de pago</span>
+                      <span className="block text-[12px] font-medium text-[#7B7267]">Tarjeta o cuenta bancaria</span>
+                    </span>
+                    <ChevronRight size={17} className="text-[#ADA398]" />
+                  </button>
+                )
+              )}
+            </div>
+          </section>
+        </Reveal>
 
-        {/* Addresses */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">Direcciones Guardadas</h3>
-            <button className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center hover:bg-slate-200 transition-colors">
-              <Plus size={18} strokeWidth={2.5} />
-            </button>
-          </div>
+        {/* ── Direcciones guardadas ── */}
+        <Reveal delay={120}>
+          <section>
+            <div className="flex items-center justify-between mb-4 px-1">
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Direcciones guardadas</h3>
+              <button
+                onClick={() => setIsAddingAddress(true)}
+                aria-label="Agregar dirección"
+                className="w-10 h-10 rounded-full bg-[#F6E6DD] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
+              >
+                <Plus size={18} strokeWidth={2.5} />
+              </button>
+            </div>
 
-          <div className="space-y-4">
-            {addresses.map((address: any) => (
-              <Card key={address.id} className="p-6 rounded-[2rem] border border-slate-100 shadow-sm bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition-shadow group">
-                <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mt-1">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-brand-night uppercase tracking-wider mb-1 flex items-center gap-3">
+            <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+              {addresses.map((address: any, i: number) => (
+                <div key={address.id} className={`flex items-center gap-4 px-6 py-5 group ${i > 0 ? 'border-t border-black/[0.06]' : ''}`}>
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                    <MapPin size={19} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14.5px] font-semibold text-[#1F1C18] flex items-center gap-2.5">
                       {address.title}
                       {address.is_default && (
-                        <span className="bg-primary/10 text-primary text-[8px] px-2 py-0.5 rounded-full">PRINCIPAL</span>
+                        <span className="inline-flex items-center h-6 px-2.5 rounded-full bg-[#F6E6DD] text-[#2A9460] text-[10px] font-bold">
+                          Principal
+                        </span>
                       )}
-                    </h4>
-                    <p className="text-xs font-medium text-slate-500 mb-1">{address.street}</p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{address.city}, {address.state} · C.P. {address.cp}</p>
+                    </p>
+                    <p className="text-[13px] font-medium text-[#7B7267] truncate">{address.street}</p>
+                    <p className="text-[12px] font-medium text-[#ADA398]">
+                      {address.city}, {address.state} · C.P. {address.cp}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleDeleteAddress(address.id)}
+                      aria-label="Eliminar dirección"
+                      className="text-[#ADA398] hover:text-red-500 transition-colors p-2 v2-press"
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                    <ChevronRight size={17} className="text-[#ADA398]" />
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                   <button 
-                    onClick={() => handleDeleteAddress(address.id)}
-                    className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                  <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary">
-                    Editar <ChevronRight size={14} className="ml-1" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
+              ))}
 
-            {isAddingAddress ? (
-              <Card className="p-8 rounded-[2rem] border-2 border-dashed border-primary/20 bg-primary/5">
-                <h4 className="text-xs font-black text-brand-night uppercase tracking-widest mb-6">Nueva Dirección</h4>
-                <form onSubmit={handleAddAddress} className="space-y-4">
-                  <Input 
-                    placeholder="Título (e.g. Casa, Oficina)" 
-                    value={newAddress.title}
-                    onChange={(e) => setNewAddress({...newAddress, title: e.target.value})}
-                    className="h-14 bg-white" 
-                    required 
-                  />
-                  <Input 
-                    placeholder="Calle y Número" 
-                    value={newAddress.street}
-                    onChange={(e) => setNewAddress({...newAddress, street: e.target.value})}
-                    className="h-14 bg-white" 
-                    required 
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input 
-                      placeholder="Ciudad" 
-                      value={newAddress.city}
-                      onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
-                      className="h-14 bg-white" 
-                      required 
+              {isAddingAddress ? (
+                <div className={`p-6 ${addresses.length > 0 ? 'border-t border-black/[0.06]' : ''}`}>
+                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1F1C18] mb-5">Nueva dirección</h4>
+                  <form onSubmit={handleAddAddress} className="space-y-3.5">
+                    <input
+                      placeholder="Título (e.g. Casa, Oficina)"
+                      value={newAddress.title}
+                      onChange={(e) => setNewAddress({...newAddress, title: e.target.value})}
+                      className={inputCls}
+                      required
                     />
-                    <Input 
-                      placeholder="Estado" 
-                      value={newAddress.state}
-                      onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
-                      className="h-14 bg-white" 
-                      required 
+                    <input
+                      placeholder="Calle y número"
+                      value={newAddress.street}
+                      onChange={(e) => setNewAddress({...newAddress, street: e.target.value})}
+                      className={inputCls}
+                      required
                     />
-                  </div>
-                  <Input 
-                    placeholder="Código Postal" 
-                    value={newAddress.cp}
-                    onChange={(e) => setNewAddress({...newAddress, cp: e.target.value})}
-                    className="h-14 bg-white" 
-                    required 
-                  />
-                  <div className="flex gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setIsAddingAddress(false)} className="flex-1 rounded-2xl h-14">Cancelar</Button>
-                    <Button type="submit" className="flex-1 rounded-2xl h-14 bg-brand-night hover:bg-black text-[11px] font-black uppercase tracking-widest">
-                      {loading ? <Loader2 className="animate-spin" /> : 'Guardar Dirección'}
-                    </Button>
-                  </div>
-                </form>
-              </Card>
-            ) : (
-                <button 
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <input
+                        placeholder="Ciudad"
+                        value={newAddress.city}
+                        onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
+                        className={inputCls}
+                        required
+                      />
+                      <input
+                        placeholder="Estado"
+                        value={newAddress.state}
+                        onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
+                        className={inputCls}
+                        required
+                      />
+                    </div>
+                    <input
+                      placeholder="Código postal"
+                      value={newAddress.cp}
+                      onChange={(e) => setNewAddress({...newAddress, cp: e.target.value})}
+                      className={inputCls}
+                      required
+                    />
+                    <div className="flex gap-3 pt-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingAddress(false)}
+                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 h-14 rounded-full bg-primary text-white text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors flex items-center justify-center"
+                      >
+                        {loading ? <Loader2 size={18} className="animate-spin" /> : 'Guardar dirección'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <button
                   onClick={() => setIsAddingAddress(true)}
-                  className="w-full py-8 rounded-[2rem] border-2 border-dashed border-slate-100 text-slate-300 font-black uppercase text-[10px] tracking-widest hover:border-primary/20 hover:text-primary transition-all flex flex-col items-center gap-2"
+                  className={`w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF8F2] transition-colors ${addresses.length > 0 ? 'border-t border-black/[0.06]' : ''}`}
                 >
-                  <Plus size={24} />
-                  Agregar Dirección
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
+                    <Plus size={19} strokeWidth={2.5} />
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-[14.5px] font-semibold text-[#1F1C18]">Agregar dirección</span>
+                    <span className="block text-[12px] font-medium text-[#7B7267]">Casa, oficina u otro lugar</span>
+                  </span>
+                  <ChevronRight size={17} className="text-[#ADA398]" />
                 </button>
-            )}
-          </div>
-        </section>
+              )}
+            </div>
+          </section>
+        </Reveal>
 
+        {/* ── Cerrar sesión ── */}
+        <Reveal delay={180}>
+          <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-red-50 transition-colors"
+            >
+              <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-red-50 text-red-500 flex items-center justify-center">
+                <LogOut size={19} />
+              </span>
+              <span className="flex-1 text-[14.5px] font-semibold text-red-500">Cerrar sesión</span>
+              <ChevronRight size={17} className="text-red-300" />
+            </button>
+          </div>
+        </Reveal>
       </div>
-      
-      {/* Bottom Nav */}
-      <BottomNav onLogout={handleLogout} />
+
+      <ClientNav />
     </main>
   );
 }

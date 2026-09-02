@@ -1,48 +1,53 @@
 "use client";
 
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { 
-  Sparkles, 
-  Search, 
-  MapPin, 
-  LogOut, 
-  ChevronRight, 
-  Zap, 
-  Droplets, 
-  Wind, 
-  Paintbrush,
+import {
+  Search,
+  MapPin,
+  LogOut,
+  ChevronRight,
+  ArrowUpRight,
+  Heart,
   User,
   Bell,
   Navigation,
   Shield,
   ShieldCheck,
-  BarChart3,
-  MessageCircle,
-  Home
+  BadgeCheck,
+  Star,
 } from 'lucide-react';
-import { BottomNav } from '@i-mendly/shared';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { Avatar } from '@i-mendly/shared/components/Avatar';
+import { ClientNav } from '@/components/client/ClientNav';
+import { Reveal } from '@/components/client/ui';
 
-const CATEGORIES = [
-  { name: 'Electricidad', icon: Zap, color: 'text-amber-500', slug: 'Electricidad' },
-  { name: 'Plomería', icon: Droplets, color: 'text-blue-500', slug: 'Plomería' },
-  { name: 'Climas', icon: Wind, color: 'text-cyan-500', slug: 'Climas/AC' },
-  { name: 'Pintura', icon: Paintbrush, color: 'text-purple-500', slug: 'Pintura' },
+// Oficios con su fotografía editorial (banco de imágenes del proyecto)
+const TRADES = [
+  { name: 'Electricidad', slug: 'Electricidad', img: '/assets/electrician.png', from: 'desde $180' },
+  { name: 'Plomería', slug: 'Plomería', img: '/assets/plumbing.png', from: 'desde $350' },
+  { name: 'Carpintería', slug: 'Carpintería', img: '/assets/carpentry.png', from: 'desde $1,500' },
+  { name: 'Climas', slug: 'Climas/AC', img: '/assets/ac_work.png', from: 'desde $400' },
+  { name: 'Pintura', slug: 'Pintura', img: '/assets/painting_work.png', from: 'desde $50/m²' },
+  { name: 'Jardinería', slug: 'Jardinería', img: '/assets/gardening.png', from: 'desde $300' },
+  { name: 'Limpieza', slug: 'Limpieza', img: '/assets/cleaning_professional.png', from: 'desde $400' },
+  { name: 'Cerrajería', slug: 'Cerrajería', img: '/assets/locksmith.png', from: 'desde $250' },
+];
+
+const TABS = ['Todos', 'Electricidad', 'Plomería', 'Carpintería', 'Climas/AC', 'Pintura', 'Jardinería', 'Limpieza'];
+
+// Etiquetas flotantes sobre la foto del hero (patrón "hotspot" de la referencia)
+const HOTSPOTS = [
+  { label: 'Pintura', price: 'desde $50/m²', style: { top: '18%', left: '7%' }, delay: 700 },
+  { label: 'Pérgola', price: 'desde $12,000', style: { top: '44%', right: '6%' }, delay: 900 },
+  { label: 'Cocina integral', price: 'desde $18,000', style: { bottom: '42%', left: '12%' }, delay: 1100 },
 ];
 
 const SUGGESTIONS = [
-  'Electricista', 'Plomería', 'Limpieza', 'Climas/AC', 'Pintura', 
+  'Electricista', 'Plomería', 'Limpieza', 'Climas/AC', 'Pintura',
   'Carpintería', 'Jardinería', 'Cerrajería', 'Fumigación', 'Remodelación', 'Moda y costura', 'Pisos', 'Herrería'
 ];
-
 
 export default function ClientHome() {
   const router = useRouter();
@@ -51,6 +56,10 @@ export default function ClientHome() {
   const [location, setLocation] = useState("México");
   const [isLocating, setIsLocating] = useState(false);
   const [profileIncomplete, setProfileIncomplete] = useState(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [featured, setFeatured] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState('Todos');
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -60,9 +69,11 @@ export default function ClientHome() {
       // Check users table for phone
       const { data: userData } = await supabase
         .from('users')
-        .select('phone')
+        .select('phone, full_name')
         .eq('id', user.id)
         .single();
+
+      if (userData?.full_name) setFirstName(userData.full_name.split(' ')[0]);
 
       // Check user_addresses table
       const { data: addrData } = await supabase
@@ -76,7 +87,18 @@ export default function ClientHome() {
       }
     };
 
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from('providers')
+        .select('id, category, rating, reviews_count, is_verified, base_price, users ( full_name, avatar_url )')
+        .eq('is_verified', true)
+        .order('rating', { ascending: false })
+        .limit(6);
+      if (data) setFeatured(data);
+    };
+
     checkProfile();
+    fetchFeatured();
   }, []);
 
   const handleSearch = (term?: string) => {
@@ -96,7 +118,7 @@ export default function ClientHome() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((pos) => {
         // Simulated location naming
-        setLocation("Monterrey, NL");
+        setLocation("Ciudad Juárez");
         setIsLocating(false);
       }, () => setIsLocating(false));
     } else {
@@ -104,313 +126,264 @@ export default function ClientHome() {
     }
   };
 
+  const pickTab = (tab: string) => {
+    setActiveTab(tab);
+    if (tab !== 'Todos') router.push(`/cliente/search?q=${encodeURIComponent(tab)}`);
+  };
+
+  const filteredSuggestions = SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
+
   return (
-    <main className="min-h-screen bg-[#FDFDFD] pb-32">
-      {/* Profile Incomplete Banner */}
+    <main className="min-h-screen bg-[#F4F0E8] pb-36 overflow-x-hidden">
+      {/* Aviso de perfil incompleto */}
       {profileIncomplete && (
-        <div className="bg-brand-night text-white py-3 px-8 flex items-center justify-between animate-in slide-in-from-top duration-700 sticky top-0 z-[60]">
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary animate-pulse">
-              <Shield size={16} />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em]">
-              Tu perfil está incompleto. <span className="text-primary hidden sm:inline ml-2 opacity-80">El teléfono y la dirección son obligatorios para solicitar servicios.</span>
+        <div className="v2-rise bg-[#1F1C18] text-white py-3 px-6 flex items-center justify-between gap-4 sticky top-0 z-[60]">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="w-8 h-8 shrink-0 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+              <Shield size={15} />
+            </span>
+            <p className="text-[12px] font-semibold truncate">
+              Completa tu perfil <span className="text-white/50 hidden sm:inline">— teléfono y dirección para solicitar servicios</span>
             </p>
           </div>
-          <Link 
-            href="/cliente/profile"
-            className="text-[10px] font-black uppercase tracking-widest bg-primary px-5 py-2 rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-          >
-            Completar Ahora
+          <Link href="/cliente/profile" className="shrink-0 text-[12px] font-bold bg-primary px-4 py-2 rounded-full v2-press">
+            Completar
           </Link>
         </div>
       )}
 
-      {/* Header Boutique */}
-      <nav className={`flex items-center justify-between px-8 py-6 max-w-7xl mx-auto sticky ${profileIncomplete ? 'top-[52px]' : 'top-0'} z-50 bg-white/80 backdrop-blur-xl border-b border-slate-50`}>
-        <Logo size={32} />
-        
-        <div className="hidden md:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
-          <Link href="/cliente/orders" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-night transition-colors">
-            Seguimiento de Órdenes
-          </Link>
-          <Link href="/cliente/reports" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-night transition-colors">
-            Reportes
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
-            <MapPin size={12} className="text-primary" />
-            {location}
-          </div>
-          
-          <div className="h-8 w-[1px] bg-slate-100 hidden sm:block" />
-          
-          <div className="flex items-center gap-4">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-brand-night hover:bg-slate-50 transition-all">
-              <Bell size={20} strokeWidth={1.5} />
-            </button>
-            <div className="group relative">
-              <Avatar name="Julio" size="md" className="cursor-pointer ring-2 ring-primary/5 hover:ring-primary/20 transition-all shadow-sm" />
-              <div className="absolute top-full right-0 mt-4 w-48 bg-white rounded-2xl shadow-2xl border border-slate-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
-                <button 
-                  onClick={() => router.push('/cliente/profile')}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-3"
-                >
-                  <User size={16} /> Ver Perfil
-                </button>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-[10px] font-black uppercase tracking-widest text-red-500 flex items-center gap-3"
-                >
-                  <LogOut size={16} /> Cerrar Sesión
-                </button>
-              </div>
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        {/* ── Barra superior ── */}
+        <div className="v3-blur-in flex items-center justify-between pt-7">
+          <div className="group relative flex items-center gap-3">
+            <Avatar name={firstName || 'Cliente'} size="md" className="cursor-pointer ring-4 ring-white" />
+            <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-[1.25rem] v2-shadow-float p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <button onClick={() => router.push('/cliente/profile')} className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#F4F0E8] text-[13px] font-semibold text-[#1F1C18] flex items-center gap-3">
+                <User size={15} /> Ver perfil
+              </button>
+              <button onClick={handleLogout} className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-[13px] font-semibold text-red-500 flex items-center gap-3">
+                <LogOut size={15} /> Cerrar sesión
+              </button>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <button onClick={handleLocate} className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 text-[12px] font-semibold text-[#1F1C18] v2-press">
+              {isLocating ? <Navigation size={13} className="animate-spin text-primary" /> : <MapPin size={13} className="text-primary" />}
+              {isLocating ? 'Ubicando…' : location}
+            </button>
+            <button aria-label="Notificaciones" className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#1F1C18] v2-press">
+              <Bell size={17} />
+            </button>
+          </div>
         </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="relative px-8 pt-20 pb-24 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-6 py-2.5 rounded-full mb-8 shadow-sm border border-emerald-100/50 animate-in fade-in slide-in-from-top-4 duration-700">
-          <Sparkles size={14} className="animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Nueva versión 1.0 disponible en {location}</span>
+        {/* ── Saludo editorial ── */}
+        <div className="mt-9">
+          <p className="v3-blur-in text-[15px] font-medium text-[#7B7267]" style={{ animationDelay: '120ms' }}>
+            Hola{firstName ? `, ${firstName}` : ''}
+          </p>
+          <h1 className="v3-blur-in text-[36px] md:text-[56px] font-semibold tracking-tight leading-[1.02] text-[#1F1C18] mt-1 max-w-2xl" style={{ animationDelay: '220ms' }}>
+            ¿Qué arreglamos hoy?
+          </h1>
         </div>
-        <h1 className="text-5xl md:text-7xl font-black text-brand-night leading-[1.1] mb-8 tracking-tighter max-w-4xl mx-auto">
-          Servicios del hogar <span className="text-primary italic">con confianza</span> y certeza.
-        </h1>
-        <p className="text-lg md:text-xl text-brand-night/60 mb-12 max-w-2xl mx-auto font-medium">
-          Conectamos a los mejores profesionales certificados con quienes buscan calidad, rapidez y seguridad en cada rincón de su hogar.
-        </p>
 
-        {/* Search & Location Block */}
-        <div className="max-w-3xl mx-auto relative">
-          <div className="flex flex-col md:flex-row gap-4 p-2 bg-white rounded-[2.5rem] shadow-[0_32px_128px_-12px_rgba(0,0,0,0.12)] border border-slate-50 relative z-20">
-            <div className="flex-1 relative group">
-              <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" />
-              <input 
+        {/* ── Buscador de vidrio ── */}
+        <div className="v3-blur-in relative mt-6 max-w-xl" style={{ animationDelay: '340ms' }}>
+          <div className="flex items-center gap-2 glass rounded-full p-1.5">
+            <div className="flex-1 flex items-center gap-3 pl-4 min-w-0">
+              <Search size={18} className="shrink-0 text-[#ADA398]" />
+              <input
                 type="text"
-                placeholder="¿Qué servicio necesitas?"
+                placeholder="Busca un servicio o proyecto"
                 value={searchTerm}
                 onFocus={() => setShowSuggestions(true)}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-16 pl-14 pr-6 bg-transparent text-brand-night font-bold placeholder:text-slate-300 outline-none"
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="w-full h-11 bg-transparent text-[#1F1C18] text-[15px] font-semibold placeholder:text-[#ADA398] placeholder:font-medium outline-none"
               />
             </div>
-            <div className="h-16 w-[1px] bg-slate-100 hidden md:block" />
-            <button 
-              onClick={handleLocate}
-              disabled={isLocating}
-              className="flex items-center gap-3 px-8 h-16 rounded-2xl md:rounded-[2rem] hover:bg-slate-50 text-slate-400 font-bold transition-all whitespace-nowrap"
-            >
-              <Navigation size={18} className={isLocating ? 'animate-spin text-primary' : ''} />
-              <span className="text-[11px] font-black uppercase tracking-widest">
-                {isLocating ? 'Buscando...' : 'Mi ubicación'}
-              </span>
+            <button onClick={() => handleSearch()} className="shrink-0 h-11 w-11 rounded-full bg-[#1F1C18] text-white flex items-center justify-center v2-press">
+              <ArrowUpRight size={18} />
             </button>
-            <Button 
-              onClick={() => handleSearch()}
-              size="lg" 
-              className="h-16 px-10 rounded-2xl md:rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20"
-            >
-              Buscar
-            </Button>
           </div>
-
-          {/* Dynamic Suggestions Dropdown */}
           {showSuggestions && searchTerm.length > 0 && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowSuggestions(false)} />
-              <Card className="absolute top-full left-0 right-0 mt-4 p-4 rounded-[2rem] shadow-2xl border-none z-20 animate-in fade-in slide-in-from-top-4 duration-300 bg-white/95 backdrop-blur-xl">
-                 <div className="space-y-1">
-                   {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).map((s, i) => (
-                     <button 
-                       key={i}
-                       onClick={() => {
-                         setSearchTerm(s);
-                         setShowSuggestions(false);
-                         handleSearch(s);
-                       }}
-                       className="w-full text-left px-6 py-4 rounded-xl hover:bg-primary/5 text-sm font-bold text-brand-night flex items-center justify-between group transition-colors"
-                     >
-                       <span>{s}</span>
-                       <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all text-primary" />
-                     </button>
-                   ))}
-                   {SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-                     <p className="px-6 py-8 text-center text-slate-400 text-xs font-medium italic">Presiona enter para buscar "{searchTerm}"</p>
-                   )}
-                 </div>
-              </Card>
+              <div className="absolute top-full left-0 right-0 mt-3 p-2 rounded-[1.75rem] bg-white v2-shadow-float z-20 v2-scale">
+                {filteredSuggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setSearchTerm(s); setShowSuggestions(false); handleSearch(s); }}
+                    className="w-full text-left px-5 py-3.5 rounded-[1.15rem] hover:bg-[#F4F0E8] text-[14px] font-semibold text-[#1F1C18] flex items-center justify-between group transition-colors"
+                  >
+                    <span>{s}</span>
+                    <ChevronRight size={15} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-primary" />
+                  </button>
+                ))}
+                {filteredSuggestions.length === 0 && (
+                  <p className="px-5 py-6 text-center text-[#ADA398] text-[13px] font-medium">Presiona Enter para buscar “{searchTerm}”</p>
+                )}
+              </div>
             </>
           )}
         </div>
-      </section>
 
-      {/* Tablero de Proyectos — publica y recibe ofertas */}
-      <section className="px-8 pb-24 max-w-7xl mx-auto">
-        <Card className="relative overflow-hidden p-10 md:p-14 rounded-[3rem] border-none bg-brand-night text-white shadow-float">
-          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-primary/15 blur-2xl" />
-          <div className="relative flex flex-col md:flex-row md:items-center gap-8">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-4">
-                <ShieldCheck size={16} className="text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Nuevo · Tablero de proyectos</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight mb-3">¿Tienes un proyecto en mente?<br />Publícalo y deja que te busquen.</h2>
-              <p className="text-sm font-medium text-white/60 max-w-lg">Una pérgola, una cocina, una remodelación. Publica lo que necesitas y recibe hasta 5 ofertas de proveedores verificados de tu zona — con anticipo protegido y Garantía I mendly.</p>
-            </div>
-            <div className="flex flex-col gap-3 md:w-56">
-              <Link href="/cliente/proyectos/nuevo">
-                <Button variant="primary" className="w-full h-14 rounded-2xl bg-primary text-white hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest">
-                  Publicar proyecto
-                </Button>
-              </Link>
-              <Link href="/cliente/proyectos">
-                <Button variant="ghost" className="w-full h-14 rounded-2xl border border-white/15 text-white/80 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest">
-                  Ver mis proyectos
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* Categories Section */}
-      <section className="px-8 pb-32 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-12 px-2">
-          <div className="space-y-1">
-            <h2 className="text-3xl font-black text-brand-night tracking-tight uppercase">Categorías</h2>
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Servicios más solicitados</p>
-          </div>
-          <Link href="/cliente/categories" className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:gap-3 transition-all">
-            Ver todas <ChevronRight size={14} />
-          </Link>
+        {/* ── Tabs subrayadas (patrón editorial) ── */}
+        <div className="v3-blur-in mt-8 -mx-6 md:mx-0 px-6 md:px-0 flex gap-7 overflow-x-auto no-scrollbar" style={{ animationDelay: '440ms' }}>
+          {TABS.map(tab => {
+            const active = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => pickTab(tab)}
+                className={`relative shrink-0 pb-3 text-[14px] transition-colors duration-300 ${active ? 'font-semibold text-[#1F1C18]' : 'font-medium text-[#ADA398] hover:text-[#7B7267]'}`}
+              >
+                {tab}
+                <span className={`absolute left-0 right-0 -bottom-px h-[3px] rounded-full bg-primary transition-transform duration-500 origin-left ${active ? 'scale-x-100' : 'scale-x-0'}`} />
+              </button>
+            );
+          })}
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {CATEGORIES.map((cat, i) => (
-            <div 
-              key={i} 
-              onClick={() => handleSearch(cat.slug)}
-              className="group hover:scale-[1.02] transition-all duration-500 cursor-pointer"
-            >
-              <Card className="h-full border-none shadow-[0_20px_48px_-12px_rgba(0,0,0,0.05)] p-10 flex flex-col items-center text-center gap-6 group-hover:bg-primary transition-all duration-500">
-                <div className={`w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-500 ${cat.color} group-hover:text-white`}>
-                  <cat.icon size={28} strokeWidth={1.5} />
+        {/* ── Hero fotográfico con etiquetas flotantes ── */}
+        <section className="v3-blur-in mt-6" style={{ animationDelay: '520ms' }}>
+          <div className="group relative h-[520px] md:h-[600px] rounded-[2.5rem] overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/painting_work.png" alt="Casa luminosa recién pintada" className="absolute inset-0 w-full h-full object-cover v3-photo" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C18]/70 via-transparent to-transparent" />
+
+            {HOTSPOTS.map(h => (
+              <button
+                key={h.label}
+                onClick={() => handleSearch(h.label)}
+                style={{ ...h.style, animationDelay: `${h.delay}ms` }}
+                className="v3-pop absolute glass rounded-full pl-2.5 pr-4 h-10 flex items-center gap-2.5 v2-press"
+              >
+                <span className="relative w-2.5 h-2.5">
+                  <span className="absolute inset-0 rounded-full bg-primary v3-pulse-ring" />
+                  <span className="absolute inset-0 rounded-full bg-primary" />
+                </span>
+                <span className="text-[12.5px] font-semibold text-[#1F1C18]">{h.label}</span>
+                <span className="text-[12px] font-medium text-[#7B7267]">{h.price}</span>
+              </button>
+            ))}
+
+            <div className="absolute inset-x-5 bottom-5 md:inset-x-7 md:bottom-7 glass rounded-[1.9rem] p-5 md:p-6 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-1">Tablero de proyectos</p>
+                <h2 className="text-[21px] md:text-[24px] font-semibold tracking-tight leading-tight text-[#1F1C18]">Publica tu proyecto</h2>
+                <p className="mt-1 text-[13px] font-medium text-[#7B7267]">Hasta 5 ofertas de verificados, con anticipo protegido</p>
+              </div>
+              <Link href="/cliente/proyectos/nuevo" className="shrink-0 h-14 px-6 rounded-full bg-[#1F1C18] text-white text-[13px] font-bold flex items-center gap-2 v2-press">
+                Publicar <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Certificados destacados: tarjetas apiladas con foto que se sale ── */}
+        {featured.length > 0 && (
+          <Reveal className="mt-14">
+            <div className="flex items-end justify-between mb-7">
+              <h2 className="text-[24px] font-semibold tracking-tight text-[#1F1C18]">Certificados destacados</h2>
+              <Link href="/cliente/search?q=" className="text-[13px] font-semibold text-primary flex items-center gap-1">Ver todos <ChevronRight size={15} /></Link>
+            </div>
+            <div className="flex gap-7 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-6 px-10 md:mx-0 md:px-4 pb-6 pt-3">
+              {featured.map((p, i) => {
+                const name = p.users?.full_name || 'Proveedor';
+                const initials = name.split(' ').map((w: string) => w[0]).slice(0, 2).join('');
+                return (
+                  <div key={p.id} className="snap-start shrink-0 w-[300px] relative pl-6 v2-rise" style={{ animationDelay: `${i * 90}ms` }}>
+                    {/* Tarjeta sombra detrás (patrón apilado de la referencia) */}
+                    <div className="absolute inset-y-3 left-9 right-[-10px] rounded-[2rem] bg-[#8A4529]" />
+                    <article className="relative bg-[#FBF8F2] rounded-[2rem] p-5 pl-0 flex items-center gap-4 v2-press v2-float">
+                      {/* Foto que se sale de la tarjeta */}
+                      <div className="-ml-6 shrink-0 w-[104px] h-[124px] rounded-[1.6rem] overflow-hidden v3-lift-shadow bg-[#1F1C18]">
+                        {p.users?.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.users.avatar_url} alt={name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D98A66] to-[#8A4529] text-white text-3xl font-semibold">{initials}</div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 py-1">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="text-[17px] font-semibold tracking-tight text-[#1F1C18] truncate">{name}</h3>
+                          {p.is_verified && <BadgeCheck size={15} className="shrink-0 text-primary" />}
+                        </div>
+                        <p className="text-[12.5px] font-medium text-[#7B7267] mt-0.5">{p.category}</p>
+                        <div className="flex items-center gap-1 mt-2.5">
+                          <Star size={13} className="text-amber-400 fill-amber-400" />
+                          <span className="text-[13px] font-bold text-[#1F1C18] tabular-nums">{Number(p.rating || 0).toFixed(1)}</span>
+                          <span className="text-[12px] text-[#ADA398]">· {p.reviews_count} reseñas</span>
+                        </div>
+                        {p.base_price > 0 && <p className="mt-2 text-[13px] font-bold text-[#8A4529] tabular-nums">desde ${Number(p.base_price).toFixed(0)}</p>}
+                      </div>
+                      <div className="shrink-0 flex flex-col gap-2 -mr-1">
+                        <button
+                          aria-label="Guardar"
+                          onClick={() => setLiked(l => ({ ...l, [p.id]: !l[p.id] }))}
+                          className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors v2-press ${liked[p.id] ? 'bg-primary text-white' : 'bg-white text-[#1F1C18]'}`}
+                        >
+                          <Heart size={16} className={liked[p.id] ? 'fill-white' : ''} />
+                        </button>
+                        <Link href={`/cliente/providers/${p.id}`} aria-label="Ver perfil" className="w-11 h-11 rounded-full bg-[#1F1C18] text-white flex items-center justify-center v2-press">
+                          <ArrowUpRight size={16} />
+                        </Link>
+                      </div>
+                    </article>
+                  </div>
+                );
+              })}
+            </div>
+          </Reveal>
+        )}
+
+        {/* ── Explora por oficio: mosaico fotográfico ── */}
+        <Reveal className="mt-12">
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="text-[24px] font-semibold tracking-tight text-[#1F1C18]">Explora por oficio</h2>
+            <Link href="/cliente/categories" className="text-[13px] font-semibold text-primary flex items-center gap-1">Todos <ChevronRight size={15} /></Link>
+          </div>
+          <div className="columns-2 md:columns-4 gap-3.5">
+            {TRADES.map((t, i) => (
+              <button
+                key={t.slug}
+                onClick={() => router.push(`/cliente/search?q=${encodeURIComponent(t.slug)}`)}
+                className={`group relative w-full mb-3.5 break-inside-avoid rounded-[1.9rem] overflow-hidden text-left v2-press ${i % 3 === 0 ? 'h-64' : i % 3 === 1 ? 'h-44' : 'h-52'}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={t.img} alt={t.name} className="absolute inset-0 w-full h-full object-cover v3-photo" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C18]/75 via-[#1F1C18]/5 to-transparent" />
+                <div className="absolute inset-x-4 bottom-4">
+                  <p className="text-white text-[16px] font-semibold tracking-tight leading-tight">{t.name}</p>
+                  <p className="text-white/65 text-[12px] font-medium mt-0.5">{t.from}</p>
                 </div>
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-night group-hover:text-white transition-colors">{cat.name}</p>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured Service Card Demo */}
-      <section className="px-8 pb-40 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Card 1: Professional Profile */}
-          <Card className="hover:scale-[1.02] cursor-pointer rounded-[3.5rem] p-12 border-none shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] bg-white group transition-all duration-500">
-            <div className="flex justify-between items-start mb-10">
-              <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-5 py-2 rounded-full border border-emerald-100/50">
-                <ShieldCheck size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Verificado</span>
-              </div>
-              <span className="text-4xl font-black text-brand-night leading-none tracking-tighter">$450<span className="text-[10px] font-bold opacity-20 uppercase tracking-tighter ml-1">/h</span></span>
-            </div>
-            <div className="relative mb-8 w-24 h-24">
-              <Avatar src="/assets/electrician.png" name="Juan Pérez" size="lg" className="w-full h-full ring-8 ring-slate-50 shadow-xl" />
-              <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-xl shadow-lg border-4 border-white">
-                <Zap size={16} fill="white" />
-              </div>
-            </div>
-            <h3 className="text-3xl font-black text-brand-night mb-2 tracking-tight uppercase group-hover:text-primary transition-colors">Juan Pérez</h3>
-            <p className="text-[11px] font-black text-slate-300 mb-8 uppercase tracking-[0.2em]">Electricista Certificado Master</p>
-            <p className="text-sm text-brand-night/60 leading-relaxed mb-10 font-medium opacity-80 group-hover:opacity-100 transition-opacity">
-              Especialista en sistemas de alta tensión y domótica residencial con certificación internacional.
-            </p>
-            <div className="flex items-center gap-2 text-brand-night/30 font-black text-[10px] uppercase tracking-widest bg-slate-50 w-fit px-5 py-2 rounded-full">
-              <Sparkles size={14} className="text-amber-400" /> 4.9 (124 reseñas)
-            </div>
-          </Card>
-
-          {/* Card 2: Featured Service (Photorealistic + Glassmorphism) */}
-          <Card variant="navy" className="group relative overflow-hidden rounded-[3.5rem] p-0 border-none shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)] min-h-[500px] flex items-center justify-center">
-            <img 
-              src="/assets/ac_maintenance_boutique.png" 
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] opacity-60" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-night/20 via-transparent to-brand-night/60" />
-            
-            <div className="relative z-10 w-[85%] p-12 backdrop-blur-2xl bg-white/10 border border-white/20 rounded-[3rem] transition-all duration-700 flex flex-col items-center text-center shadow-2xl">
-               <Badge 
-                 variant="warning" 
-                 className="mb-8 font-black uppercase tracking-[0.3em] px-6 py-2.5 bg-amber-400 text-brand-night border-none shadow-2xl inline-flex"
-               >
-                 OFERTA LIMITADA
-               </Badge>
-               <h3 className="text-4xl font-black mb-4 uppercase tracking-tighter leading-tight text-white drop-shadow-2xl">
-                 Mantenimiento <br/>de Climas
-               </h3>
-               <p className="text-white/80 mb-10 leading-relaxed text-sm font-medium drop-shadow-md max-w-[280px]">
-                 Protocolo de revisión premium para sistemas de aire acondicionado central y mini-split.
-               </p>
-               <Link href="/cliente/search?q=Climas/AC" className="w-full">
-                 <Button className="w-full py-7 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] bg-white !text-emerald-600 hover:bg-emerald-50 border-none shadow-[0_20px_48px_rgba(0,0,0,0.4)] transition-all transform active:scale-95">
-                   Reservar Ahora
-                 </Button>
-               </Link>
-            </div>
-          </Card>
-
-          {/* Card 3: Trust & Glass (Cristal Labrado) */}
-          <Card className="flex flex-col justify-between bg-[#F8F9FA] rounded-[3.5rem] p-12 overflow-hidden relative border-none shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] border-l border-white group">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(124,58,237,0.05),_transparent_70%)]" />
-            
-            <div className="relative z-10">
-              <div className="w-16 h-16 rounded-[2rem] bg-white shadow-xl flex items-center justify-center mb-10 text-primary group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
-                <Shield size={32} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-3xl font-black text-brand-night mb-6 uppercase tracking-tight leading-none">Garantía <br/>Escrow</h3>
-              <p className="text-brand-night/50 text-base leading-relaxed mb-10 font-bold opacity-80 pr-2">
-                Seguridad absoluta en cada transacción. Liberamos el pago solo tras tu plena satisfacción con el servicio final.
-              </p>
-              <div className="flex gap-2">
-                {[1,2,3].map(i => (
-                  <div key={i} className="w-8 h-1 bg-primary/10 rounded-full group-hover:bg-primary/30 transition-colors" />
-                ))}
-              </div>
-            </div>
-            
-            <div className="relative z-10 mt-auto">
-               <Logo className="opacity-[0.04] grayscale -mb-16 -mr-16 rotate-12 group-hover:scale-125 transition-transform duration-1000" size={240} />
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* Footer Boutique */}
-      <footer className="bg-brand-night text-white/40 py-24 px-8 text-center border-t border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(255,255,255,0.03),_transparent_70%)]" />
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <Logo size={40} className="mx-auto mb-8 grayscale opacity-50 contrast-125" />
-          <div className="flex justify-center gap-12 mb-12 text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
-            <a href="#" className="hover:text-primary transition-colors">Servicios</a>
-            <a href="#" className="hover:text-primary transition-colors">Zonas</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacidad</a>
-            <a href="#" className="hover:text-primary transition-colors">Soporte</a>
+              </button>
+            ))}
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] mb-4 text-primary">I mendly · 2026</p>
-          <p className="text-xs max-w-sm mx-auto opacity-30 font-medium leading-relaxed">
-            Plataforma confidencial para gestión de servicios domésticos premium. <br/>Calidad, rapidez y seguridad garantizada.
-          </p>
-        </div>
-      </footer>
-      
-      {/* Bottom Nav (Standardized) */}
-      <BottomNav onLogout={handleLogout} />
+        </Reveal>
+
+        {/* ── Garantía: vidrio sobre foto cálida ── */}
+        <Reveal className="mt-10">
+          <div className="relative rounded-[2.5rem] overflow-hidden h-[240px] md:h-[280px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/provider_dashboard_hero.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-[#1F1C18]/20" />
+            <div className="absolute inset-4 md:inset-6 glass rounded-[1.9rem] p-6 md:p-8 flex items-center gap-5">
+              <span className="w-14 h-14 shrink-0 rounded-full bg-[#1F1C18] text-primary flex items-center justify-center">
+                <ShieldCheck size={26} />
+              </span>
+              <div>
+                <h3 className="text-[19px] md:text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Garantía I mendly de hasta $10,000 MXN</h3>
+                <p className="mt-1.5 text-[13.5px] font-medium text-[#7B7267] max-w-md">Paga dentro de la app y tu anticipo queda protegido. Si algo sale mal, lo corregimos con otro certificado o te reembolsamos.</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
+      <ClientNav />
     </main>
   );
 }
