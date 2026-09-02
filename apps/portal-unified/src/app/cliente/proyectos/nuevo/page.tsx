@@ -16,8 +16,8 @@ import { SegmentBar } from '@/components/client/ui';
 
 const STEPS = ['Tu proyecto', 'Zona y presupuesto', 'Revisar y publicar'];
 
-const LABEL_CLS = 'text-[10px] font-bold uppercase tracking-[0.18em] text-[#70756E] mb-3 block';
-const INPUT_CLS = 'w-full h-14 px-5 rounded-[1.25rem] bg-[#FAFBF8] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[15px] font-semibold text-[#151714] placeholder:text-[#A8ADA6] placeholder:font-medium transition-shadow';
+const LABEL_CLS = 'text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A7468] mb-3 block';
+const INPUT_CLS = 'w-full h-14 px-5 rounded-[1.25rem] bg-[#FBF9F4] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[15px] font-semibold text-[#1B1A17] placeholder:text-[#ACA598] placeholder:font-medium transition-shadow';
 
 export default function NuevoProyectoPage() {
   const router = useRouter();
@@ -95,15 +95,15 @@ export default function NuevoProyectoPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F3F4F1]">
+    <main className="min-h-screen bg-[#F4F1EA]">
       <div className="max-w-md mx-auto px-6 flex flex-col min-h-screen">
         {/* Header interno v2 */}
-        <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl -mx-6 px-6 py-5">
+        <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl -mx-6 px-6 py-5">
           <div className="flex items-center gap-4">
             <Link
               href="/cliente/proyectos"
               aria-label="Volver"
-              className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+              className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
             >
               <ArrowLeft size={19} />
             </Link>
@@ -111,7 +111,7 @@ export default function NuevoProyectoPage() {
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
                 Paso {step + 1} de 3
               </p>
-              <h1 className="text-[22px] font-semibold tracking-tight text-[#151714] leading-tight">
+              <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] leading-tight">
                 {STEPS[step]}
               </h1>
             </div>
@@ -133,8 +133,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setCategory(cat)}
                       className={`h-12 px-4 rounded-full text-[13px] font-semibold v2-press transition-colors duration-300 ${
                         category === cat
-                          ? 'bg-[#151714] text-white v2-shadow-lift'
-                          : 'bg-[#FAFBF8] text-[#70756E] hover:text-[#151714]'
+                          ? 'bg-[#1B1A17] text-white v2-shadow-lift'
+                          : 'bg-[#FBF9F4] text-[#7A7468] hover:text-[#1B1A17]'
                       }`}
                     >
                       {cat}
@@ -161,10 +161,10 @@ export default function NuevoProyectoPage() {
                   onChange={e => setDescription(e.target.value)}
                   placeholder="Medidas, materiales que imaginas, estado actual, y todo lo que ayude a cotizar sin visitar. Mínimo 30 caracteres."
                   rows={5}
-                  className="w-full px-5 py-4 rounded-[1.25rem] bg-[#FAFBF8] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[14px] font-medium text-[#151714] placeholder:text-[#A8ADA6] resize-none transition-shadow"
+                  className="w-full px-5 py-4 rounded-[1.25rem] bg-[#FBF9F4] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[14px] font-medium text-[#1B1A17] placeholder:text-[#ACA598] resize-none transition-shadow"
                   maxLength={1200}
                 />
-                <p className={`mt-2 text-[12px] font-semibold tabular-nums ${description.trim().length < 30 ? 'text-[#A8ADA6]' : 'text-primary'}`}>
+                <p className={`mt-2 text-[12px] font-semibold tabular-nums ${description.trim().length < 30 ? 'text-[#ACA598]' : 'text-primary'}`}>
                   {description.trim().length} / 30 mín.
                 </p>
               </div>
@@ -186,7 +186,7 @@ export default function NuevoProyectoPage() {
                 <label className={LABEL_CLS}>Fotos (opcional, máx. 5)</label>
                 <div className="flex flex-wrap gap-3">
                   {photos.map((f, i) => (
-                    <div key={i} className="relative w-20 h-20 rounded-[1.25rem] overflow-hidden bg-[#FAFBF8]">
+                    <div key={i} className="relative w-20 h-20 rounded-[1.25rem] overflow-hidden bg-[#FBF9F4]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={URL.createObjectURL(f)} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                       <button
@@ -200,7 +200,7 @@ export default function NuevoProyectoPage() {
                     </div>
                   ))}
                   {photos.length < 5 && (
-                    <label className="w-20 h-20 rounded-[1.25rem] bg-[#FAFBF8] flex flex-col items-center justify-center gap-1 text-[#A8ADA6] cursor-pointer hover:text-primary hover:bg-[#E9F7EF] transition-colors v2-press">
+                    <label className="w-20 h-20 rounded-[1.25rem] bg-[#FBF9F4] flex flex-col items-center justify-center gap-1 text-[#ACA598] cursor-pointer hover:text-primary hover:bg-[#E7F2E9] transition-colors v2-press">
                       <Camera size={20} />
                       <span className="text-[10px] font-semibold">Agregar</span>
                       <input type="file" accept="image/*" multiple className="hidden" onChange={e => handlePhotos(e.target.files)} />
@@ -224,8 +224,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setZone(z)}
                       className={`h-11 px-5 rounded-full text-[13px] font-semibold v2-press transition-colors duration-300 ${
                         zone === z
-                          ? 'bg-[#151714] text-white v2-shadow-lift'
-                          : 'bg-[#FAFBF8] text-[#70756E] hover:text-[#151714]'
+                          ? 'bg-[#1B1A17] text-white v2-shadow-lift'
+                          : 'bg-[#FBF9F4] text-[#7A7468] hover:text-[#1B1A17]'
                       }`}
                     >
                       {z}
@@ -254,7 +254,7 @@ export default function NuevoProyectoPage() {
                     inputMode="numeric"
                     className={`${INPUT_CLS} tabular-nums`}
                   />
-                  <span className="text-[#A8ADA6] font-semibold">—</span>
+                  <span className="text-[#ACA598] font-semibold">—</span>
                   <input
                     value={budgetMax}
                     onChange={e => setBudgetMax(e.target.value.replace(/\D/g, ''))}
@@ -263,7 +263,7 @@ export default function NuevoProyectoPage() {
                     className={`${INPUT_CLS} tabular-nums`}
                   />
                 </div>
-                <p className="text-[12px] font-medium text-[#A8ADA6] mt-2.5">
+                <p className="text-[12px] font-medium text-[#ACA598] mt-2.5">
                   Un rango orienta mejores ofertas. Si no lo sabes, déjalo vacío y pide visita de cotización.
                 </p>
               </div>
@@ -278,8 +278,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setTiming(t.value)}
                       className={`h-12 px-4 rounded-full text-[12.5px] font-semibold v2-press transition-colors duration-300 ${
                         timing === t.value
-                          ? 'bg-[#151714] text-white v2-shadow-lift'
-                          : 'bg-[#FAFBF8] text-[#70756E] hover:text-[#151714]'
+                          ? 'bg-[#1B1A17] text-white v2-shadow-lift'
+                          : 'bg-[#FBF9F4] text-[#7A7468] hover:text-[#1B1A17]'
                       }`}
                     >
                       {t.label}
@@ -296,10 +296,10 @@ export default function NuevoProyectoPage() {
               <section className="bg-white rounded-[2.25rem] v2-shadow-soft p-6 space-y-4">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">{category}</span>
-                  <span className="text-[12px] font-semibold text-[#A8ADA6]">{timingLabel(timing)}</span>
+                  <span className="text-[12px] font-semibold text-[#ACA598]">{timingLabel(timing)}</span>
                 </div>
-                <h2 className="text-[19px] font-semibold tracking-tight text-[#151714] leading-snug">{title}</h2>
-                <p className="text-[14px] font-medium text-[#70756E] whitespace-pre-wrap">{description}</p>
+                <h2 className="text-[19px] font-semibold tracking-tight text-[#1B1A17] leading-snug">{title}</h2>
+                <p className="text-[14px] font-medium text-[#7A7468] whitespace-pre-wrap">{description}</p>
 
                 {photos.length > 0 && (
                   <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
@@ -311,25 +311,25 @@ export default function NuevoProyectoPage() {
                 )}
 
                 <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-black/[0.05]">
-                  <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[#70756E]">
-                    <MapPin size={13} className="text-[#A8ADA6]" />
+                  <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[#7A7468]">
+                    <MapPin size={13} className="text-[#ACA598]" />
                     {zone}{neighborhood ? ` · ${neighborhood}` : ''}
                   </span>
                   {(budgetMin || budgetMax) && (
-                    <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#E9F7EF] text-primary text-[12.5px] font-bold tabular-nums">
+                    <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#E7F2E9] text-primary text-[12.5px] font-bold tabular-nums">
                       {budgetMin ? formatMXN(Number(budgetMin)) : ''}{budgetMin && budgetMax ? ' – ' : ''}{budgetMax ? formatMXN(Number(budgetMax)) : ''}
                     </span>
                   )}
                 </div>
               </section>
 
-              <section className="rounded-[1.75rem] bg-[#E9F7EF] p-6 flex items-start gap-4">
+              <section className="rounded-[1.75rem] bg-[#E7F2E9] p-6 flex items-start gap-4">
                 <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
                   <ShieldCheck size={22} />
                 </span>
                 <div>
-                  <p className="text-[14px] font-semibold text-[#151714] mb-1">Así te protegemos</p>
-                  <p className="text-[12.5px] font-medium text-[#70756E]">
+                  <p className="text-[14px] font-semibold text-[#1B1A17] mb-1">Así te protegemos</p>
+                  <p className="text-[12.5px] font-medium text-[#7A7468]">
                     Tu proyecto pasa una revisión rápida antes de publicarse. Solo proveedores
                     verificados de tu zona podrán ofertar (máximo 5 ofertas). Tu dirección y
                     teléfono se comparten únicamente cuando tú aceptas una oferta.
@@ -347,13 +347,13 @@ export default function NuevoProyectoPage() {
         </div>
 
         {/* Botonera inferior sticky */}
-        <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-[#F3F4F1] via-[#F3F4F1]/95 to-transparent">
+        <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-[#F4F1EA] via-[#F4F1EA]/95 to-transparent">
           <div className="flex items-center gap-3">
             {step > 0 && (
               <button
                 type="button"
                 onClick={() => setStep(s => s - 1)}
-                className="h-14 px-6 rounded-full text-[13px] font-semibold text-[#70756E] hover:text-[#151714] v2-press transition-colors"
+                className="h-14 px-6 rounded-full text-[13px] font-semibold text-[#7A7468] hover:text-[#1B1A17] v2-press transition-colors"
               >
                 Atrás
               </button>
@@ -366,7 +366,7 @@ export default function NuevoProyectoPage() {
                 className={`flex-1 h-14 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-colors ${
                   canNext
                     ? 'bg-primary text-white shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark'
-                    : 'bg-black/[0.06] text-[#A8ADA6] cursor-not-allowed'
+                    : 'bg-black/[0.06] text-[#ACA598] cursor-not-allowed'
                 }`}
               >
                 Continuar <ArrowRight size={16} />

@@ -109,14 +109,14 @@ function SearchResults() {
   );
 
   return (
-    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+    <main className="min-h-screen bg-[#F4F1EA] pb-36">
       {/* ── Header interno v2 (patrón 5) ── */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-4">
           <button
             onClick={() => window.history.back()}
             aria-label="Regresar"
-            className="shrink-0 w-11 h-11 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+            className="shrink-0 w-11 h-11 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
           >
             <ArrowLeft size={19} />
           </button>
@@ -124,7 +124,7 @@ function SearchResults() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               Resultados
             </p>
-            <h1 className="text-[19px] font-semibold tracking-tight text-[#151714] truncate">
+            <h1 className="text-[19px] font-semibold tracking-tight text-[#1B1A17] truncate">
               {query || 'Todos los servicios'}
             </h1>
           </div>
@@ -168,8 +168,8 @@ function SearchResults() {
             </div>
           ) : filteredProviders.length > 0 ? (
             <>
-              <p className="text-[13px] font-medium text-[#70756E] mb-4">
-                <span className="font-bold text-[#151714]">{filteredProviders.length}</span>{' '}
+              <p className="text-[13px] font-medium text-[#7A7468] mb-4">
+                <span className="font-bold text-[#1B1A17]">{filteredProviders.length}</span>{' '}
                 {filteredProviders.length === 1 ? 'profesional' : 'profesionales'} cerca de ti
               </p>
 
@@ -183,12 +183,12 @@ function SearchResults() {
                   >
                     <article className="flex items-center gap-4 bg-white rounded-[1.75rem] p-4 v2-shadow-soft v2-press v2-float">
                       {/* Imagen / iniciales */}
-                      <div className="relative w-24 h-24 shrink-0 rounded-[1.5rem] overflow-hidden bg-[#151714]">
+                      <div className="relative w-24 h-24 shrink-0 rounded-[1.5rem] overflow-hidden bg-[#1B1A17]">
                         {p.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#151714] flex items-center justify-center">
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#1B1A17] flex items-center justify-center">
                             <span className="text-white/85 text-xl font-bold">
                               {p.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
                             </span>
@@ -199,21 +199,21 @@ function SearchResults() {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="text-[15.5px] font-semibold tracking-tight text-[#151714] truncate">
+                          <h3 className="text-[15.5px] font-semibold tracking-tight text-[#1B1A17] truncate">
                             {p.name}
                           </h3>
                           {p.verified && (
                             <BadgeCheck size={15} className="shrink-0 text-primary" />
                           )}
                         </div>
-                        <p className="text-[12.5px] font-medium text-[#70756E] truncate">
+                        <p className="text-[12.5px] font-medium text-[#7A7468] truncate">
                           {(p.categories || []).slice(0, 2).join(' · ') || 'Servicios'}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="text-[13.5px] font-bold text-primary tabular-nums">
                             desde ${p.price}
                           </span>
-                          <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#A8ADA6]">
+                          <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#ACA598]">
                             <MapPin size={11} />
                             {getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km
                           </span>
@@ -233,13 +233,13 @@ function SearchResults() {
           ) : (
             /* ── Estado vacío (patrón 6) ── */
             <div className="v2-rise py-20 text-center">
-              <div className="w-24 h-24 rounded-[1.75rem] bg-[#E9F7EF] text-primary flex items-center justify-center mx-auto mb-7">
+              <div className="w-24 h-24 rounded-[1.75rem] bg-[#E7F2E9] text-primary flex items-center justify-center mx-auto mb-7">
                 <SearchX size={38} strokeWidth={1.8} />
               </div>
-              <h3 className="text-[21px] font-semibold tracking-tight text-[#151714] mb-2">
+              <h3 className="text-[21px] font-semibold tracking-tight text-[#1B1A17] mb-2">
                 Sin resultados
               </h3>
-              <p className="text-[14px] font-medium text-[#70756E] max-w-xs mx-auto">
+              <p className="text-[14px] font-medium text-[#7A7468] max-w-xs mx-auto">
                 No encontramos proveedores de “{query}” en un radio de 20 km.
               </p>
               <Link
@@ -261,7 +261,7 @@ function SearchResults() {
 // useSearchParams requiere un límite de Suspense para el prerender de producción
 export default function SearchResultsWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F3F4F1]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#F4F1EA]" />}>
       <SearchResults />
     </Suspense>
   );

@@ -20,7 +20,7 @@ const METHOD_OPTIONS: { id: PaymentMethod; icon: typeof CreditCard; title: strin
 ];
 
 const inputCls =
-  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FAFBF8] text-[#151714] text-[14px] font-semibold placeholder:text-[#A8ADA6] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow';
+  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FBF9F4] text-[#1B1A17] text-[14px] font-semibold placeholder:text-[#ACA598] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow';
 
 function CheckoutPage() {
   const router = useRouter();
@@ -156,18 +156,18 @@ function CheckoutPage() {
             onClick={() => setMethod(opt.id)}
             className={`v2-rise v2-d${i + 1} w-full p-5 rounded-[1.75rem] flex items-center gap-4 text-left v2-press transition-all ${
               active
-                ? 'bg-[#E9F7EF]/70 ring-2 ring-primary v2-shadow-lift'
+                ? 'bg-[#E7F2E9]/70 ring-2 ring-primary v2-shadow-lift'
                 : 'bg-white v2-shadow-soft'
             }`}
           >
             <span className={`w-12 h-12 shrink-0 rounded-[1.05rem] flex items-center justify-center transition-colors ${
-              active ? 'bg-primary text-white' : 'bg-[#E9F7EF] text-primary'
+              active ? 'bg-primary text-white' : 'bg-[#E7F2E9] text-primary'
             }`}>
               <opt.icon size={22} />
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[14.5px] font-semibold text-[#151714] tracking-tight">{opt.title}</span>
-              <span className="block text-[12.5px] font-medium text-[#70756E]">{opt.caption}</span>
+              <span className="block text-[14.5px] font-semibold text-[#1B1A17] tracking-tight">{opt.title}</span>
+              <span className="block text-[12.5px] font-medium text-[#7A7468]">{opt.caption}</span>
             </span>
             {active && (
               <span className="w-6 h-6 shrink-0 rounded-full bg-primary text-white flex items-center justify-center">
@@ -186,28 +186,28 @@ function CheckoutPage() {
         return (
           <div className="v2-rise bg-white p-7 rounded-[1.75rem] v2-shadow-soft space-y-5">
             <div className="flex items-center gap-3.5">
-              <span className="w-11 h-11 rounded-[1.05rem] bg-[#E9F7EF] text-primary flex items-center justify-center">
+              <span className="w-11 h-11 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
                 <CreditCard size={20} />
               </span>
-              <h3 className="text-[16px] font-semibold tracking-tight text-[#151714]">Datos de tarjeta</h3>
+              <h3 className="text-[16px] font-semibold tracking-tight text-[#1B1A17]">Datos de tarjeta</h3>
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-2 ml-1">Número de tarjeta</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1">Número de tarjeta</p>
                 <input placeholder="0000 0000 0000 0000" className={inputCls} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-2 ml-1">Expiración</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1">Expiración</p>
                   <input placeholder="MM / YY" className={inputCls} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-2 ml-1">CVC</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1">CVC</p>
                   <input placeholder="123" className={inputCls} />
                 </div>
               </div>
             </div>
-            <p className="flex items-center gap-2 text-[12px] text-[#70756E] font-medium">
+            <p className="flex items-center gap-2 text-[12px] text-[#7A7468] font-medium">
               <ShieldCheck size={14} className="text-primary" />
               Encriptado con SSL de 256 bits
             </p>
@@ -223,26 +223,26 @@ function CheckoutPage() {
               </p>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FAFBF8]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FBF9F4]">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-1">Banco receptor</p>
-                  <p className="text-[14px] font-semibold text-[#151714]">STP (Sistema de Transf.)</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-1">Banco receptor</p>
+                  <p className="text-[14px] font-semibold text-[#1B1A17]">STP (Sistema de Transf.)</p>
                 </div>
-                <Copy size={16} className="text-[#A8ADA6] hover:text-primary cursor-pointer transition-colors" />
+                <Copy size={16} className="text-[#ACA598] hover:text-primary cursor-pointer transition-colors" />
               </div>
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FAFBF8]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FBF9F4]">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-1">CLABE interbancaria</p>
-                  <p className="text-[14px] font-semibold text-[#151714] tabular-nums">6461 8011 2400 0000 01</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-1">CLABE interbancaria</p>
+                  <p className="text-[14px] font-semibold text-[#1B1A17] tabular-nums">6461 8011 2400 0000 01</p>
                 </div>
-                <Copy size={16} className="text-[#A8ADA6] hover:text-primary cursor-pointer transition-colors" />
+                <Copy size={16} className="text-[#ACA598] hover:text-primary cursor-pointer transition-colors" />
               </div>
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FAFBF8]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FBF9F4]">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6] mb-1">Concepto</p>
-                  <p className="text-[14px] font-semibold text-[#151714]">PAGO IMENDLY {provider.name.split(' ')[0]}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-1">Concepto</p>
+                  <p className="text-[14px] font-semibold text-[#1B1A17]">PAGO IMENDLY {provider.name.split(' ')[0]}</p>
                 </div>
-                <Copy size={16} className="text-[#A8ADA6] hover:text-primary cursor-pointer transition-colors" />
+                <Copy size={16} className="text-[#ACA598] hover:text-primary cursor-pointer transition-colors" />
               </div>
             </div>
           </div>
@@ -254,13 +254,13 @@ function CheckoutPage() {
               <span className="w-20 h-20 rounded-[1.5rem] bg-red-50 text-red-600 flex items-center justify-center mx-auto">
                 <ShoppingBag size={32} strokeWidth={1.8} />
               </span>
-              <h3 className="text-[18px] font-semibold tracking-tight text-[#151714]">Ficha de pago OXXO</h3>
+              <h3 className="text-[18px] font-semibold tracking-tight text-[#1B1A17]">Ficha de pago OXXO</h3>
             </div>
 
             <div className="py-7 border-y border-black/[0.06] space-y-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A8ADA6]">Referencia de pago</p>
-              <div className="bg-[#FAFBF8] p-5 rounded-[1.25rem]">
-                <p className="text-[22px] font-bold text-[#151714] tracking-[0.14em] tabular-nums">1234-5678-9012-34</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">Referencia de pago</p>
+              <div className="bg-[#FBF9F4] p-5 rounded-[1.25rem]">
+                <p className="text-[22px] font-bold text-[#1B1A17] tracking-[0.14em] tabular-nums">1234-5678-9012-34</p>
               </div>
               {/* Simulated barcode */}
               <div className="flex gap-1 justify-center h-14 opacity-30 mt-5">
@@ -268,12 +268,12 @@ function CheckoutPage() {
                   <div key={i} className="bg-black h-full rounded-sm" style={{ width: `${w * 2}px` }} />
                 ))}
               </div>
-              <p className="text-[11px] font-medium text-[#A8ADA6]">Válido por 48 horas</p>
+              <p className="text-[11px] font-medium text-[#ACA598]">Válido por 48 horas</p>
             </div>
 
             <div className="text-left space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#151714] mb-2">Instrucciones</p>
-              <ol className="text-[13px] text-[#70756E] font-medium space-y-2 list-decimal ml-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1B1A17] mb-2">Instrucciones</p>
+              <ol className="text-[13px] text-[#7A7468] font-medium space-y-2 list-decimal ml-4">
                 <li>Dicta la referencia al cajero o muestra esta pantalla.</li>
                 <li>Realiza el pago en efectivo (se cobra comisión externa en OXXO).</li>
                 <li>Conserva tu comprobante de pago.</li>
@@ -286,10 +286,10 @@ function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F3F4F1]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F1EA]">
         <div className="text-center animate-pulse">
           <Logo size={48} className="mx-auto mb-4" />
-          <p className="text-[13px] font-semibold text-[#70756E]">Cargando checkout…</p>
+          <p className="text-[13px] font-semibold text-[#7A7468]">Cargando checkout…</p>
         </div>
       </div>
     );
@@ -297,10 +297,10 @@ function CheckoutPage() {
 
   if (!provider) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F3F4F1]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F1EA]">
         <div className="text-center px-8">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#151714] mb-3">Servicio no encontrado</h1>
-          <p className="text-[14px] font-medium text-[#70756E] mb-8 max-w-xs mx-auto">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] mb-3">Servicio no encontrado</h1>
+          <p className="text-[14px] font-medium text-[#7A7468] mb-8 max-w-xs mx-auto">
             El enlace es inválido o el profesional ya no está disponible.
           </p>
           <button
@@ -315,14 +315,14 @@ function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F3F4F1] pb-12">
+    <main className="min-h-screen bg-[#F4F1EA] pb-12">
       {/* ── Header interno v2 ── */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
         <div className="max-w-md mx-auto px-6 py-5 flex items-center gap-4">
           <button
             onClick={() => step === 'details' ? setStep('selection') : router.back()}
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
           >
             <ArrowLeft size={19} />
           </button>
@@ -330,7 +330,7 @@ function CheckoutPage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               {step === 'selection' ? 'Resumen de contratación' : 'Finalizar transacción'}
             </p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#151714] leading-tight">
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] leading-tight">
               {step === 'selection' ? 'Selección de pago' : 'Detalles de pago'}
             </h1>
           </div>
@@ -339,7 +339,7 @@ function CheckoutPage() {
 
       <div className="max-w-md mx-auto px-6 mt-2 space-y-6">
         {/* ── Resumen — tarjeta ink con total protagonista ── */}
-        <section className="v2-rise v2-d1 relative overflow-hidden rounded-[2.25rem] bg-[#151714] text-white p-7 v2-shadow-float">
+        <section className="v2-rise v2-d1 relative overflow-hidden rounded-[2.25rem] bg-[#1B1A17] text-white p-7 v2-shadow-float">
           <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
 
           <div className="relative">
@@ -380,13 +380,13 @@ function CheckoutPage() {
         {step === 'selection' ? renderSelection() : renderDetails()}
 
         {/* ── Protección Escrow ── */}
-        <div className="v2-rise v2-d4 rounded-[1.75rem] bg-[#E9F7EF] p-6 flex items-center gap-4">
+        <div className="v2-rise v2-d4 rounded-[1.75rem] bg-[#E7F2E9] p-6 flex items-center gap-4">
           <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
             <ShieldCheck size={22} />
           </span>
           <div>
-            <p className="text-[13.5px] font-bold tracking-tight text-[#151714] mb-0.5">Pago protegido por I mendly</p>
-            <p className="text-[12.5px] font-medium text-[#70756E] leading-relaxed">
+            <p className="text-[13.5px] font-bold tracking-tight text-[#1B1A17] mb-0.5">Pago protegido por I mendly</p>
+            <p className="text-[12.5px] font-medium text-[#7A7468] leading-relaxed">
               Tu dinero está seguro en Escrow hasta que confirmes la finalización de tu servicio.
             </p>
           </div>
@@ -395,11 +395,11 @@ function CheckoutPage() {
         {/* ── Método seleccionado (solo en detalles) ── */}
         {step === 'details' && (
           <div className="flex items-center gap-3 px-1">
-            <span className="w-9 h-9 rounded-[0.85rem] bg-white v2-shadow-soft flex items-center justify-center text-[#151714]">
+            <span className="w-9 h-9 rounded-[0.85rem] bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17]">
               {method === 'stripe' ? <CreditCard size={15} /> : method === 'conekta_spei' ? <Landmark size={15} /> : <ShoppingBag size={15} />}
             </span>
-            <p className="text-[12.5px] font-semibold text-[#70756E]">
-              Método: <span className="text-[#151714]">{method === 'stripe' ? 'Stripe' : method === 'conekta_spei' ? 'Conekta SPEI' : 'Conekta OXXO'}</span>
+            <p className="text-[12.5px] font-semibold text-[#7A7468]">
+              Método: <span className="text-[#1B1A17]">{method === 'stripe' ? 'Stripe' : method === 'conekta_spei' ? 'Conekta SPEI' : 'Conekta OXXO'}</span>
             </p>
           </div>
         )}
@@ -421,9 +421,9 @@ function CheckoutPage() {
           </button>
         </div>
 
-        <p className="text-center text-[11.5px] font-medium text-[#A8ADA6] leading-relaxed">
+        <p className="text-center text-[11.5px] font-medium text-[#ACA598] leading-relaxed">
           Al pagar confirmas que estás de acuerdo con nuestras{' '}
-          <span className="text-[#151714] font-semibold underline">Políticas de privacidad</span>
+          <span className="text-[#1B1A17] font-semibold underline">Políticas de privacidad</span>
         </p>
       </div>
     </main>
@@ -433,7 +433,7 @@ function CheckoutPage() {
 // useSearchParams requiere un límite de Suspense para el prerender de producción
 export default function CheckoutPageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F3F4F1]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#F4F1EA]" />}>
       <CheckoutPage />
     </Suspense>
   );

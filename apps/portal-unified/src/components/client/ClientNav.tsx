@@ -12,7 +12,7 @@ const ITEMS = [
   { href: '/cliente/profile', icon: User, label: 'Perfil' },
 ] as { href: string; icon: typeof Home; label: string; exact?: boolean; also?: string }[];
 
-/** Nav inferior flotante del portal cliente — pill con blur y FAB central. */
+/** Nav inferior flotante del portal cliente — pill de vidrio con FAB central. */
 export function ClientNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -37,10 +37,10 @@ export function ClientNav() {
         <item.icon
           size={22}
           strokeWidth={active ? 2.4 : 2}
-          className={`transition-colors duration-300 ${active ? 'text-primary' : 'text-[#A8ADA6]'}`}
+          className={`transition-colors duration-300 ${active ? 'text-[#1B1A17]' : 'text-[#ACA598]'}`}
         />
         <span
-          className={`absolute bottom-2 w-1 h-1 rounded-full bg-primary transition-all duration-300 ${active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+          className={`absolute bottom-2 w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
         />
       </Link>
     );
@@ -48,7 +48,7 @@ export function ClientNav() {
 
   return (
     <nav className="fixed bottom-5 inset-x-0 z-[70] flex justify-center px-6 pointer-events-none">
-      <div className="pointer-events-auto flex items-center gap-1 bg-white/90 backdrop-blur-2xl rounded-full px-3 py-1.5 v2-shadow-float border border-black/[0.04]">
+      <div className="pointer-events-auto flex items-center gap-1 glass rounded-full px-3 py-1.5">
         {left.map(renderItem)}
         <button
           onClick={() => router.push('/cliente/proyectos/nuevo')}

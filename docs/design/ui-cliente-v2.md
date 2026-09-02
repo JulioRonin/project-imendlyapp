@@ -1,7 +1,34 @@
-# UI Cliente v2 — "Esmeralda Aire"
+# UI Cliente — "Lino & Esmeralda" (v3, editorial) sobre base "Esmeralda Aire" (v2)
 > Spec de rediseño del portal cliente. Fuente de verdad para todas las pantallas.
 > Se conserva ÚNICAMENTE: verde de marca (#3DB87A) y tipografía Urbanist.
 > Todo lo demás (fondos, tarjetas, sombras, radios, motion, navegación) es nuevo.
+
+## 0. Capa v3 — la fotografía ES el diseño (vigente, prevalece sobre v2)
+
+Referencias: apps editoriales de mobiliario/lifestyle. Reglas que se suman a v2:
+
+```
+PALETA CÁLIDA (reemplaza los neutros fríos de v2)
+  lino #F4F1EA (fondo)   arena #EBE6DC   crema #FBF9F4 (tarjetas)
+  tinta #1B1A17   muted #7A7468   faint #ACA598   tinte verde #E7F2E9
+  verde #3DB87A (único acento) · verde profundo #1E7A4E (texto sobre claro / tarjeta sombra)
+
+VIDRIO   clase `.glass` (blanco 74% + blur 24px + borde blanco) y `.glass-dark`.
+         Toda tarjeta que vaya SOBRE una foto es de vidrio, nunca blanca sólida.
+FOTOS    Banco en /public/assets. Siempre a sangre completa con overlay
+         `from-[#1B1A17]/70` desde abajo. Hero fotográfico en cada pantalla principal.
+         Fotos que se SALEN de la tarjeta: margen negativo + `.v3-lift-shadow`.
+APILADO  Tarjeta con otra detrás desplazada (verde profundo) = patrón "stack".
+HOTSPOTS Pills de vidrio con dot verde pulsante (`.v3-pulse-ring`) sobre la foto,
+         entrada `.v3-pop` escalonada.
+TABS     Texto subrayado (barra verde 3px animada con scale-x), NO chips, para
+         filtros principales. Los chips quedan para selección en formularios.
+MOSAICO  Grid tipo masonry con `columns-2 md:columns-4`, alturas alternadas.
+MOTION   `.v3-blur-in` (desenfoque → nítido) para entradas de texto/hero;
+         `.v3-photo` zoom lento en hover; `.v3-panel` expansión de paneles;
+         splash: `.v3-kenburns` + `.v3-mark-in` + `.v3-track-in` + `.v3-exit-up`.
+SPLASH   Una vez por sesión (sessionStorage), 1.9s + salida 0.85s. Nunca bloquear más.
+```
 
 ## 1. Dirección
 

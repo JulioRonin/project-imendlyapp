@@ -12,10 +12,10 @@ import { PROJECT_STATUS_LABELS, timeAgo, formatMXN } from '../../../lib/tablero'
 import { ClientNav } from '@/components/client/ClientNav';
 
 const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
-  success: 'bg-[#E9F7EF] text-primary',
+  success: 'bg-[#E7F2E9] text-primary',
   warning: 'bg-amber-50 text-amber-700',
   error: 'bg-red-50 text-red-600',
-  default: 'bg-black/[0.05] text-[#70756E]',
+  default: 'bg-black/[0.05] text-[#7A7468]',
 };
 
 export default function MisProyectosPage() {
@@ -47,14 +47,14 @@ export default function MisProyectosPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#F3F4F1] pb-36">
+    <main className="min-h-screen bg-[#F4F1EA] pb-36">
       {/* Header interno v2 */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F3F4F1]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
           <Link
             href="/cliente"
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#151714] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
           >
             <ArrowLeft size={19} />
           </Link>
@@ -62,7 +62,7 @@ export default function MisProyectosPage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               Tablero de proyectos
             </p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#151714] leading-tight">
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] leading-tight">
               Mis proyectos
             </h1>
           </div>
@@ -88,13 +88,13 @@ export default function MisProyectosPage() {
         {/* Estado vacío */}
         {!isLoading && projects.length === 0 && (
           <div className="v2-rise v2-d1 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-14 flex flex-col items-center text-center">
-            <span className="w-20 h-20 rounded-[1.4rem] bg-[#E9F7EF] text-primary flex items-center justify-center mb-6">
+            <span className="w-20 h-20 rounded-[1.4rem] bg-[#E7F2E9] text-primary flex items-center justify-center mb-6">
               <Hammer size={32} />
             </span>
-            <h3 className="text-[19px] font-semibold tracking-tight text-[#151714] mb-2">
+            <h3 className="text-[19px] font-semibold tracking-tight text-[#1B1A17] mb-2">
               ¿Necesitas un trabajo en casa?
             </h3>
-            <p className="text-[14px] font-medium text-[#70756E] max-w-sm mb-8">
+            <p className="text-[14px] font-medium text-[#7A7468] max-w-sm mb-8">
               Publica tu proyecto — una pérgola, una cocina, una reparación — y recibe
               hasta 5 ofertas de proveedores verificados de tu zona.
             </p>
@@ -127,22 +127,22 @@ export default function MisProyectosPage() {
                   </span>
                 </div>
 
-                <h3 className="text-[17px] font-semibold tracking-tight text-[#151714] leading-snug mb-3">
+                <h3 className="text-[17px] font-semibold tracking-tight text-[#1B1A17] leading-snug mb-3">
                   {p.title}
                 </h3>
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F3F4F1] text-[12px] font-semibold text-[#70756E]">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F1EA] text-[12px] font-semibold text-[#7A7468]">
                     {p.category}
                   </span>
-                  <span className="flex items-center gap-1 text-[12px] font-medium text-[#A8ADA6]">
+                  <span className="flex items-center gap-1 text-[12px] font-medium text-[#ACA598]">
                     <MapPin size={12} /> {p.zone}
                   </span>
-                  <span className="text-[12px] font-medium text-[#A8ADA6]">{timeAgo(p.created_at)}</span>
+                  <span className="text-[12px] font-medium text-[#ACA598]">{timeAgo(p.created_at)}</span>
                 </div>
 
                 <div className="flex items-center gap-3 mt-4 pt-4 border-t border-black/[0.05]">
-                  <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12px] font-bold ${hasOffers ? 'bg-[#E9F7EF] text-primary' : 'bg-[#F3F4F1] text-[#A8ADA6]'}`}>
+                  <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12px] font-bold ${hasOffers ? 'bg-[#E7F2E9] text-primary' : 'bg-[#F4F1EA] text-[#ACA598]'}`}>
                     <Users size={13} />
                     {p.offers_count}/{p.max_offers} ofertas
                   </span>
@@ -153,7 +153,7 @@ export default function MisProyectosPage() {
                   )}
                   <ChevronRight
                     size={18}
-                    className={`${(p.budget_min || p.budget_max) ? '' : 'ml-auto '}text-[#A8ADA6] transition-all group-hover:text-primary group-hover:translate-x-0.5`}
+                    className={`${(p.budget_min || p.budget_max) ? '' : 'ml-auto '}text-[#ACA598] transition-all group-hover:text-primary group-hover:translate-x-0.5`}
                   />
                 </div>
               </article>

@@ -72,7 +72,7 @@ export function DevModeBanner() {
   if (!DEV_BYPASS_ENABLED) return null;
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-[100] bg-amber-500 text-white py-1.5 px-4 flex items-center justify-center gap-2 pointer-events-none">
+    <div className="fixed top-0 inset-x-0 z-[100] bg-amber-500 text-white py-1 px-4 flex items-center justify-center gap-2 pointer-events-none">
       <TriangleAlert size={12} />
       <span className="text-[9px] font-black uppercase tracking-[0.3em]">
         Modo demo · acceso sin autenticación habilitado
