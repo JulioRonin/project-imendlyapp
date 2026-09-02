@@ -14,10 +14,10 @@ import { ClientNav } from '@/components/client/ClientNav';
 import { RatingPill } from '@/components/client/ui';
 
 const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
-  success: 'bg-[#E7F2E9] text-primary',
+  success: 'bg-[#F6E6DD] text-primary',
   warning: 'bg-amber-50 text-amber-700',
   error: 'bg-red-50 text-red-600',
-  default: 'bg-black/[0.05] text-[#7A7468]',
+  default: 'bg-black/[0.05] text-[#7B7267]',
 };
 
 export default function ProyectoDetallePage() {
@@ -128,7 +128,7 @@ export default function ProyectoDetallePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#F4F1EA] pb-36">
+      <main className="min-h-screen bg-[#F4F0E8] pb-36">
         <div className="max-w-3xl mx-auto px-6 pt-6 space-y-4">
           <div className="v2-rise h-12 w-2/3 rounded-full v2-shimmer" />
           <div className="v2-rise v2-d1 h-56 rounded-[2.25rem] v2-shimmer" />
@@ -142,13 +142,13 @@ export default function ProyectoDetallePage() {
 
   if (!project) {
     return (
-      <main className="min-h-screen bg-[#F4F1EA] pb-36 flex flex-col items-center justify-center gap-6 px-6 text-center">
-        <span className="v2-rise w-20 h-20 rounded-[1.4rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+      <main className="min-h-screen bg-[#F4F0E8] pb-36 flex flex-col items-center justify-center gap-6 px-6 text-center">
+        <span className="v2-rise w-20 h-20 rounded-[1.4rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
           <X size={30} />
         </span>
         <div className="v2-rise v2-d1">
-          <h1 className="text-[19px] font-semibold tracking-tight text-[#1B1A17] mb-1">Proyecto no encontrado</h1>
-          <p className="text-[14px] font-medium text-[#7A7468]">Puede que se haya eliminado o el enlace sea incorrecto.</p>
+          <h1 className="text-[19px] font-semibold tracking-tight text-[#1F1C18] mb-1">Proyecto no encontrado</h1>
+          <p className="text-[14px] font-medium text-[#7B7267]">Puede que se haya eliminado o el enlace sea incorrecto.</p>
         </div>
         <Link
           href="/cliente/proyectos"
@@ -164,14 +164,14 @@ export default function ProyectoDetallePage() {
   const st = PROJECT_STATUS_LABELS[project.status] ?? { label: project.status, tone: 'default' as const };
 
   return (
-    <main className="min-h-screen bg-[#F4F1EA] pb-36">
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
       {/* Header interno v2 */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
           <Link
             href="/cliente/proyectos"
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
           >
             <ArrowLeft size={19} />
           </Link>
@@ -179,7 +179,7 @@ export default function ProyectoDetallePage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               {project.display_id}
             </p>
-            <h1 className="text-[20px] font-semibold tracking-tight text-[#1B1A17] leading-tight truncate">
+            <h1 className="text-[20px] font-semibold tracking-tight text-[#1F1C18] leading-tight truncate">
               {project.title}
             </h1>
           </div>
@@ -219,7 +219,7 @@ export default function ProyectoDetallePage() {
 
         {/* Detalle del proyecto */}
         <section className="v2-rise v2-d2 bg-white rounded-[2.25rem] v2-shadow-soft p-7 space-y-5">
-          <p className="text-[14.5px] font-medium text-[#7A7468] whitespace-pre-wrap">{project.description}</p>
+          <p className="text-[14.5px] font-medium text-[#7B7267] whitespace-pre-wrap">{project.description}</p>
 
           {project.photos?.length > 0 && (
             <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
@@ -231,19 +231,19 @@ export default function ProyectoDetallePage() {
           )}
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2.5 pt-4 border-t border-black/[0.05]">
-            <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F1EA] text-[12px] font-semibold text-[#7A7468]">
+            <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F0E8] text-[12px] font-semibold text-[#7B7267]">
               {project.category}
             </span>
-            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#ACA598]">
+            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#ADA398]">
               <MapPin size={13} />
               {project.zone}{project.neighborhood ? ` · ${project.neighborhood}` : ''}
             </span>
-            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#ACA598]">
+            <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#ADA398]">
               <Calendar size={13} />
               {timingLabel(project.timing)}
             </span>
             {(project.budget_min || project.budget_max) && (
-              <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#E7F2E9] text-primary text-[12.5px] font-bold tabular-nums">
+              <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#F6E6DD] text-primary text-[12.5px] font-bold tabular-nums">
                 {project.budget_min ? formatMXN(project.budget_min) : ''}{project.budget_min && project.budget_max ? ' – ' : ''}{project.budget_max ? formatMXN(project.budget_max) : ''}
               </span>
             )}
@@ -252,8 +252,8 @@ export default function ProyectoDetallePage() {
 
         {/* Ofertas */}
         <div className="v2-rise v2-d3 flex items-end justify-between pt-2">
-          <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17]">Ofertas recibidas</h2>
-          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#E7F2E9] text-primary text-[12px] font-bold tabular-nums">
+          <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Ofertas recibidas</h2>
+          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#F6E6DD] text-primary text-[12px] font-bold tabular-nums">
             <Users size={13} /> {project.offers_count}/{project.max_offers}
           </span>
         </div>
@@ -264,11 +264,11 @@ export default function ProyectoDetallePage() {
 
         {offers.length === 0 && project.status === 'open' && (
           <div className="v2-rise v2-d4 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-12 flex flex-col items-center text-center">
-            <span className="w-16 h-16 rounded-[1.25rem] bg-[#E7F2E9] text-primary flex items-center justify-center mb-5">
+            <span className="w-16 h-16 rounded-[1.25rem] bg-[#F6E6DD] text-primary flex items-center justify-center mb-5">
               <Users size={26} />
             </span>
-            <h3 className="text-[16px] font-semibold tracking-tight text-[#1B1A17] mb-1.5">Aún no hay ofertas</h3>
-            <p className="text-[13.5px] font-medium text-[#7A7468] max-w-xs">
+            <h3 className="text-[16px] font-semibold tracking-tight text-[#1F1C18] mb-1.5">Aún no hay ofertas</h3>
+            <p className="text-[13.5px] font-medium text-[#7B7267] max-w-xs">
               Los proveedores verificados de tu zona ya fueron notificados. Te avisaremos en cuanto llegue la primera.
             </p>
           </div>
@@ -289,10 +289,10 @@ export default function ProyectoDetallePage() {
                 <Avatar src={prov?.users?.avatar_url} name={name} size="md" className="shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <h3 className="text-[15.5px] font-semibold tracking-tight text-[#1B1A17] truncate">{name}</h3>
+                    <h3 className="text-[15.5px] font-semibold tracking-tight text-[#1F1C18] truncate">{name}</h3>
                     {prov?.is_verified && <BadgeCheck size={16} className="shrink-0 text-primary" />}
                   </div>
-                  <p className="text-[12.5px] font-medium text-[#ACA598] truncate">
+                  <p className="text-[12.5px] font-medium text-[#ADA398] truncate">
                     {prov?.category} · {prov?.reviews_count || 0} reseñas
                   </p>
                 </div>
@@ -302,40 +302,40 @@ export default function ProyectoDetallePage() {
               {/* El monto es protagonista */}
               {offer.offer_type === 'price' ? (
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-0.5">Oferta</p>
-                  <p className="text-[27px] font-bold tracking-tight text-[#1B1A17] tabular-nums leading-none">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-0.5">Oferta</p>
+                  <p className="text-[27px] font-bold tracking-tight text-[#1F1C18] tabular-nums leading-none">
                     {formatMXN(offer.amount)}{offer.amount_max ? ` – ${formatMXN(offer.amount_max)}` : ''}
                   </p>
                 </div>
               ) : (
-                <span className="inline-flex items-center h-9 px-4 rounded-full bg-[#E7F2E9] text-primary text-[13px] font-bold">
+                <span className="inline-flex items-center h-9 px-4 rounded-full bg-[#F6E6DD] text-primary text-[13px] font-bold">
                   Visita gratis para cotizar
                 </span>
               )}
 
               {offer.message && (
-                <p className="text-[13.5px] font-medium text-[#7A7468] bg-[#FBF9F4] rounded-[1.25rem] p-4">
+                <p className="text-[13.5px] font-medium text-[#7B7267] bg-[#FBF8F2] rounded-[1.25rem] p-4">
                   {offer.message}
                 </p>
               )}
 
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
                 {offer.offer_type === 'price' && (
-                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F1EA] text-[12px] font-semibold text-[#7A7468]">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F0E8] text-[12px] font-semibold text-[#7B7267]">
                     {offer.includes_materials ? 'Incluye materiales' : 'Sin materiales'}
                   </span>
                 )}
                 {offer.offer_type === 'price' && offer.estimated_days && (
-                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F1EA] text-[12px] font-semibold text-[#7A7468] tabular-nums">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F0E8] text-[12px] font-semibold text-[#7B7267] tabular-nums">
                     {offer.estimated_days} días est.
                   </span>
                 )}
                 {offer.deposit_percent > 0 && offer.offer_type === 'price' && (
-                  <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[#E7F2E9] text-primary text-[12px] font-bold">
+                  <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[#F6E6DD] text-primary text-[12px] font-bold">
                     <ShieldCheck size={12} /> Anticipo {offer.deposit_percent}% protegido
                   </span>
                 )}
-                <span className="ml-auto text-[12px] font-medium text-[#ACA598]">{timeAgo(offer.created_at)}</span>
+                <span className="ml-auto text-[12px] font-medium text-[#ADA398]">{timeAgo(offer.created_at)}</span>
               </div>
 
               {project.status === 'open' && offer.status === 'active' && (
@@ -343,14 +343,14 @@ export default function ProyectoDetallePage() {
                   type="button"
                   onClick={() => acceptOffer(offer)}
                   disabled={accepting !== null}
-                  className="w-full h-14 rounded-full bg-[#1B1A17] text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press hover:bg-black transition-colors disabled:opacity-60"
+                  className="w-full h-14 rounded-full bg-[#1F1C18] text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press hover:bg-black transition-colors disabled:opacity-60"
                 >
                   {accepting === offer.id ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   Aceptar esta oferta
                 </button>
               )}
               {isAccepted && (
-                <div className="flex items-center justify-center gap-2 h-12 rounded-full bg-[#E7F2E9] text-primary">
+                <div className="flex items-center justify-center gap-2 h-12 rounded-full bg-[#F6E6DD] text-primary">
                   <Check size={16} />
                   <span className="text-[13px] font-bold">Oferta aceptada</span>
                   {project.order_id && (
@@ -368,13 +368,13 @@ export default function ProyectoDetallePage() {
         })}
 
         {/* Garantía */}
-        <div className="v2-rise v2-d8 rounded-[2.25rem] bg-[#E7F2E9] p-7 flex items-start gap-4">
+        <div className="v2-rise v2-d8 rounded-[2.25rem] bg-[#F6E6DD] p-7 flex items-start gap-4">
           <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
             <ShieldCheck size={22} />
           </span>
           <div>
-            <p className="text-[14px] font-semibold text-[#1B1A17] mb-1">Garantía I mendly</p>
-            <p className="text-[12.5px] font-medium text-[#7A7468]">
+            <p className="text-[14px] font-semibold text-[#1F1C18] mb-1">Garantía I mendly</p>
+            <p className="text-[12.5px] font-medium text-[#7B7267]">
               Al aceptar una oferta y pagar dentro de la plataforma, tu anticipo y tu pago quedan
               protegidos y el trabajo cuenta con garantía. Los tratos fuera de la plataforma no
               tienen protección ni respaldo.

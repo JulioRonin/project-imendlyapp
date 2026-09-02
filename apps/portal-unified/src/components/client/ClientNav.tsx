@@ -37,7 +37,7 @@ export function ClientNav() {
         <item.icon
           size={22}
           strokeWidth={active ? 2.4 : 2}
-          className={`transition-colors duration-300 ${active ? 'text-[#1B1A17]' : 'text-[#ACA598]'}`}
+          className={`transition-colors duration-300 ${active ? 'text-[#1F1C18]' : 'text-[#ADA398]'}`}
         />
         <span
           className={`absolute bottom-2 w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}

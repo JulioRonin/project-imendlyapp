@@ -13,7 +13,7 @@ import { Reveal } from '@/components/client/ui';
 import { supabase } from '@/lib/supabase';
 
 const inputCls =
-  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FBF9F4] text-[#1B1A17] text-[14px] font-semibold placeholder:text-[#ACA598] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow disabled:text-[#7A7468]';
+  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FBF8F2] text-[#1F1C18] text-[14px] font-semibold placeholder:text-[#ADA398] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow disabled:text-[#7B7267]';
 
 export default function ClientProfilePage() {
   const router = useRouter();
@@ -170,20 +170,20 @@ export default function ClientProfilePage() {
   // Removed mock PAYMENT_METHODS as per user request
 
   return (
-    <main className="min-h-screen bg-[#F4F1EA] pb-36">
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
       {/* ── Header interno v2 ── */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
           <button
             onClick={() => router.back()}
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
           >
             <ArrowLeft size={19} />
           </button>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Mi cuenta</p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] leading-tight">Perfil</h1>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Perfil</h1>
           </div>
         </div>
       </header>
@@ -211,11 +211,11 @@ export default function ClientProfilePage() {
           <Avatar
             name={personalInfo.name}
             size="xl"
-            className="w-28 h-28 text-3xl ring-4 ring-[#E7F2E9] v2-shadow-lift mb-5"
+            className="w-28 h-28 text-3xl ring-4 ring-[#F6E6DD] v2-shadow-lift mb-5"
           />
-          <h2 className="text-[22px] font-bold tracking-tight text-[#1B1A17] mb-1">{personalInfo.name}</h2>
-          <p className="text-[14px] font-medium text-[#7A7468] mb-4">{personalInfo.email}</p>
-          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#E7F2E9] text-[#2A9460] text-[11px] font-bold">
+          <h2 className="text-[22px] font-bold tracking-tight text-[#1F1C18] mb-1">{personalInfo.name}</h2>
+          <p className="text-[14px] font-medium text-[#7B7267] mb-4">{personalInfo.email}</p>
+          <span className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#F6E6DD] text-[#2A9460] text-[11px] font-bold">
             <ShieldCheck size={13} /> Cuenta verificada
           </span>
         </section>
@@ -224,7 +224,7 @@ export default function ClientProfilePage() {
         <Reveal>
           <section>
             <div className="flex items-center justify-between mb-4 px-1">
-              <h3 className="text-xl font-semibold tracking-tight text-[#1B1A17]">Información básica</h3>
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Información básica</h3>
               {!isEditingInfo && (
                 <button
                   onClick={() => setIsEditingInfo(true)}
@@ -239,7 +239,7 @@ export default function ClientProfilePage() {
               {isEditingInfo ? (
                 <div className="p-6 space-y-4">
                   <div>
-                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1 block">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
                       Nombre completo
                     </label>
                     <input
@@ -249,7 +249,7 @@ export default function ClientProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1 block">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
                       Teléfono celular
                     </label>
                     <input
@@ -259,7 +259,7 @@ export default function ClientProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-2 ml-1 block">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-2 ml-1 block">
                       Correo electrónico
                     </label>
                     <input
@@ -272,7 +272,7 @@ export default function ClientProfilePage() {
                     <button
                       type="button"
                       onClick={() => setIsEditingInfo(false)}
-                      className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1B1A17] text-[13px] font-semibold v2-press hover:bg-[#FBF9F4] transition-colors"
+                      className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
                     >
                       Cancelar
                     </button>
@@ -288,30 +288,30 @@ export default function ClientProfilePage() {
               ) : (
                 <>
                   <div className="flex items-center gap-4 px-6 py-5">
-                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                       <User size={19} />
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-[#ACA598]">Nombre completo</p>
-                      <p className="text-[14.5px] font-semibold text-[#1B1A17] truncate">{personalInfo.name || '—'}</p>
+                      <p className="text-[11px] font-medium text-[#ADA398]">Nombre completo</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate">{personalInfo.name || '—'}</p>
                     </div>
                   </div>
                   <div className="border-t border-black/[0.06] flex items-center gap-4 px-6 py-5">
-                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                       <Phone size={19} />
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-[#ACA598]">Teléfono celular</p>
-                      <p className="text-[14.5px] font-semibold text-[#1B1A17] truncate tabular-nums">{personalInfo.phone || 'Sin registrar'}</p>
+                      <p className="text-[11px] font-medium text-[#ADA398]">Teléfono celular</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate tabular-nums">{personalInfo.phone || 'Sin registrar'}</p>
                     </div>
                   </div>
                   <div className="border-t border-black/[0.06] flex items-center gap-4 px-6 py-5">
-                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                       <Mail size={19} />
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-[#ACA598]">Correo electrónico</p>
-                      <p className="text-[14.5px] font-semibold text-[#1B1A17] truncate">{personalInfo.email || '—'}</p>
+                      <p className="text-[11px] font-medium text-[#ADA398]">Correo electrónico</p>
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] truncate">{personalInfo.email || '—'}</p>
                     </div>
                   </div>
                 </>
@@ -324,11 +324,11 @@ export default function ClientProfilePage() {
         <Reveal delay={60}>
           <section>
             <div className="flex items-center justify-between mb-4 px-1">
-              <h3 className="text-xl font-semibold tracking-tight text-[#1B1A17]">Métodos de pago</h3>
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Métodos de pago</h3>
               <button
                 onClick={() => setIsAddingPayment(true)}
                 aria-label="Agregar método de pago"
-                className="w-10 h-10 rounded-full bg-[#E7F2E9] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-[#F6E6DD] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
               >
                 <Plus size={18} strokeWidth={2.5} />
               </button>
@@ -337,18 +337,18 @@ export default function ClientProfilePage() {
             <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
               {paymentMethods.map((method: any, i: number) => (
                 <div key={method.id} className={`flex items-center gap-4 px-6 py-5 group ${i > 0 ? 'border-t border-black/[0.06]' : ''}`}>
-                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                     <CreditCard size={19} />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14.5px] font-semibold text-[#1B1A17]">
+                    <p className="text-[14.5px] font-semibold text-[#1F1C18]">
                       {method.type} terminada en {method.last4}
                     </p>
-                    <p className="text-[12px] font-medium text-[#7A7468]">
+                    <p className="text-[12px] font-medium text-[#7B7267]">
                       Expira {method.exp} {method.isDefault && <span className="text-primary font-semibold">· Principal</span>}
                     </p>
                   </div>
-                  <button className="text-[#ACA598] hover:text-red-500 transition-colors p-2 v2-press" aria-label="Eliminar método">
+                  <button className="text-[#ADA398] hover:text-red-500 transition-colors p-2 v2-press" aria-label="Eliminar método">
                     <Trash2 size={17} />
                   </button>
                 </div>
@@ -356,7 +356,7 @@ export default function ClientProfilePage() {
 
               {isAddingPayment ? (
                 <div className={`p-6 ${paymentMethods.length > 0 ? 'border-t border-black/[0.06]' : ''}`}>
-                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1B1A17] mb-5">Agregar nueva tarjeta / cuenta</h4>
+                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1F1C18] mb-5">Agregar nueva tarjeta / cuenta</h4>
                   <form onSubmit={handleSavePaymentMethod} className="space-y-3.5">
                     <input placeholder="Número de tarjeta (16 dígitos)" className={inputCls} required />
                     <div className="grid grid-cols-2 gap-3.5">
@@ -368,7 +368,7 @@ export default function ClientProfilePage() {
                       <button
                         type="button"
                         onClick={() => setIsAddingPayment(false)}
-                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1B1A17] text-[13px] font-semibold v2-press hover:bg-[#FBF9F4] transition-colors"
+                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
                       >
                         Cancelar
                       </button>
@@ -385,16 +385,16 @@ export default function ClientProfilePage() {
                 paymentMethods.length === 0 && (
                   <button
                     onClick={() => setIsAddingPayment(true)}
-                    className="w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF9F4] transition-colors"
+                    className="w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF8F2] transition-colors"
                   >
-                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                    <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                       <Plus size={19} strokeWidth={2.5} />
                     </span>
                     <span className="flex-1">
-                      <span className="block text-[14.5px] font-semibold text-[#1B1A17]">Agregar método de pago</span>
-                      <span className="block text-[12px] font-medium text-[#7A7468]">Tarjeta o cuenta bancaria</span>
+                      <span className="block text-[14.5px] font-semibold text-[#1F1C18]">Agregar método de pago</span>
+                      <span className="block text-[12px] font-medium text-[#7B7267]">Tarjeta o cuenta bancaria</span>
                     </span>
-                    <ChevronRight size={17} className="text-[#ACA598]" />
+                    <ChevronRight size={17} className="text-[#ADA398]" />
                   </button>
                 )
               )}
@@ -406,11 +406,11 @@ export default function ClientProfilePage() {
         <Reveal delay={120}>
           <section>
             <div className="flex items-center justify-between mb-4 px-1">
-              <h3 className="text-xl font-semibold tracking-tight text-[#1B1A17]">Direcciones guardadas</h3>
+              <h3 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Direcciones guardadas</h3>
               <button
                 onClick={() => setIsAddingAddress(true)}
                 aria-label="Agregar dirección"
-                className="w-10 h-10 rounded-full bg-[#E7F2E9] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-[#F6E6DD] text-primary flex items-center justify-center v2-press hover:bg-primary hover:text-white transition-colors"
               >
                 <Plus size={18} strokeWidth={2.5} />
               </button>
@@ -419,20 +419,20 @@ export default function ClientProfilePage() {
             <div className="bg-white rounded-[2.25rem] v2-shadow-soft overflow-hidden">
               {addresses.map((address: any, i: number) => (
                 <div key={address.id} className={`flex items-center gap-4 px-6 py-5 group ${i > 0 ? 'border-t border-black/[0.06]' : ''}`}>
-                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                     <MapPin size={19} />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14.5px] font-semibold text-[#1B1A17] flex items-center gap-2.5">
+                    <p className="text-[14.5px] font-semibold text-[#1F1C18] flex items-center gap-2.5">
                       {address.title}
                       {address.is_default && (
-                        <span className="inline-flex items-center h-6 px-2.5 rounded-full bg-[#E7F2E9] text-[#2A9460] text-[10px] font-bold">
+                        <span className="inline-flex items-center h-6 px-2.5 rounded-full bg-[#F6E6DD] text-[#2A9460] text-[10px] font-bold">
                           Principal
                         </span>
                       )}
                     </p>
-                    <p className="text-[13px] font-medium text-[#7A7468] truncate">{address.street}</p>
-                    <p className="text-[12px] font-medium text-[#ACA598]">
+                    <p className="text-[13px] font-medium text-[#7B7267] truncate">{address.street}</p>
+                    <p className="text-[12px] font-medium text-[#ADA398]">
                       {address.city}, {address.state} · C.P. {address.cp}
                     </p>
                   </div>
@@ -440,18 +440,18 @@ export default function ClientProfilePage() {
                     <button
                       onClick={() => handleDeleteAddress(address.id)}
                       aria-label="Eliminar dirección"
-                      className="text-[#ACA598] hover:text-red-500 transition-colors p-2 v2-press"
+                      className="text-[#ADA398] hover:text-red-500 transition-colors p-2 v2-press"
                     >
                       <Trash2 size={17} />
                     </button>
-                    <ChevronRight size={17} className="text-[#ACA598]" />
+                    <ChevronRight size={17} className="text-[#ADA398]" />
                   </div>
                 </div>
               ))}
 
               {isAddingAddress ? (
                 <div className={`p-6 ${addresses.length > 0 ? 'border-t border-black/[0.06]' : ''}`}>
-                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1B1A17] mb-5">Nueva dirección</h4>
+                  <h4 className="text-[15px] font-semibold tracking-tight text-[#1F1C18] mb-5">Nueva dirección</h4>
                   <form onSubmit={handleAddAddress} className="space-y-3.5">
                     <input
                       placeholder="Título (e.g. Casa, Oficina)"
@@ -494,7 +494,7 @@ export default function ClientProfilePage() {
                       <button
                         type="button"
                         onClick={() => setIsAddingAddress(false)}
-                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1B1A17] text-[13px] font-semibold v2-press hover:bg-[#FBF9F4] transition-colors"
+                        className="flex-1 h-14 rounded-full bg-white border border-black/[0.06] text-[#1F1C18] text-[13px] font-semibold v2-press hover:bg-[#FBF8F2] transition-colors"
                       >
                         Cancelar
                       </button>
@@ -510,16 +510,16 @@ export default function ClientProfilePage() {
               ) : (
                 <button
                   onClick={() => setIsAddingAddress(true)}
-                  className={`w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF9F4] transition-colors ${addresses.length > 0 ? 'border-t border-black/[0.06]' : ''}`}
+                  className={`w-full flex items-center gap-4 px-6 py-5 text-left v2-press hover:bg-[#FBF8F2] transition-colors ${addresses.length > 0 ? 'border-t border-black/[0.06]' : ''}`}
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-[1.05rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
                     <Plus size={19} strokeWidth={2.5} />
                   </span>
                   <span className="flex-1">
-                    <span className="block text-[14.5px] font-semibold text-[#1B1A17]">Agregar dirección</span>
-                    <span className="block text-[12px] font-medium text-[#7A7468]">Casa, oficina u otro lugar</span>
+                    <span className="block text-[14.5px] font-semibold text-[#1F1C18]">Agregar dirección</span>
+                    <span className="block text-[12px] font-medium text-[#7B7267]">Casa, oficina u otro lugar</span>
                   </span>
-                  <ChevronRight size={17} className="text-[#ACA598]" />
+                  <ChevronRight size={17} className="text-[#ADA398]" />
                 </button>
               )}
             </div>

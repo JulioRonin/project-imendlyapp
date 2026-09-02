@@ -40,10 +40,10 @@ const STATUS_LABEL: Record<string, string> = {
 
 /** Pill semántica de estado. */
 const statusPillClass = (status: string) => {
-  if (status === 'COMPLETED' || status === 'PAID') return 'bg-[#E7F2E9] text-[#2A9460]';
+  if (status === 'COMPLETED' || status === 'PAID') return 'bg-[#F6E6DD] text-[#2A9460]';
   if (status === 'REJECTED' || status === 'CANCELLED') return 'bg-red-50 text-red-600';
   if (status === 'PENDING' || status === 'COUNTER_OFFER') return 'bg-amber-50 text-amber-700';
-  return 'bg-[#E7F2E9] text-[#2A9460]';
+  return 'bg-[#F6E6DD] text-[#2A9460]';
 };
 
 export default function OrdersDashboard() {
@@ -123,22 +123,22 @@ export default function OrdersDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F4F1EA] pb-36">
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
       {/* ── Header interno v2 ── */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#F4F1EA]/85 backdrop-blur-xl">
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center gap-4">
           <Link
             href="/cliente"
             aria-label="Volver al inicio"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
           >
             <ArrowLeft size={19} />
           </Link>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Tu actividad</p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#1B1A17] leading-tight">Mis órdenes</h1>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Mis órdenes</h1>
           </div>
-          <span className="shrink-0 h-9 px-4 inline-flex items-center rounded-full bg-white v2-shadow-soft text-[12px] font-bold text-[#1B1A17] tabular-nums">
+          <span className="shrink-0 h-9 px-4 inline-flex items-center rounded-full bg-white v2-shadow-soft text-[12px] font-bold text-[#1F1C18] tabular-nums">
             {myOrders.length} {myOrders.length === 1 ? 'activa' : 'activas'}
           </span>
         </div>
@@ -157,13 +157,13 @@ export default function OrdersDashboard() {
         {/* ── Estado vacío ── */}
         {!isLoading && myOrders.length === 0 && (
           <div className="v2-rise v2-d1 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-16 flex flex-col items-center text-center">
-            <span className="w-20 h-20 rounded-[1.5rem] bg-[#E7F2E9] text-primary flex items-center justify-center mb-6">
+            <span className="w-20 h-20 rounded-[1.5rem] bg-[#F6E6DD] text-primary flex items-center justify-center mb-6">
               <ClipboardList size={32} strokeWidth={1.8} />
             </span>
-            <h2 className="text-[19px] font-semibold tracking-tight text-[#1B1A17] mb-2">
+            <h2 className="text-[19px] font-semibold tracking-tight text-[#1F1C18] mb-2">
               Aún no tienes órdenes
             </h2>
-            <p className="text-[14px] font-medium text-[#7A7468] max-w-xs mb-8">
+            <p className="text-[14px] font-medium text-[#7B7267] max-w-xs mb-8">
               Cuando contrates un servicio, aquí verás su avance paso a paso.
             </p>
             <Link
@@ -187,14 +187,14 @@ export default function OrdersDashboard() {
                 {/* Servicio + monto protagonista */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] mb-1 tabular-nums">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-1 tabular-nums">
                       ORD-{p.id}
                     </p>
-                    <h3 className="text-[17px] font-semibold tracking-tight text-[#1B1A17] leading-snug">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-[#1F1C18] leading-snug">
                       {p.serviceName}
                     </h3>
                   </div>
-                  <p className="shrink-0 text-[24px] font-bold tracking-tight text-[#1B1A17] tabular-nums">
+                  <p className="shrink-0 text-[24px] font-bold tracking-tight text-[#1F1C18] tabular-nums">
                     ${p.price.toFixed(2)}
                   </p>
                 </div>
@@ -203,9 +203,9 @@ export default function OrdersDashboard() {
                 <div className="flex items-center gap-4 mb-5 min-w-0">
                   <div className="flex items-center gap-2 min-w-0">
                     <Avatar src={p.providerAvatar} name={p.providerName} size="sm" />
-                    <span className="text-[13px] font-semibold text-[#7A7468] truncate">{p.providerName}</span>
+                    <span className="text-[13px] font-semibold text-[#7B7267] truncate">{p.providerName}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#ACA598] shrink-0">
+                  <div className="flex items-center gap-1.5 text-[#ADA398] shrink-0">
                     <Calendar size={13} />
                     <span className="text-[12.5px] font-medium tabular-nums">{p.date} · {p.time}</span>
                   </div>
@@ -218,7 +218,7 @@ export default function OrdersDashboard() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700 mb-1">
                         Sugerencia de nuevo horario
                       </p>
-                      <p className="text-[14px] font-semibold text-[#1B1A17] tabular-nums">
+                      <p className="text-[14px] font-semibold text-[#1F1C18] tabular-nums">
                         {p.counterOffer.date} · {p.counterOffer.time}
                       </p>
                       <p className="text-[13px] font-medium text-amber-700/80 mt-1">
@@ -227,7 +227,7 @@ export default function OrdersDashboard() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleAcceptCounterOffer(p.id); }}
-                      className="shrink-0 h-11 px-5 rounded-full bg-[#1B1A17] text-white text-[12px] font-bold v2-press"
+                      className="shrink-0 h-11 px-5 rounded-full bg-[#1F1C18] text-white text-[12px] font-bold v2-press"
                     >
                       Aceptar horario
                     </button>
@@ -249,16 +249,16 @@ export default function OrdersDashboard() {
                   {p.status === 'ACCEPTED' && (
                     <button
                       onClick={(e) => { e.stopPropagation(); handlePayOrder(p.id); }}
-                      className="flex-1 sm:flex-none h-14 px-8 rounded-full bg-[#1B1A17] text-white text-[13px] font-bold v2-press v2-shadow-lift"
+                      className="flex-1 sm:flex-none h-14 px-8 rounded-full bg-[#1F1C18] text-white text-[13px] font-bold v2-press v2-shadow-lift"
                     >
                       Proceder al pago
                     </button>
                   )}
                   <span className="ml-auto flex items-center gap-2">
-                    <span className="w-11 h-11 rounded-full bg-[#FBF9F4] text-[#ACA598] flex items-center justify-center group-hover:bg-[#E7F2E9] group-hover:text-primary transition-colors">
+                    <span className="w-11 h-11 rounded-full bg-[#FBF8F2] text-[#ADA398] flex items-center justify-center group-hover:bg-[#F6E6DD] group-hover:text-primary transition-colors">
                       <MessageCircle size={18} />
                     </span>
-                    <ChevronRight size={19} className="text-[#ACA598] group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight size={19} className="text-[#ADA398] group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                   </span>
                 </div>
               </article>

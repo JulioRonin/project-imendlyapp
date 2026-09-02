@@ -23,7 +23,7 @@ const ALL_CATEGORIES = [
 
 export default function CategoriesPage() {
   return (
-    <main className="min-h-screen bg-[#F4F1EA] pb-36">
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
       <div className="max-w-7xl mx-auto">
         {/* ── Hero verde compacto ── */}
         <header className="v2-rise relative v2-hero-grad text-white rounded-b-[2.75rem] md:rounded-[2.75rem] md:mt-5 md:mx-6 overflow-hidden">
@@ -62,7 +62,7 @@ export default function CategoriesPage() {
               >
                 <article className="group h-full flex items-center gap-5 bg-white rounded-[1.75rem] p-5 v2-shadow-soft v2-press v2-float">
                   {/* Imagen / ícono en squircle de tinte verde */}
-                  <div className="relative w-[4.5rem] h-[4.5rem] shrink-0 rounded-[1.25rem] bg-[#E7F2E9] overflow-hidden flex items-center justify-center text-primary">
+                  <div className="relative w-[4.5rem] h-[4.5rem] shrink-0 rounded-[1.25rem] bg-[#F6E6DD] overflow-hidden flex items-center justify-center text-primary">
                     {cat.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -77,21 +77,21 @@ export default function CategoriesPage() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-[16px] font-semibold tracking-tight text-[#1B1A17] truncate">
+                      <h2 className="text-[16px] font-semibold tracking-tight text-[#1F1C18] truncate">
                         {cat.name}
                       </h2>
                       {cat.comingSoon && (
-                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598] bg-[#F4F1EA] rounded-full px-2.5 py-1">
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] bg-[#F4F0E8] rounded-full px-2.5 py-1">
                           Pronto
                         </span>
                       )}
                     </div>
-                    <p className="text-[12.5px] font-medium text-[#7A7468] leading-snug mt-0.5 line-clamp-2">
+                    <p className="text-[12.5px] font-medium text-[#7B7267] leading-snug mt-0.5 line-clamp-2">
                       {cat.description}
                     </p>
                   </div>
 
-                  <span className="shrink-0 w-9 h-9 rounded-full bg-[#F4F1EA] text-[#1B1A17] flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+                  <span className="shrink-0 w-9 h-9 rounded-full bg-[#F4F0E8] text-[#1F1C18] flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white">
                     <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </article>

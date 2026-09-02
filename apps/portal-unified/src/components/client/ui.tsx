@@ -20,8 +20,8 @@ export function Chip({
       onClick={onClick}
       className={`shrink-0 snap-start px-5 h-11 rounded-full text-[13px] font-semibold v2-press transition-colors duration-300 ${
         active
-          ? 'bg-[#1B1A17] text-white v2-shadow-lift'
-          : 'bg-white text-[#7A7468] border border-black/[0.05] hover:text-[#1B1A17]'
+          ? 'bg-[#1F1C18] text-white v2-shadow-lift'
+          : 'bg-white text-[#7B7267] border border-black/[0.05] hover:text-[#1F1C18]'
       }`}
     >
       {label}
@@ -41,7 +41,7 @@ export function SectionHead({
 }) {
   return (
     <div className="flex items-end justify-between mb-5">
-      <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17]">{title}</h2>
+      <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18]">{title}</h2>
       {action && href && (
         <Link
           href={href}
@@ -71,10 +71,10 @@ export function IconTile({
       onClick={onClick}
       className="flex flex-col items-center gap-3 p-5 bg-white rounded-[1.75rem] v2-shadow-soft v2-press v2-float"
     >
-      <span className="w-14 h-14 rounded-[1.15rem] bg-[#E7F2E9] text-primary flex items-center justify-center">
+      <span className="w-14 h-14 rounded-[1.15rem] bg-[#F6E6DD] text-primary flex items-center justify-center">
         {icon}
       </span>
-      <span className="text-[12.5px] font-semibold text-[#1B1A17]">{label}</span>
+      <span className="text-[12.5px] font-semibold text-[#1F1C18]">{label}</span>
     </button>
   );
 }
@@ -86,7 +86,7 @@ export function RatingPill({ value, className = '' }: { value: number; className
       className={`inline-flex items-center gap-1 bg-white rounded-full px-3 h-9 v2-shadow-lift ${className}`}
     >
       <Star size={13} className="text-amber-400 fill-amber-400" />
-      <span className="text-[13px] font-bold text-[#1B1A17] tabular-nums">
+      <span className="text-[13px] font-bold text-[#1F1C18] tabular-nums">
         {value.toFixed(1)}
       </span>
     </span>

@@ -1,29 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  /* ESMERALDA MINIMAL PALETTE */
-  --im-green:      #3DB87A;
-  --im-green-dk:   #2A9460;
-  --im-green-lt:   #E8F7F0;
-  
-  --im-silver:     #D1D1D1;
-  --im-silver-lt:  #E8E8E8;
-  --im-white:      #FFFFFF;
-  --im-off-white:  #F7F7F7;
-  
-  --im-black:      #1F1F1F;
-  --im-gray-600:   #4A4A4A;
-  --im-gray-400:   #8A8A8A;
-  --im-gray-200:   #C4C4C4;
+  /* ═══ PALETA "ARCILLA & LINO" — línea de diseño definitiva ═══
+     Ver docs/design/design-system.md. Los nombres --im-* se conservan
+     por compatibilidad pero apuntan a la paleta nueva. */
+  --im-clay:       #C8663E;   /* acento de acción (antes verde) */
+  --im-clay-dk:    #B0552F;
+  --im-clay-lt:    #F6E6DD;
+  --im-clay-deep:  #8A4529;
+  --im-sage:       #7F9A78;   /* secundario: verificado / éxito */
+  --im-sage-lt:    #E9EFE5;
 
-  --im-success:    #3DB87A;
-  --im-warning:    #F59E0B;
-  --im-error:      #EF4444;
-  
+  --im-linen:      #F4F0E8;
+  --im-sand:       #EAE3D8;
+  --im-cream:      #FBF8F2;
+  --im-white:      #FFFFFF;
+
+  --im-ink:        #1F1C18;
+  --im-muted:      #7B7267;
+  --im-faint:      #ADA398;
+  --im-line:       rgba(31, 28, 24, 0.07);
+
+  --im-warning:    #C98A2B;
+  --im-error:      #B8402E;
+
+  /* alias heredados */
+  --im-green:      var(--im-clay);
+  --im-green-dk:   var(--im-clay-dk);
+  --im-green-lt:   var(--im-clay-lt);
+  --im-silver:     var(--im-sand);
+  --im-silver-lt:  var(--im-linen);
+  --im-off-white:  var(--im-cream);
+  --im-black:      var(--im-ink);
+  --im-gray-600:   var(--im-muted);
+  --im-gray-400:   var(--im-faint);
+  --im-gray-200:   #D9D2C7;
+  --im-success:    var(--im-sage);
+
   /* TOKENS */
-  --primary: var(--im-green);
-  --background: var(--im-silver);
-  --foreground: var(--im-black);
+  --primary: var(--im-clay);
+  --background: var(--im-linen);
+  --foreground: var(--im-ink);
   
   --radius-xs: 6px;
   --radius-sm: 12px;
@@ -37,18 +54,31 @@
 }
 
 @theme inline {
-  --color-primary: var(--im-green);
-  --color-primary-dark: var(--im-green-dk);
-  --color-primary-light: var(--im-green-lt);
-  
-  --color-silver: var(--im-silver);
-  --color-silver-light: var(--im-silver-lt);
-  --color-off-white: var(--im-off-white);
-  
-  --color-black-rich: var(--im-black);
-  --color-brand-night: var(--im-black);
-  --color-brand-navy: #060d16;
-  --color-gray-soft: var(--im-gray-400);
+  --color-primary: var(--im-clay);
+  --color-primary-dark: var(--im-clay-dk);
+  --color-primary-light: var(--im-clay-lt);
+  --color-clay-deep: var(--im-clay-deep);
+  --color-sage: var(--im-sage);
+  --color-sage-light: var(--im-sage-lt);
+
+  --color-linen: var(--im-linen);
+  --color-sand: var(--im-sand);
+  --color-cream: var(--im-cream);
+  --color-ink: var(--im-ink);
+  --color-muted: var(--im-muted);
+  --color-faint: var(--im-faint);
+  --color-line: var(--im-line);
+  --color-warning: var(--im-warning);
+  --color-error: var(--im-error);
+
+  /* alias heredados usados por proveedor/admin */
+  --color-silver: var(--im-sand);
+  --color-silver-light: var(--im-linen);
+  --color-off-white: var(--im-cream);
+  --color-black-rich: var(--im-ink);
+  --color-brand-night: var(--im-ink);
+  --color-brand-navy: #2B241F;
+  --color-gray-soft: var(--im-faint);
   
   --font-urbanist: var(--font-urbanist);
 
@@ -61,8 +91,8 @@
 }
 
 body {
-  background: #F8F9FB;
-  color: var(--im-black);
+  background: var(--im-linen);
+  color: var(--im-ink);
   font-family: var(--font-urbanist), sans-serif;
   letter-spacing: -0.01em;
 }
@@ -79,18 +109,18 @@ body {
    Spec: docs/design/ui-cliente-v2.md
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --v2-ground: #F3F4F1;
+  --v2-ground: #F4F0E8;
   --v2-card: #FFFFFF;
-  --v2-card-soft: #FAFBF8;
-  --v2-ink: #151714;
-  --v2-muted: #70756E;
-  --v2-faint: #A8ADA6;
+  --v2-card-soft: #FBF8F2;
+  --v2-ink: #1F1C18;
+  --v2-muted: #7B7267;
+  --v2-faint: #ADA398;
   --v2-line: rgba(21, 23, 20, 0.06);
-  --v2-tint: #E9F7EF;
+  --v2-tint: #F6E6DD;
 }
 
 .v2-hero-grad {
-  background: linear-gradient(150deg, #43C688 0%, #2FA36B 45%, #1E7A4E 100%);
+  background: linear-gradient(150deg, #D98A66 0%, #C8663E 45%, #8A4529 100%);
 }
 
 .v2-shadow-soft  { box-shadow: 0 2px 10px rgba(21, 23, 20, 0.04); }
@@ -140,7 +170,7 @@ body {
 }
 
 .v2-shimmer {
-  background: linear-gradient(90deg, #ECEDEA 0%, #F6F7F4 40%, #ECEDEA 80%);
+  background: linear-gradient(90deg, #EAE3D8 0%, #F4F0E8 40%, #EAE3D8 80%);
   background-size: 800px 100%;
   animation: v2-shimmer 1.4s linear infinite;
 }
@@ -158,12 +188,12 @@ body {
    Fondos cálidos, vidrio esmerilado, fotografía protagonista.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --v3-linen: #F4F1EA;
+  --v3-linen: #F4F0E8;
   --v3-sand: #EBE6DC;
-  --v3-cream: #FBF9F4;
-  --v3-ink: #1B1A17;
-  --v3-muted: #7A7468;
-  --v3-faint: #ACA598;
+  --v3-cream: #FBF8F2;
+  --v3-ink: #1F1C18;
+  --v3-muted: #7B7267;
+  --v3-faint: #ADA398;
 }
 
 /* Vidrio esmerilado sobre fotografía */

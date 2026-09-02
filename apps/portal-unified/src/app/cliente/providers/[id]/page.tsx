@@ -225,7 +225,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#F4F1EA]">
+      <main className="min-h-screen bg-[#F4F0E8]">
         <div className="max-w-3xl mx-auto">
           <div className="h-[420px] md:rounded-[2.75rem] md:mt-5 v2-shimmer" />
           <div className="relative z-10 -mt-10 bg-white rounded-t-[2.75rem] md:rounded-[2.75rem] px-6 md:px-10 pt-9 pb-16 space-y-4">
@@ -246,15 +246,15 @@ export default function ProviderProfile({ params }: { params: any }) {
 
   if (!provider) {
     return (
-      <main className="min-h-screen bg-[#F4F1EA] flex items-center justify-center px-6">
+      <main className="min-h-screen bg-[#F4F0E8] flex items-center justify-center px-6">
         <div className="v2-rise text-center">
-          <div className="w-24 h-24 rounded-[1.75rem] bg-[#E7F2E9] text-primary flex items-center justify-center mx-auto mb-7">
+          <div className="w-24 h-24 rounded-[1.75rem] bg-[#F6E6DD] text-primary flex items-center justify-center mx-auto mb-7">
             <UserX size={38} strokeWidth={1.8} />
           </div>
-          <h1 className="text-[21px] font-semibold tracking-tight text-[#1B1A17] mb-2">
+          <h1 className="text-[21px] font-semibold tracking-tight text-[#1F1C18] mb-2">
             Proveedor no encontrado
           </h1>
-          <p className="text-[14px] font-medium text-[#7A7468] max-w-xs mx-auto">
+          <p className="text-[14px] font-medium text-[#7B7267] max-w-xs mx-auto">
             Puede que este perfil ya no esté disponible.
           </p>
           <Link
@@ -269,10 +269,10 @@ export default function ProviderProfile({ params }: { params: any }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#F4F1EA] pb-40">
+    <main className="min-h-screen bg-[#F4F0E8] pb-40">
       <div className="max-w-3xl mx-auto">
         {/* ── Hero image-forward ── */}
-        <header className="v2-rise relative h-[420px] md:h-[460px] md:mt-5 md:rounded-[2.75rem] overflow-hidden bg-[#1B1A17]">
+        <header className="v2-rise relative h-[420px] md:h-[460px] md:mt-5 md:rounded-[2.75rem] overflow-hidden bg-[#1F1C18]">
           {provider.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -281,7 +281,7 @@ export default function ProviderProfile({ params }: { params: any }) {
               className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#1B1A17] flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#1F1C18] flex items-center justify-center">
               <span className="text-white/85 text-8xl font-bold">
                 {provider.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
               </span>
@@ -293,7 +293,7 @@ export default function ProviderProfile({ params }: { params: any }) {
           <button
             onClick={() => window.history.back()}
             aria-label="Regresar"
-            className="absolute top-5 left-5 md:top-6 md:left-6 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md v2-shadow-soft flex items-center justify-center text-[#1B1A17] v2-press z-10"
+            className="absolute top-5 left-5 md:top-6 md:left-6 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press z-10"
           >
             <ArrowLeft size={19} />
           </button>
@@ -323,29 +323,29 @@ export default function ProviderProfile({ params }: { params: any }) {
         <div className="relative z-10 -mt-10 bg-white rounded-t-[2.75rem] md:rounded-[2.75rem] px-6 md:px-10 pt-8 pb-10">
           {/* Chips de stats */}
           <div className="v2-rise v2-d1 grid grid-cols-3 gap-3">
-            <div className="rounded-[1.25rem] bg-[#FBF9F4] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="flex items-center gap-1 text-[17px] font-bold text-[#1B1A17] tabular-nums">
+            <div className="rounded-[1.25rem] bg-[#FBF8F2] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
+              <span className="flex items-center gap-1 text-[17px] font-bold text-[#1F1C18] tabular-nums">
                 <Star size={14} className="text-amber-400 fill-amber-400" />
                 {Number(provider.rating || 0).toFixed(1)}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">Rating</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">Rating</span>
             </div>
-            <div className="rounded-[1.25rem] bg-[#FBF9F4] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="text-[17px] font-bold text-[#1B1A17] tabular-nums">
+            <div className="rounded-[1.25rem] bg-[#FBF8F2] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
+              <span className="text-[17px] font-bold text-[#1F1C18] tabular-nums">
                 {provider.reviews?.length || 0}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">Reseñas</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">Reseñas</span>
             </div>
-            <div className="rounded-[1.25rem] bg-[#FBF9F4] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="text-[17px] font-bold text-[#1B1A17] tabular-nums">
+            <div className="rounded-[1.25rem] bg-[#FBF8F2] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
+              <span className="text-[17px] font-bold text-[#1F1C18] tabular-nums">
                 {provider.experience || 0}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">Años exp.</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">Años exp.</span>
             </div>
           </div>
 
           {/* Cobertura */}
-          <div className="v2-rise v2-d2 flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] font-medium text-[#7A7468]">
+          <div className="v2-rise v2-d2 flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] font-medium text-[#7B7267]">
             <span className="flex items-center gap-1.5 min-w-0">
               <MapPin size={14} className="shrink-0 text-primary" />
               <span className="truncate">
@@ -361,10 +361,10 @@ export default function ProviderProfile({ params }: { params: any }) {
           {/* Acerca */}
           {provider.about && (
             <section className="v2-rise v2-d3 mt-9">
-              <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17] mb-3">
+              <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18] mb-3">
                 Acerca del profesional
               </h2>
-              <p className="text-[14.5px] font-medium text-[#7A7468] leading-relaxed">
+              <p className="text-[14.5px] font-medium text-[#7B7267] leading-relaxed">
                 {provider.about}
               </p>
             </section>
@@ -373,8 +373,8 @@ export default function ProviderProfile({ params }: { params: any }) {
           {/* ── Servicios ── */}
           <section className="v2-rise v2-d4 mt-10">
             <div className="flex items-end justify-between mb-5">
-              <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17]">Servicios</h2>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">
+              <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18]">Servicios</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">
                 Elige varios
               </p>
             </div>
@@ -389,7 +389,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 return (
                   <div key={cat} className="space-y-3">
-                    <h3 className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">
+                    <h3 className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">
                       {cat}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -401,22 +401,22 @@ export default function ProviderProfile({ params }: { params: any }) {
                             onClick={() => toggleService(s.name)}
                             className={`p-5 rounded-[1.75rem] text-left transition-colors duration-300 v2-press ${
                               isSelected
-                                ? 'bg-[#E7F2E9] border border-primary/25'
+                                ? 'bg-[#F6E6DD] border border-primary/25'
                                 : 'bg-white border border-black/[0.05] v2-shadow-soft hover:border-black/10'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex items-center gap-3.5 min-w-0">
                                 <span className={`w-10 h-10 shrink-0 rounded-[0.85rem] flex items-center justify-center transition-colors ${
-                                  isSelected ? 'bg-primary text-white' : 'bg-[#F4F1EA] text-[#ACA598]'
+                                  isSelected ? 'bg-primary text-white' : 'bg-[#F4F0E8] text-[#ADA398]'
                                 }`}>
                                   <CheckCircle2 size={19} />
                                 </span>
                                 <div className="min-w-0">
-                                  <p className="text-[14.5px] font-semibold text-[#1B1A17] leading-snug">
+                                  <p className="text-[14.5px] font-semibold text-[#1F1C18] leading-snug">
                                     {s.name}
                                   </p>
-                                  <p className="text-[12px] font-medium text-[#ACA598]">
+                                  <p className="text-[12px] font-medium text-[#ADA398]">
                                     Por {s.unit || 'servicio'}
                                   </p>
                                 </div>
@@ -424,7 +424,7 @@ export default function ProviderProfile({ params }: { params: any }) {
                               <p className="shrink-0 text-[16px] font-bold text-primary tabular-nums text-right">
                                 ${s.price}
                                 {s.isRange && (
-                                  <span className="block text-[11.5px] font-semibold text-[#ACA598]">
+                                  <span className="block text-[11.5px] font-semibold text-[#ADA398]">
                                     a ${s.maxPrice}
                                   </span>
                                 )}
@@ -443,7 +443,7 @@ export default function ProviderProfile({ params }: { params: any }) {
                 onClick={() => toggleService('Personalizado o Explica tu necesidad')}
                 className={`w-full p-5 rounded-[1.75rem] text-left transition-colors duration-300 v2-press ${
                   selectedServices.includes('Personalizado o Explica tu necesidad')
-                    ? 'bg-[#E7F2E9] border border-primary/25'
+                    ? 'bg-[#F6E6DD] border border-primary/25'
                     : 'bg-white border border-black/[0.05] v2-shadow-soft hover:border-black/10'
                 }`}
               >
@@ -452,15 +452,15 @@ export default function ProviderProfile({ params }: { params: any }) {
                     <span className={`w-10 h-10 shrink-0 rounded-[0.85rem] flex items-center justify-center transition-colors ${
                       selectedServices.includes('Personalizado o Explica tu necesidad')
                         ? 'bg-primary text-white'
-                        : 'bg-[#F4F1EA] text-[#ACA598]'
+                        : 'bg-[#F4F0E8] text-[#ADA398]'
                     }`}>
                       <Pencil size={17} />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[14.5px] font-semibold text-[#1B1A17] leading-snug">
+                      <p className="text-[14.5px] font-semibold text-[#1F1C18] leading-snug">
                         Personalizado o Explica tu necesidad
                       </p>
-                      <p className="text-[12px] font-medium text-[#ACA598]">
+                      <p className="text-[12px] font-medium text-[#ADA398]">
                         Explícanos a detalle
                       </p>
                     </div>
@@ -476,9 +476,9 @@ export default function ProviderProfile({ params }: { params: any }) {
                   value={customRequestText}
                   onChange={(e) => setCustomRequestText(e.target.value)}
                   placeholder="Describe exactamente qué necesitas. ¿Medidas, materiales, detalles específicos?"
-                  className="w-full bg-[#FBF9F4] rounded-[1.25rem] p-5 text-[14.5px] font-semibold text-[#1B1A17] placeholder:text-[#ACA598] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow h-36 resize-none"
+                  className="w-full bg-[#FBF8F2] rounded-[1.25rem] p-5 text-[14.5px] font-semibold text-[#1F1C18] placeholder:text-[#ADA398] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow h-36 resize-none"
                 />
-                <p className="text-[12px] font-medium text-[#7A7468] mt-2 px-2">
+                <p className="text-[12px] font-medium text-[#7B7267] mt-2 px-2">
                   Este monto requerirá cotización final por parte del proveedor tras su revisión.
                 </p>
               </div>
@@ -487,14 +487,14 @@ export default function ProviderProfile({ params }: { params: any }) {
 
           {/* ── Agenda ── */}
           <section className="v2-rise v2-d5 mt-10">
-            <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17] mb-5">Agenda</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18] mb-5">Agenda</h2>
 
             <button
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
               className={`w-full h-14 px-6 rounded-full flex items-center justify-center gap-2.5 text-[13px] font-semibold transition-colors v2-press ${
                 isCalendarOpen
-                  ? 'bg-[#E7F2E9] text-primary border border-primary/25'
-                  : 'bg-white text-[#1B1A17] border border-black/[0.05] v2-shadow-soft'
+                  ? 'bg-[#F6E6DD] text-primary border border-primary/25'
+                  : 'bg-white text-[#1F1C18] border border-black/[0.05] v2-shadow-soft'
               }`}
             >
               <CalendarIcon size={16} />
@@ -511,23 +511,23 @@ export default function ProviderProfile({ params }: { params: any }) {
 
             {/* Calendario colapsable */}
             <div className={`transition-all duration-700 ease-in-out ${isCalendarOpen ? 'max-h-[800px] opacity-100 mt-6' : 'max-h-0 opacity-0 overflow-hidden'}`}>
-              <div className="rounded-[1.75rem] bg-[#FBF9F4] border border-black/[0.04] p-5">
+              <div className="rounded-[1.75rem] bg-[#FBF8F2] border border-black/[0.04] p-5">
                 <div className="flex justify-between items-center mb-5">
-                  <h4 className="text-[14px] font-semibold text-[#1B1A17] capitalize">
+                  <h4 className="text-[14px] font-semibold text-[#1F1C18] capitalize">
                     {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
                   </h4>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
                       aria-label="Mes anterior"
-                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#7A7468] hover:text-[#1B1A17] transition-colors v2-press"
+                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#7B7267] hover:text-[#1F1C18] transition-colors v2-press"
                     >
                       <ChevronRight className="rotate-180" size={14} />
                     </button>
                     <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
                       aria-label="Mes siguiente"
-                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#7A7468] hover:text-[#1B1A17] transition-colors v2-press"
+                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#7B7267] hover:text-[#1F1C18] transition-colors v2-press"
                     >
                       <ChevronRight size={14} />
                     </button>
@@ -536,7 +536,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 <div className="grid grid-cols-7 gap-1.5 mb-6">
                   {['D','L','M','M','J','V','S'].map((d, i) => (
-                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">{d}</div>
+                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">{d}</div>
                   ))}
                   {/* Calendar Days */}
                   {(() => {
@@ -567,7 +567,7 @@ export default function ProviderProfile({ params }: { params: any }) {
                           onClick={() => setSelectedDate(dateObj)}
                           className={`h-10 rounded-full text-[12px] font-semibold tabular-nums transition-colors v2-press ${
                             isSelectedDay ? 'bg-primary text-white shadow-lg shadow-primary/25' :
-                            (isWorkingDay && !isPast) ? 'bg-white text-[#1B1A17] v2-shadow-soft hover:bg-[#E7F2E9]' : 'bg-transparent text-[#ACA598]/60 cursor-not-allowed'
+                            (isWorkingDay && !isPast) ? 'bg-white text-[#1F1C18] v2-shadow-soft hover:bg-[#F6E6DD]' : 'bg-transparent text-[#ADA398]/60 cursor-not-allowed'
                           }`}
                         >
                           {day}
@@ -580,7 +580,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 {selectedDate && (
                   <div className="v2-scale space-y-3">
-                    <p className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">
+                    <p className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">
                       Horarios disponibles
                     </p>
                     <div className="grid grid-cols-2 gap-2.5">
@@ -590,14 +590,14 @@ export default function ProviderProfile({ params }: { params: any }) {
                           onClick={() => setSelectedTime(t)}
                           className={`h-12 rounded-full text-[12.5px] font-semibold tabular-nums transition-colors v2-press ${
                             selectedTime === t
-                              ? 'bg-[#1B1A17] text-white v2-shadow-lift'
-                              : 'bg-white text-[#7A7468] border border-black/[0.05] hover:text-[#1B1A17]'
+                              ? 'bg-[#1F1C18] text-white v2-shadow-lift'
+                              : 'bg-white text-[#7B7267] border border-black/[0.05] hover:text-[#1F1C18]'
                           }`}
                         >
                           {t}
                         </button>
                       )) : (
-                        <p className="col-span-2 text-[13px] font-medium text-[#ACA598] py-4 text-center">
+                        <p className="col-span-2 text-[13px] font-medium text-[#ADA398] py-4 text-center">
                           No hay horarios disponibles este día.
                         </p>
                       )}
@@ -612,12 +612,12 @@ export default function ProviderProfile({ params }: { params: any }) {
           {(provider as any).portfolio && (provider as any).portfolio.length > 0 && (
             <Reveal className="mt-10">
               <section>
-                <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17] mb-5">Portafolio</h2>
+                <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18] mb-5">Portafolio</h2>
                 <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-6 px-6 md:-mx-10 md:px-10 pb-2">
                   {(provider as any).portfolio.map((item: any, i: number) => (
                     <figure
                       key={i}
-                      className="group snap-start shrink-0 w-[72%] sm:w-[300px] relative aspect-[4/3] rounded-[1.75rem] overflow-hidden bg-[#1B1A17] v2-shadow-lift v2-float"
+                      className="group snap-start shrink-0 w-[72%] sm:w-[300px] relative aspect-[4/3] rounded-[1.75rem] overflow-hidden bg-[#1F1C18] v2-shadow-lift v2-float"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -646,18 +646,18 @@ export default function ProviderProfile({ params }: { params: any }) {
           {provider.reviews && provider.reviews.length > 0 && (
             <Reveal className="mt-10">
               <section>
-                <h2 className="text-xl font-semibold tracking-tight text-[#1B1A17] mb-5">Reseñas</h2>
+                <h2 className="text-xl font-semibold tracking-tight text-[#1F1C18] mb-5">Reseñas</h2>
                 <div className="space-y-3.5">
                   {provider.reviews.map((review: any, i: number) => (
-                    <article key={i} className="rounded-[1.75rem] bg-[#FBF9F4] border border-black/[0.04] p-5">
+                    <article key={i} className="rounded-[1.75rem] bg-[#FBF8F2] border border-black/[0.04] p-5">
                       <div className="flex items-center justify-between gap-4 mb-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <span className="w-10 h-10 shrink-0 rounded-full bg-[#E7F2E9] text-primary flex items-center justify-center text-[14px] font-bold">
+                          <span className="w-10 h-10 shrink-0 rounded-full bg-[#F6E6DD] text-primary flex items-center justify-center text-[14px] font-bold">
                             {review.user.charAt(0)}
                           </span>
                           <div className="min-w-0">
-                            <h4 className="text-[13.5px] font-semibold text-[#1B1A17] truncate">{review.user}</h4>
-                            <p className="text-[11.5px] font-medium text-[#ACA598]">{review.date}</p>
+                            <h4 className="text-[13.5px] font-semibold text-[#1F1C18] truncate">{review.user}</h4>
+                            <p className="text-[11.5px] font-medium text-[#ADA398]">{review.date}</p>
                           </div>
                         </div>
                         <div className="flex gap-0.5 shrink-0 text-amber-400">
@@ -666,7 +666,7 @@ export default function ProviderProfile({ params }: { params: any }) {
                           ))}
                         </div>
                       </div>
-                      <p className="text-[13.5px] font-medium text-[#7A7468] leading-relaxed">
+                      <p className="text-[13.5px] font-medium text-[#7B7267] leading-relaxed">
                         “{review.comment}”
                       </p>
                       {review.photo && (
@@ -684,14 +684,14 @@ export default function ProviderProfile({ params }: { params: any }) {
 
           {/* ── Confianza ── */}
           <Reveal className="mt-10">
-            <div className="rounded-[1.75rem] bg-[#E7F2E9] p-6 space-y-4">
-              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#1B1A17]">
+            <div className="rounded-[1.75rem] bg-[#F6E6DD] p-6 space-y-4">
+              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#1F1C18]">
                 <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
                   <ShieldCheck size={18} />
                 </span>
                 Pago seguro con anticipo protegido
               </div>
-              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#1B1A17]">
+              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#1F1C18]">
                 <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-white text-primary flex items-center justify-center v2-shadow-soft">
                   <MessageSquare size={18} />
                 </span>
@@ -706,12 +706,12 @@ export default function ProviderProfile({ params }: { params: any }) {
       <div className="fixed bottom-0 inset-x-0 z-[70] bg-white/85 backdrop-blur-xl border-t border-black/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ACA598]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398]">
               Total estimado
             </p>
-            <p className="text-[24px] font-bold tracking-tight text-[#1B1A17] tabular-nums leading-tight">
+            <p className="text-[24px] font-bold tracking-tight text-[#1F1C18] tabular-nums leading-tight">
               ${totalPrice}
-              <span className="text-[12px] font-semibold text-[#ACA598] ml-1">MXN</span>
+              <span className="text-[12px] font-semibold text-[#ADA398] ml-1">MXN</span>
             </p>
             {selectedServices.length > 0 && (
               <p className="text-[11.5px] font-medium text-primary">
@@ -725,7 +725,7 @@ export default function ProviderProfile({ params }: { params: any }) {
             className={`shrink-0 h-14 px-8 rounded-full text-[13px] font-bold text-white transition-colors v2-press ${
               isFormValid
                 ? 'bg-primary hover:bg-primary-dark shadow-lg shadow-primary/25'
-                : 'bg-[#ACA598] cursor-not-allowed'
+                : 'bg-[#ADA398] cursor-not-allowed'
             }`}
           >
             Solicitar servicio

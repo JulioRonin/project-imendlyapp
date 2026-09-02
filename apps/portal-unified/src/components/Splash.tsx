@@ -34,7 +34,7 @@ export function Splash() {
   return (
     <div
       aria-hidden
-      className={`fixed inset-0 z-[100] overflow-hidden bg-[#1B1A17] ${phase === "out" ? "v3-exit-up" : ""}`}
+      className={`fixed inset-0 z-[100] overflow-hidden bg-[#1F1C18] ${phase === "out" ? "v3-exit-up" : ""}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -42,7 +42,7 @@ export function Splash() {
         alt=""
         className="absolute inset-0 w-full h-full object-cover v3-kenburns"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#1B1A17]/90 via-[#1B1A17]/30 to-[#1B1A17]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C18]/90 via-[#1F1C18]/30 to-[#1F1C18]/10" />
 
       <div className="relative h-full flex flex-col items-center justify-end pb-[16vh] px-8 text-white text-center">
         <svg
