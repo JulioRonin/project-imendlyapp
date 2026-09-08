@@ -108,10 +108,10 @@ export default function OrdersPage() {
       const base = 'inline-flex items-center h-8 px-3.5 rounded-full text-[12px] font-semibold whitespace-nowrap';
       switch (status) {
           case 'pending':
-              return <span className={`${base} bg-primary-light text-primary`}>Por confirmar</span>;
+              return <span className={`${base} bg-primary-light text-primary-deep`}>Por confirmar</span>;
           case 'scheduled':
           case 'in_progress':
-              return <span className={`${base} bg-primary-light text-primary`}>En progreso</span>;
+              return <span className={`${base} bg-primary-light text-primary-deep`}>En progreso</span>;
           case 'completed':
               return <span className={`${base} bg-sage-light text-sage`}>Completado</span>;
           case 'cancelled':
@@ -180,7 +180,7 @@ export default function OrdersPage() {
                 {/* ── Cabecera editorial ── */}
                 <header className="pt-10 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <p className={`v3-blur-in ${EYEBROW} text-primary`}>Historial</p>
+                        <p className={`v3-blur-in ${EYEBROW} text-primary-deep`}>Historial</p>
                         <h1 className="v3-blur-in text-[34px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink mt-2" style={{ animationDelay: '100ms' }}>
                             Tus órdenes
                         </h1>
@@ -209,7 +209,7 @@ export default function OrdersPage() {
                                 }`}
                             >
                                 <div className="flex items-start justify-between">
-                                    <span className={`w-10 h-10 rounded-[0.9rem] flex items-center justify-center ${active ? 'bg-white/10 text-primary' : 'bg-primary-light text-primary'}`}>
+                                    <span className={`w-10 h-10 rounded-[0.9rem] flex items-center justify-center ${active ? 'bg-white/10 text-primary-deep' : 'bg-primary-light text-primary-deep'}`}>
                                         <Icon size={17} />
                                     </span>
                                     <span className="text-[30px] font-bold tabular-nums tracking-tight leading-none">{c.value}</span>
@@ -241,7 +241,7 @@ export default function OrdersPage() {
                 <div className="mt-6 space-y-3">
                     {filteredOrders.length === 0 ? (
                         <div className="v2-rise bg-cream rounded-[2.25rem] px-8 py-14 flex flex-col items-center text-center v2-shadow-soft">
-                            <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary flex items-center justify-center mb-5">
+                            <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary-deep flex items-center justify-center mb-5">
                                 <ClipboardList size={26} />
                             </span>
                             <h3 className="text-[19px] font-semibold tracking-tight text-ink">Sin órdenes aquí</h3>
@@ -285,7 +285,7 @@ export default function OrdersPage() {
                                     <div className="hidden md:flex items-center gap-1 text-[13px] font-bold text-ink tabular-nums w-14 shrink-0">
                                         {order.rating ? (
                                             <>
-                                                <Star size={13} className="text-primary fill-primary" />
+                                                <Star size={13} className="text-primary-deep fill-primary" />
                                                 {order.rating}
                                             </>
                                         ) : (
@@ -327,13 +327,13 @@ export default function OrdersPage() {
                             <Avatar size="lg" name={selectedOrder.clients.full_name} src={selectedOrder.clients.avatar_url} className="shrink-0 ring-4 ring-white" />
                             <div className="min-w-0">
                                 <div className="flex items-center gap-3 flex-wrap">
-                                    <span className={`${EYEBROW} text-primary`}>{selectedOrder.display_id}</span>
+                                    <span className={`${EYEBROW} text-primary-deep`}>{selectedOrder.display_id}</span>
                                     {renderStatusBadge(selectedOrder.status)}
                                 </div>
                                 <h2 className="mt-1.5 text-[24px] md:text-[28px] font-semibold tracking-tight leading-tight text-ink">{selectedOrder.service_requested}</h2>
                                 <p className="mt-1.5 text-[13px] font-medium text-muted flex items-center gap-2 flex-wrap">
                                     {selectedOrder.clients.full_name} · {new Date(selectedOrder.created_at).toLocaleDateString('es-MX')}
-                                    <span className="inline-flex items-center gap-1"><MapPin size={12} className="text-primary" /> {selectedOrder.address}</span>
+                                    <span className="inline-flex items-center gap-1"><MapPin size={12} className="text-primary-deep" /> {selectedOrder.address}</span>
                                 </p>
                             </div>
                         </div>
@@ -365,7 +365,7 @@ export default function OrdersPage() {
                             ].map((step, idx) => (
                                 <div key={idx} className="relative z-10 flex flex-col items-center gap-2.5 w-20">
                                     <span className={`w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-linen transition-colors ${
-                                        step.active ? (selectedOrder.status === 'cancelled' ? 'bg-faint text-white' : 'bg-primary text-white') : 'bg-sand'
+                                        step.active ? (selectedOrder.status === 'cancelled' ? 'bg-faint text-white' : 'bg-primary text-ink') : 'bg-sand'
                                     }`}>
                                         {step.active ? <CheckCircle2 size={13} /> : <span className="w-1.5 h-1.5 rounded-full bg-faint" />}
                                     </span>
@@ -381,7 +381,7 @@ export default function OrdersPage() {
                             <div className="relative overflow-hidden bg-ink rounded-[2rem] p-7 md:p-8 text-white">
                                 <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
                                 <div className="relative">
-                                    <p className={`${EYEBROW} text-primary`}>Requiere tu confirmación</p>
+                                    <p className={`${EYEBROW} text-primary-deep`}>Requiere tu confirmación</p>
                                     <h4 className="mt-2 text-[21px] font-semibold tracking-tight leading-tight">Revisa y acepta la orden</h4>
                                     <p className="mt-2 text-[13.5px] font-medium text-white/60 max-w-lg">Revisa los detalles y la dirección antes de aceptar. Puedes sugerir otro horario o aceptar tal como se solicitó.</p>
                                     <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -390,7 +390,7 @@ export default function OrdersPage() {
                                         </button>
                                         <button
                                             type="button"
-                                            className="h-14 px-8 rounded-full bg-primary text-white text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
+                                            className="h-14 px-8 rounded-full bg-primary text-ink text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
                                             onClick={() => updateOrderStatus(selectedOrder.id, 'scheduled')}
                                         >
                                             Aceptar servicio
@@ -403,7 +403,7 @@ export default function OrdersPage() {
                         {(selectedOrder.status === 'in_progress' || selectedOrder.status === 'pending_client_approval') && (
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
-                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary flex items-center justify-center mb-4">
+                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
                                         <Edit3 size={19} />
                                     </span>
                                     <h4 className="text-[16px] font-semibold tracking-tight text-ink">Ajustar costo o alcance</h4>
@@ -414,7 +414,7 @@ export default function OrdersPage() {
                                 </div>
 
                                 <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
-                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary flex items-center justify-center mb-4">
+                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
                                         <Camera size={19} />
                                     </span>
                                     <h4 className="text-[16px] font-semibold tracking-tight text-ink">Entregar servicio</h4>

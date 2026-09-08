@@ -107,7 +107,7 @@ export default function DisputesPage() {
                            <span className="text-xs text-gray-soft font-[500]">ID: {dispute.id}</span>
                            <span className="text-xs text-gray-soft flex items-center gap-1"><Clock size={12} /> {dispute.date}</span>
                         </div>
-                        <h4 className="text-xl font-[600] text-black-rich mb-2 group-hover:text-primary transition-colors">{dispute.title}</h4>
+                        <h4 className="text-xl font-[600] text-black-rich mb-2 group-hover:text-primary-deep transition-colors">{dispute.title}</h4>
                         <p className="text-sm text-gray-500 line-clamp-1 italic">"{dispute.reason}"</p>
                      </div>
 
@@ -127,7 +127,7 @@ export default function DisputesPage() {
                            <p className="text-[10px] text-gray-soft uppercase font-[600] mb-1">En Escrow</p>
                            <p className="text-lg font-[600] text-black-rich">{dispute.amount}</p>
                         </div>
-                        <div className="w-10 h-10 rounded-pill bg-silver-light/30 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-colors">
+                        <div className="w-10 h-10 rounded-pill bg-silver-light/30 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary-deep transition-colors">
                            <ArrowLeft className="rotate-180" size={20} />
                         </div>
                      </div>
@@ -140,17 +140,17 @@ export default function DisputesPage() {
         {/* Analytics Mini-Card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
            <Card variant="silver" className="p-6 text-center">
-              <ShieldCheck className="mx-auto mb-3 text-primary" size={24} />
+              <ShieldCheck className="mx-auto mb-3 text-primary-deep" size={24} />
               <p className="text-2xl font-[600] text-black-rich">94%</p>
               <p className="text-[10px] text-gray-soft uppercase">Tasa de Resolución</p>
            </Card>
            <Card variant="silver" className="p-6 text-center">
-              <MessageSquare className="mx-auto mb-3 text-primary" size={24} />
+              <MessageSquare className="mx-auto mb-3 text-primary-deep" size={24} />
               <p className="text-2xl font-[600] text-black-rich">1.4d</p>
               <p className="text-[10px] text-gray-soft uppercase">Tiempo Promedio</p>
            </Card>
            <Card variant="silver" className="p-6 text-center">
-              <TrendingUp className="mx-auto mb-3 text-primary" size={24} />
+              <TrendingUp className="mx-auto mb-3 text-primary-deep" size={24} />
               <p className="text-2xl font-[600] text-black-rich">$12,400</p>
               <p className="text-[10px] text-gray-soft uppercase">Recuperado este Mes</p>
            </Card>

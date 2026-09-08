@@ -134,12 +134,12 @@ export default function ClientHome() {
   const filteredSuggestions = SUGGESTIONS.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <main className="min-h-screen bg-[#F4F0E8] pb-36 overflow-x-hidden">
+    <main className="min-h-screen bg-[#FAF8F4] pb-36 overflow-x-hidden">
       {/* Aviso de perfil incompleto */}
       {profileIncomplete && (
-        <div className="v2-rise bg-[#1F1C18] text-white py-3 px-6 flex items-center justify-between gap-4 sticky top-0 z-[60]">
+        <div className="v2-rise bg-[#111111] text-white py-3 px-6 flex items-center justify-between gap-4 sticky top-0 z-[60]">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="w-8 h-8 shrink-0 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+            <span className="w-8 h-8 shrink-0 rounded-xl bg-primary/20 flex items-center justify-center text-primary-deep">
               <Shield size={15} />
             </span>
             <p className="text-[12px] font-semibold truncate">
@@ -158,7 +158,7 @@ export default function ClientHome() {
           <div className="group relative flex items-center gap-3">
             <Avatar name={firstName || 'Cliente'} size="md" className="cursor-pointer ring-4 ring-white" />
             <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-[1.25rem] v2-shadow-float p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-              <button onClick={() => router.push('/cliente/profile')} className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#F4F0E8] text-[13px] font-semibold text-[#1F1C18] flex items-center gap-3">
+              <button onClick={() => router.push('/cliente/profile')} className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#FAF8F4] text-[13px] font-semibold text-[#111111] flex items-center gap-3">
                 <User size={15} /> Ver perfil
               </button>
               <button onClick={handleLogout} className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-[13px] font-semibold text-red-500 flex items-center gap-3">
@@ -167,11 +167,11 @@ export default function ClientHome() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handleLocate} className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 text-[12px] font-semibold text-[#1F1C18] v2-press">
-              {isLocating ? <Navigation size={13} className="animate-spin text-primary" /> : <MapPin size={13} className="text-primary" />}
+            <button onClick={handleLocate} className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 text-[12px] font-semibold text-[#111111] v2-press">
+              {isLocating ? <Navigation size={13} className="animate-spin text-primary-deep" /> : <MapPin size={13} className="text-primary-deep" />}
               {isLocating ? 'Ubicando…' : location}
             </button>
-            <button aria-label="Notificaciones" className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#1F1C18] v2-press">
+            <button aria-label="Notificaciones" className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#111111] v2-press">
               <Bell size={17} />
             </button>
           </div>
@@ -179,10 +179,10 @@ export default function ClientHome() {
 
         {/* ── Saludo editorial ── */}
         <div className="mt-9">
-          <p className="v3-blur-in text-[15px] font-medium text-[#7B7267]" style={{ animationDelay: '120ms' }}>
+          <p className="v3-blur-in text-[15px] font-medium text-[#6F6B66]" style={{ animationDelay: '120ms' }}>
             Hola{firstName ? `, ${firstName}` : ''}
           </p>
-          <h1 className="v3-blur-in text-[36px] md:text-[56px] font-semibold tracking-tight leading-[1.02] text-[#1F1C18] mt-1 max-w-2xl" style={{ animationDelay: '220ms' }}>
+          <h1 className="v3-blur-in text-[36px] md:text-[56px] font-semibold tracking-tight leading-[1.02] text-[#111111] mt-1 max-w-2xl" style={{ animationDelay: '220ms' }}>
             ¿Qué arreglamos hoy?
           </h1>
         </div>
@@ -191,7 +191,7 @@ export default function ClientHome() {
         <div className="v3-blur-in relative mt-6 max-w-xl" style={{ animationDelay: '340ms' }}>
           <div className="flex items-center gap-2 glass rounded-full p-1.5">
             <div className="flex-1 flex items-center gap-3 pl-4 min-w-0">
-              <Search size={18} className="shrink-0 text-[#ADA398]" />
+              <Search size={18} className="shrink-0 text-[#A39E97]" />
               <input
                 type="text"
                 placeholder="Busca un servicio o proyecto"
@@ -199,10 +199,10 @@ export default function ClientHome() {
                 onFocus={() => setShowSuggestions(true)}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full h-11 bg-transparent text-[#1F1C18] text-[15px] font-semibold placeholder:text-[#ADA398] placeholder:font-medium outline-none"
+                className="w-full h-11 bg-transparent text-[#111111] text-[15px] font-semibold placeholder:text-[#A39E97] placeholder:font-medium outline-none"
               />
             </div>
-            <button onClick={() => handleSearch()} className="shrink-0 h-11 w-11 rounded-full bg-[#1F1C18] text-white flex items-center justify-center v2-press">
+            <button onClick={() => handleSearch()} className="shrink-0 h-11 w-11 rounded-full bg-[#111111] text-white flex items-center justify-center v2-press">
               <ArrowUpRight size={18} />
             </button>
           </div>
@@ -214,14 +214,14 @@ export default function ClientHome() {
                   <button
                     key={i}
                     onClick={() => { setSearchTerm(s); setShowSuggestions(false); handleSearch(s); }}
-                    className="w-full text-left px-5 py-3.5 rounded-[1.15rem] hover:bg-[#F4F0E8] text-[14px] font-semibold text-[#1F1C18] flex items-center justify-between group transition-colors"
+                    className="w-full text-left px-5 py-3.5 rounded-[1.15rem] hover:bg-[#FAF8F4] text-[14px] font-semibold text-[#111111] flex items-center justify-between group transition-colors"
                   >
                     <span>{s}</span>
-                    <ChevronRight size={15} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-primary" />
+                    <ChevronRight size={15} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-primary-deep" />
                   </button>
                 ))}
                 {filteredSuggestions.length === 0 && (
-                  <p className="px-5 py-6 text-center text-[#ADA398] text-[13px] font-medium">Presiona Enter para buscar “{searchTerm}”</p>
+                  <p className="px-5 py-6 text-center text-[#A39E97] text-[13px] font-medium">Presiona Enter para buscar “{searchTerm}”</p>
                 )}
               </div>
             </>
@@ -236,10 +236,10 @@ export default function ClientHome() {
               <button
                 key={tab}
                 onClick={() => pickTab(tab)}
-                className={`relative shrink-0 pb-3 text-[14px] transition-colors duration-300 ${active ? 'font-semibold text-[#1F1C18]' : 'font-medium text-[#ADA398] hover:text-[#7B7267]'}`}
+                className={`relative shrink-0 pb-3 text-[14px] transition-colors duration-300 ${active ? 'font-semibold text-[#111111]' : 'font-medium text-[#A39E97] hover:text-[#6F6B66]'}`}
               >
                 {tab}
-                <span className={`absolute left-0 right-0 -bottom-px h-[3px] rounded-full bg-primary transition-transform duration-500 origin-left ${active ? 'scale-x-100' : 'scale-x-0'}`} />
+                <span className={`absolute left-0 right-0 -bottom-px h-[3px] rounded-full bg-lavender transition-transform duration-500 origin-left ${active ? 'scale-x-100' : 'scale-x-0'}`} />
               </button>
             );
           })}
@@ -250,7 +250,7 @@ export default function ClientHome() {
           <div className="group relative h-[520px] md:h-[600px] rounded-[2.5rem] overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/painting_work.png" alt="Casa luminosa recién pintada" className="absolute inset-0 w-full h-full object-cover v3-photo" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C18]/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#111111]/70 via-transparent to-transparent" />
 
             {HOTSPOTS.map(h => (
               <button
@@ -263,18 +263,18 @@ export default function ClientHome() {
                   <span className="absolute inset-0 rounded-full bg-primary v3-pulse-ring" />
                   <span className="absolute inset-0 rounded-full bg-primary" />
                 </span>
-                <span className="text-[12.5px] font-semibold text-[#1F1C18]">{h.label}</span>
-                <span className="text-[12px] font-medium text-[#7B7267]">{h.price}</span>
+                <span className="text-[12.5px] font-semibold text-[#111111]">{h.label}</span>
+                <span className="text-[12px] font-medium text-[#6F6B66]">{h.price}</span>
               </button>
             ))}
 
             <div className="absolute inset-x-5 bottom-5 md:inset-x-7 md:bottom-7 glass rounded-[1.9rem] p-5 md:p-6 flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-1">Tablero de proyectos</p>
-                <h2 className="text-[21px] md:text-[24px] font-semibold tracking-tight leading-tight text-[#1F1C18]">Publica tu proyecto</h2>
-                <p className="mt-1 text-[13px] font-medium text-[#7B7267]">Hasta 5 ofertas de verificados, con anticipo protegido</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-1">Tablero de proyectos</p>
+                <h2 className="text-[21px] md:text-[24px] font-semibold tracking-tight leading-tight text-[#111111]">Publica tu proyecto</h2>
+                <p className="mt-1 text-[13px] font-medium text-[#6F6B66]">Hasta 5 ofertas de verificados, con anticipo protegido</p>
               </div>
-              <Link href="/cliente/proyectos/nuevo" className="shrink-0 h-14 px-6 rounded-full bg-[#1F1C18] text-white text-[13px] font-bold flex items-center gap-2 v2-press">
+              <Link href="/cliente/proyectos/nuevo" className="shrink-0 h-14 px-6 rounded-full bg-[#111111] text-white text-[13px] font-bold flex items-center gap-2 v2-press">
                 Publicar <ArrowUpRight size={17} />
               </Link>
             </div>
@@ -285,8 +285,8 @@ export default function ClientHome() {
         {featured.length > 0 && (
           <Reveal className="mt-14">
             <div className="flex items-end justify-between mb-7">
-              <h2 className="text-[24px] font-semibold tracking-tight text-[#1F1C18]">Certificados destacados</h2>
-              <Link href="/cliente/search?q=" className="text-[13px] font-semibold text-primary flex items-center gap-1">Ver todos <ChevronRight size={15} /></Link>
+              <h2 className="text-[24px] font-semibold tracking-tight text-[#111111]">Certificados destacados</h2>
+              <Link href="/cliente/search?q=" className="text-[13px] font-semibold text-primary-deep flex items-center gap-1">Ver todos <ChevronRight size={15} /></Link>
             </div>
             <div className="flex gap-7 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-6 px-10 md:mx-0 md:px-4 pb-6 pt-3">
               {featured.map((p, i) => {
@@ -295,39 +295,39 @@ export default function ClientHome() {
                 return (
                   <div key={p.id} className="snap-start shrink-0 w-[300px] relative pl-6 v2-rise" style={{ animationDelay: `${i * 90}ms` }}>
                     {/* Tarjeta sombra detrás (patrón apilado de la referencia) */}
-                    <div className="absolute inset-y-3 left-9 right-[-10px] rounded-[2rem] bg-[#8A4529]" />
-                    <article className="relative bg-[#FBF8F2] rounded-[2rem] p-5 pl-0 flex items-center gap-4 v2-press v2-float">
+                    <div className="absolute inset-y-3 left-9 right-[-10px] rounded-[2rem] bg-[#3D315B]" />
+                    <article className="relative bg-[#FFFFFF] rounded-[2rem] p-5 pl-0 flex items-center gap-4 v2-press v2-float">
                       {/* Foto que se sale de la tarjeta */}
-                      <div className="-ml-6 shrink-0 w-[104px] h-[124px] rounded-[1.6rem] overflow-hidden v3-lift-shadow bg-[#1F1C18]">
+                      <div className="-ml-6 shrink-0 w-[104px] h-[124px] rounded-[1.6rem] overflow-hidden v3-lift-shadow bg-[#111111]">
                         {p.users?.avatar_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={p.users.avatar_url} alt={name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D98A66] to-[#8A4529] text-white text-3xl font-semibold">{initials}</div>
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#FFAA78] to-[#3D315B] text-white text-3xl font-semibold">{initials}</div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0 py-1">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="text-[17px] font-semibold tracking-tight text-[#1F1C18] truncate">{name}</h3>
-                          {p.is_verified && <BadgeCheck size={15} className="shrink-0 text-primary" />}
+                          <h3 className="text-[17px] font-semibold tracking-tight text-[#111111] truncate">{name}</h3>
+                          {p.is_verified && <BadgeCheck size={15} className="shrink-0 text-primary-deep" />}
                         </div>
-                        <p className="text-[12.5px] font-medium text-[#7B7267] mt-0.5">{p.category}</p>
+                        <p className="text-[12.5px] font-medium text-[#6F6B66] mt-0.5">{p.category}</p>
                         <div className="flex items-center gap-1 mt-2.5">
                           <Star size={13} className="text-amber-400 fill-amber-400" />
-                          <span className="text-[13px] font-bold text-[#1F1C18] tabular-nums">{Number(p.rating || 0).toFixed(1)}</span>
-                          <span className="text-[12px] text-[#ADA398]">· {p.reviews_count} reseñas</span>
+                          <span className="text-[13px] font-bold text-[#111111] tabular-nums">{Number(p.rating || 0).toFixed(1)}</span>
+                          <span className="text-[12px] text-[#A39E97]">· {p.reviews_count} reseñas</span>
                         </div>
-                        {p.base_price > 0 && <p className="mt-2 text-[13px] font-bold text-[#8A4529] tabular-nums">desde ${Number(p.base_price).toFixed(0)}</p>}
+                        {p.base_price > 0 && <p className="mt-2 text-[13px] font-bold text-[#3D315B] tabular-nums">desde ${Number(p.base_price).toFixed(0)}</p>}
                       </div>
                       <div className="shrink-0 flex flex-col gap-2 -mr-1">
                         <button
                           aria-label="Guardar"
                           onClick={() => setLiked(l => ({ ...l, [p.id]: !l[p.id] }))}
-                          className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors v2-press ${liked[p.id] ? 'bg-primary text-white' : 'bg-white text-[#1F1C18]'}`}
+                          className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors v2-press ${liked[p.id] ? 'bg-primary text-ink' : 'bg-white text-[#111111]'}`}
                         >
                           <Heart size={16} className={liked[p.id] ? 'fill-white' : ''} />
                         </button>
-                        <Link href={`/cliente/providers/${p.id}`} aria-label="Ver perfil" className="w-11 h-11 rounded-full bg-[#1F1C18] text-white flex items-center justify-center v2-press">
+                        <Link href={`/cliente/providers/${p.id}`} aria-label="Ver perfil" className="w-11 h-11 rounded-full bg-[#111111] text-white flex items-center justify-center v2-press">
                           <ArrowUpRight size={16} />
                         </Link>
                       </div>
@@ -342,8 +342,8 @@ export default function ClientHome() {
         {/* ── Explora por oficio: mosaico fotográfico ── */}
         <Reveal className="mt-12">
           <div className="flex items-end justify-between mb-6">
-            <h2 className="text-[24px] font-semibold tracking-tight text-[#1F1C18]">Explora por oficio</h2>
-            <Link href="/cliente/categories" className="text-[13px] font-semibold text-primary flex items-center gap-1">Todos <ChevronRight size={15} /></Link>
+            <h2 className="text-[24px] font-semibold tracking-tight text-[#111111]">Explora por oficio</h2>
+            <Link href="/cliente/categories" className="text-[13px] font-semibold text-primary-deep flex items-center gap-1">Todos <ChevronRight size={15} /></Link>
           </div>
           <div className="columns-2 md:columns-4 gap-3.5">
             {TRADES.map((t, i) => (
@@ -354,7 +354,7 @@ export default function ClientHome() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={t.img} alt={t.name} className="absolute inset-0 w-full h-full object-cover v3-photo" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C18]/75 via-[#1F1C18]/5 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111111]/75 via-[#111111]/5 to-transparent" />
                 <div className="absolute inset-x-4 bottom-4">
                   <p className="text-white text-[16px] font-semibold tracking-tight leading-tight">{t.name}</p>
                   <p className="text-white/65 text-[12px] font-medium mt-0.5">{t.from}</p>
@@ -369,14 +369,14 @@ export default function ClientHome() {
           <div className="relative rounded-[2.5rem] overflow-hidden h-[240px] md:h-[280px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/provider_dashboard_hero.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-[#1F1C18]/20" />
+            <div className="absolute inset-0 bg-[#111111]/20" />
             <div className="absolute inset-4 md:inset-6 glass rounded-[1.9rem] p-6 md:p-8 flex items-center gap-5">
-              <span className="w-14 h-14 shrink-0 rounded-full bg-[#1F1C18] text-primary flex items-center justify-center">
+              <span className="w-14 h-14 shrink-0 rounded-full bg-[#111111] text-primary-deep flex items-center justify-center">
                 <ShieldCheck size={26} />
               </span>
               <div>
-                <h3 className="text-[19px] md:text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Garantía I mendly de hasta $10,000 MXN</h3>
-                <p className="mt-1.5 text-[13.5px] font-medium text-[#7B7267] max-w-md">Paga dentro de la app y tu anticipo queda protegido. Si algo sale mal, lo corregimos con otro certificado o te reembolsamos.</p>
+                <h3 className="text-[19px] md:text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">Garantía I mendly de hasta $10,000 MXN</h3>
+                <p className="mt-1.5 text-[13.5px] font-medium text-[#6F6B66] max-w-md">Paga dentro de la app y tu anticipo queda protegido. Si algo sale mal, lo corregimos con otro certificado o te reembolsamos.</p>
               </div>
             </div>
           </div>

@@ -16,8 +16,9 @@ export const Logo: React.FC<{
   const isDark = variant === 'dark';
   const isVertical = orientation === 'vertical';
   const isDarkBg = variant === 'darkBg';
-  const iconColor = isDark ? '#FFFFFF' : '#3DB87A';
-  const textColor = (isDark || isDarkBg) ? '#FFFFFF' : '#1F1F1F';
+  // Paleta "Nocturne Atelier": isotipo en Ink Night sobre claro, blanco sobre oscuro
+  const iconColor = isDark ? '#FFFFFF' : '#111111';
+  const textColor = (isDark || isDarkBg) ? '#FFFFFF' : '#171717';
 
   return (
     <div className={`flex ${isVertical ? 'flex-col' : 'items-center'} gap-4 ${className}`} style={{ minHeight: size }}>

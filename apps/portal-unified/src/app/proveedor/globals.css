@@ -1,32 +1,40 @@
 @import "tailwindcss";
 
-/* Paleta unificada "Arcilla & Lino" — ver docs/design/design-system.md.
-   Los nombres antiguos (brand-night, coral, teal…) se conservan para no
-   romper clases existentes, pero apuntan a la paleta nueva. */
+/* Paleta unificada "Nocturne Atelier" — ver docs/design/nocturne-atelier.md
+   y docs/design/design-system.md. Los nombres antiguos (brand-night,
+   coral, teal…) se conservan para no romper clases existentes. */
 :root {
-  --background: #F4F0E8;
-  --foreground: #1F1C18;
+  --background: #FAF8F4;
+  --foreground: #171717;
 
-  --brand-night: #1F1C18;
-  --brand-navy: #2B241F;
-  --brand-coral: #C8663E;
-  --brand-teal: #7F9A78;
-  --brand-glacial: #E9EFE5;
+  --brand-night: #111111;
+  --brand-navy: #3D315B;
+  --brand-coral: #FFAA78;
+  --brand-teal: #3CBFA1;
+  --brand-glacial: #E6DFFF;
 
-  --primary: #C8663E;
-  --primary-light: #F6E6DD;
-  --primary-dark: #B0552F;
-  --secondary: #7F9A78;
-  --secondary-light: #E9EFE5;
+  --primary: #FFAA78;
+  --primary-light: #FFD0B4;
+  --primary-dark: #E98C5A;
+  --primary-deep: #C26A38;
+  --secondary: #3CBFA1;
+  --secondary-light: #DDF5EE;
 
-  --linen: #F4F0E8;
-  --sand: #EAE3D8;
-  --cream: #FBF8F2;
-  --ink: #1F1C18;
-  --muted: #7B7267;
-  --faint: #ADA398;
-  --line: rgba(31, 28, 24, 0.07);
-  --clay-deep: #8A4529;
+  --linen: #FAF8F4;
+  --sand: #F1EEE8;
+  --cream: #FFFFFF;
+  --ink: #111111;
+  --ink-900: #191919;
+  --ink-800: #262626;
+  --muted: #6F6B66;
+  --faint: #A39E97;
+  --line: rgba(17, 17, 17, 0.07);
+  --clay-deep: #3D315B;
+  --lavender: #BBA7F6;
+  --lavender-light: #E6DFFF;
+  --mint-deep: #1F8A72;
+  --rose: #F486A1;
+  --on-dark: #F8F5F0;
 }
 
 @theme inline {
@@ -42,6 +50,7 @@
   --color-primary: var(--primary);
   --color-primary-light: var(--primary-light);
   --color-primary-dark: var(--primary-dark);
+  --color-primary-deep: var(--primary-deep);
   --color-secondary: var(--secondary);
   --color-secondary-light: var(--secondary-light);
 
@@ -49,13 +58,25 @@
   --color-sand: var(--sand);
   --color-cream: var(--cream);
   --color-ink: var(--ink);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
   --color-line: var(--line);
   --color-clay-deep: var(--clay-deep);
   --color-sage: var(--secondary);
   --color-sage-light: var(--secondary-light);
+  --color-mint: var(--secondary);
+  --color-mint-light: var(--secondary-light);
+  --color-mint-deep: var(--mint-deep);
+  --color-lavender: var(--lavender);
+  --color-lavender-light: var(--lavender-light);
+  --color-lavender-deep: var(--clay-deep);
+  --color-rose: var(--rose);
+  --color-on-dark: var(--on-dark);
   --color-black-rich: var(--ink);
+  --color-warning: #B8641F;
+  --color-error: #D0466B;
 }
 
 body {

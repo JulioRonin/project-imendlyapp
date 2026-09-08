@@ -49,11 +49,11 @@ export default function SettingsPage() {
            <div className="lg:col-span-1 space-y-8">
               <Card variant="default" className="p-8 flex flex-col items-center text-center">
                  <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative border-2 border-primary/20 shadow-inner">
-                    <User size={48} className="text-primary" />
+                    <User size={48} className="text-primary-deep" />
                     <div className="absolute bottom-0 right-0 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full shadow-lg" />
                  </div>
                  <h3 className="text-xl font-[600] text-black-rich">Julio M.</h3>
-                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary mb-6 bg-primary/5 px-4 py-1.5 rounded-pill border border-primary/10">Super Administrador</p>
+                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-deep mb-6 bg-primary/5 px-4 py-1.5 rounded-pill border border-primary/10">Super Administrador</p>
                  
                  <div className="w-full space-y-4 text-left border-t border-black/5 pt-6">
                     <div className="flex items-center gap-3">
@@ -74,12 +74,12 @@ export default function SettingsPage() {
               <Card variant="silver" className="p-6 border-none bg-black-rich text-white overflow-hidden relative group">
                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/20 blur-[40px] rounded-full group-hover:bg-primary/30 transition-all duration-700" />
                  <h4 className="text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Shield size={14} className="text-primary" /> Seguridad
+                    <Shield size={14} className="text-primary-deep" /> Seguridad
                  </h4>
                  <div className="space-y-4">
                     <div className="flex justify-between items-center text-[10px]">
                        <span className="text-white/60">2FA Activo</span>
-                       <span className="text-primary font-bold">SI</span>
+                       <span className="text-primary-deep font-bold">SI</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px]">
                        <span className="text-white/60">Último Acceso</span>
@@ -93,14 +93,14 @@ export default function SettingsPage() {
            <div className="lg:col-span-2 space-y-8">
               <Card variant="default" className="p-10">
                  <h3 className="text-lg font-[600] text-black-rich mb-8 flex items-center gap-2">
-                    <Bell size={20} className="text-primary" /> Preferencias de Sistema
+                    <Bell size={20} className="text-primary-deep" /> Preferencias de Sistema
                  </h3>
                  
                  <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-silver-light/30 transition-all cursor-pointer group">
                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-black/5">
-                             <Bell size={18} className="text-gray-soft group-hover:text-primary transition-colors" />
+                             <Bell size={18} className="text-gray-soft group-hover:text-primary-deep transition-colors" />
                           </div>
                           <div>
                              <p className="text-sm font-[600] text-black-rich">Notificaciones Globales</p>
@@ -118,7 +118,7 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-silver-light/30 transition-all cursor-pointer group">
                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-black/5">
-                             <Moon size={18} className="text-gray-soft group-hover:text-primary transition-colors" />
+                             <Moon size={18} className="text-gray-soft group-hover:text-primary-deep transition-colors" />
                           </div>
                           <div>
                              <p className="text-sm font-[600] text-black-rich">Modo Oscuro</p>
@@ -136,7 +136,7 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-silver-light/30 transition-all cursor-pointer group">
                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-black/5">
-                             <Globe size={18} className="text-gray-soft group-hover:text-primary transition-colors" />
+                             <Globe size={18} className="text-gray-soft group-hover:text-primary-deep transition-colors" />
                           </div>
                           <div>
                              <p className="text-sm font-[600] text-black-rich">Idioma del Sistema</p>

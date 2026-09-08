@@ -473,12 +473,12 @@ export default function ProviderEditForm({ params }: { params: any }) {
         {/* Left Column: General Info */}
         <div className="md:col-span-2 space-y-6">
           <Card variant="default" className="p-8">
-            <h2 className="text-xl font-[600] mb-6 flex items-center gap-2"><User size={20} className="text-primary"/> Información General</h2>
+            <h2 className="text-xl font-[600] mb-6 flex items-center gap-2"><User size={20} className="text-primary-deep"/> Información General</h2>
             
             <div className="flex gap-8 mb-8">
               <div className="flex flex-col items-center gap-4 relative">
                 <Avatar src={imagePreview || provider.avatarUrl} name={provider.name || 'Nuevo'} size="xl" className="w-24 h-24 text-2xl" />
-                <label className="text-xs font-[600] text-primary hover:text-primary/70 cursor-pointer bg-primary/10 px-4 py-2 rounded-lg transition-colors inline-block text-center w-full">
+                <label className="text-xs font-[600] text-primary-deep hover:text-primary/70 cursor-pointer bg-primary/10 px-4 py-2 rounded-lg transition-colors inline-block text-center w-full">
                   Cambiar Foto
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                 </label>
@@ -533,7 +533,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-black text-brand-night uppercase tracking-tighter group-hover:text-primary transition-colors">Profesional Verificado</span>
+                      <span className="text-sm font-black text-brand-night uppercase tracking-tighter group-hover:text-primary-deep transition-colors">Profesional Verificado</span>
                       <span className="text-[10px] text-gray-soft font-bold uppercase tracking-widest">Confirma que los documentos y la identidad han sido validados</span>
                     </div>
                   </label>
@@ -566,7 +566,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           {/* Dynamic Services Editor */}
           <Card variant="default" className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-[600] flex items-center gap-2"><Briefcase size={20} className="text-primary"/> Catálogo de Servicios</h2>
+              <h2 className="text-xl font-[600] flex items-center gap-2"><Briefcase size={20} className="text-primary-deep"/> Catálogo de Servicios</h2>
               <Button size="sm" variant="secondary" className="gap-2 text-xs py-1" onClick={() => addService()}><Plus size={14}/> Agregar Servicio</Button>
             </div>
 
@@ -584,7 +584,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                     </h3>
                     <button 
                       onClick={() => addService(cat)}
-                      className="flex items-center gap-1.5 text-[10px] font-black text-primary uppercase tracking-widest hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 text-[10px] font-black text-primary-deep uppercase tracking-widest hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors"
                     >
                       <Plus size={12} />
                       Agregar {cat}
@@ -644,7 +644,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                           
                           {/* Rango de precios y Unidades */}
                           <div className="flex items-center gap-4 mt-1 border-t border-black/5 pt-3">
-                            <label className="flex items-center gap-2 text-xs font-[600] text-gray-soft cursor-pointer hover:text-primary transition-colors">
+                            <label className="flex items-center gap-2 text-xs font-[600] text-gray-soft cursor-pointer hover:text-primary-deep transition-colors">
                               <input 
                                 type="checkbox" 
                                 checked={service.isRange || false} 
@@ -653,7 +653,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                                   newServices[globalIndex].isRange = e.target.checked;
                                   setProvider({...provider, services: newServices});
                                 }}
-                                className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary accent-emerald-500 cursor-pointer" 
+                                className="w-4 h-4 text-primary-deep rounded border-slate-300 focus:ring-primary accent-emerald-500 cursor-pointer" 
                               />
                               Activar Rango
                             </label>
@@ -709,7 +709,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           <Card variant="default" className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-[600] flex items-center gap-2">
-                <ImageIcon size={20} className="text-primary"/> Portafolio de Trabajos
+                <ImageIcon size={20} className="text-primary-deep"/> Portafolio de Trabajos
               </h2>
               <label className="cursor-pointer">
                 <input 
@@ -719,7 +719,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                   className="hidden" 
                   onChange={handlePortfolioUpload}
                 />
-                <div className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                <div className="bg-primary/10 text-primary-deep hover:bg-primary/20 transition-colors px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2">
                   <Upload size={14}/> Subir Imágenes
                 </div>
               </label>
@@ -779,7 +779,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           {/* Schedule & Availability */}
           <Card variant="default" className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-[600] flex items-center gap-2"><Clock size={20} className="text-primary"/> Horarios y Disponibilidad</h2>
+              <h2 className="text-xl font-[600] flex items-center gap-2"><Clock size={20} className="text-primary-deep"/> Horarios y Disponibilidad</h2>
               <div className="text-[10px] font-bold text-gray-soft uppercase tracking-widest bg-silver-light/30 px-3 py-1.5 rounded-lg border border-black/5">Configuración Semanal</div>
             </div>
 
@@ -848,7 +848,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           {/* Client Reviews */}
           <Card variant="default" className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-[600] flex items-center gap-2"><Star size={20} className="text-primary"/> Reseñas de Clientes</h2>
+              <h2 className="text-xl font-[600] flex items-center gap-2"><Star size={20} className="text-primary-deep"/> Reseñas de Clientes</h2>
               <Button 
                  size="sm" 
                  variant="secondary" 
@@ -928,7 +928,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
         <div className="space-y-6">
           {/* Geolocation & Zones */}
           <Card variant="default" className="p-6">
-            <h2 className="text-lg font-[600] mb-5 flex items-center gap-2"><MapPin size={18} className="text-primary"/> Operaciones</h2>
+            <h2 className="text-lg font-[600] mb-5 flex items-center gap-2"><MapPin size={18} className="text-primary-deep"/> Operaciones</h2>
             <div className="space-y-4">
               <div className="relative">
                 <label className="text-xs font-[600] text-gray-soft uppercase tracking-wider mb-1 block">Zonas de Cobertura</label>
@@ -953,7 +953,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
                                setProvider({...provider, zones: provider.zones.filter((z: string) => z !== zone)});
                              }
                           }}
-                          className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary accent-emerald-500"
+                          className="w-4 h-4 text-primary-deep rounded border-slate-300 focus:ring-primary accent-emerald-500"
                         />
                         <span className="text-sm font-[600] text-black-rich">{zone}</span>
                       </label>
@@ -979,7 +979,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
 
           {/* Financials / CLABE */}
           <Card variant="default" className="p-6">
-            <h2 className="text-lg font-[600] mb-5 flex items-center gap-2"><CreditCard size={18} className="text-primary"/> Datos Fiscales y Pagos</h2>
+            <h2 className="text-lg font-[600] mb-5 flex items-center gap-2"><CreditCard size={18} className="text-primary-deep"/> Datos Fiscales y Pagos</h2>
             <p className="text-xs text-gray-soft mb-4 font-medium leading-relaxed">
               Esta información se utiliza para la dispersión de fondos del escrow hacia el proveedor (Stripe Connect / Transferencia).
             </p>

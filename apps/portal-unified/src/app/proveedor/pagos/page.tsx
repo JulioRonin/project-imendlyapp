@@ -120,7 +120,7 @@ export default function PaymentsPage() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div className="flex items-center justify-between mb-4">
                         <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">Servicios Realizados</p>
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-500">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-deep group-hover:bg-primary group-hover:text-white transition-colors duration-500">
                             <Wallet size={14} />
                         </div>
                     </div>
@@ -168,7 +168,7 @@ export default function PaymentsPage() {
                               key={f.id} 
                               onClick={() => setFilter(f.id as any)}
                               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-colors ${
-                                filter === f.id ? 'bg-primary text-white shadow-sm shadow-primary/20' : 'text-slate-300 hover:text-brand-night hover:bg-slate-100'
+                                filter === f.id ? 'bg-primary text-ink shadow-sm shadow-primary/20' : 'text-slate-300 hover:text-brand-night hover:bg-slate-100'
                               }`}
                             >
                               {f.label}
@@ -242,12 +242,12 @@ export default function PaymentsPage() {
                     <div className="space-y-4">
                         <div className="flex items-center justify-between p-6 bg-white rounded-3xl border border-primary/20 shadow-lg shadow-primary/5">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-primary/5 text-primary rounded-2xl flex items-center justify-center">
+                                <div className="w-12 h-12 bg-primary/5 text-primary-deep rounded-2xl flex items-center justify-center">
                                     <Building size={20} />
                                 </div>
                                 <div>
                                     <p className="text-[13px] font-black text-brand-night leading-tight mb-0.5">Santander ****4421</p>
-                                    <p className="text-[9px] font-black text-primary uppercase tracking-widest">Principal</p>
+                                    <p className="text-[9px] font-black text-primary-deep uppercase tracking-widest">Principal</p>
                                 </div>
                             </div>
                             <ChevronRight size={18} className="text-slate-200" />
@@ -257,7 +257,7 @@ export default function PaymentsPage() {
                             onClick={() => setShowAddAccountModal(true)}
                             className="w-full p-6 border-2 border-dashed border-slate-200 rounded-3xl flex items-center justify-center gap-3 text-slate-400 hover:border-slate-300 hover:text-brand-night hover:bg-slate-50 transition-all group bg-white"
                         >
-                            <CreditCard size={20} className="group-hover:scale-110 transition-transform text-slate-300 group-hover:text-primary" />
+                            <CreditCard size={20} className="group-hover:scale-110 transition-transform text-slate-300 group-hover:text-primary-deep" />
                             <span className="text-[10px] font-black uppercase tracking-widest">Añadir Nueva Cuenta</span>
                         </button>
                     </div>
@@ -278,7 +278,7 @@ export default function PaymentsPage() {
             </button>
             
             <div className="p-10 border-b border-slate-100 flex items-center gap-6">
-              <div className="w-16 h-16 bg-primary text-white rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-primary text-ink rounded-2xl flex items-center justify-center">
                 <BarChart2 size={32} />
               </div>
               <div>
@@ -291,7 +291,7 @@ export default function PaymentsPage() {
               {/* Objectives */}
               <section>
                 <h3 className="text-sm font-black text-brand-night uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <Target size={18} className="text-primary" /> Cumplimiento de Objetivos
+                  <Target size={18} className="text-primary-deep" /> Cumplimiento de Objetivos
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card className="p-6 border-none shadow-sm rounded-3xl">
@@ -317,7 +317,7 @@ export default function PaymentsPage() {
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Conversión de Clientes</p>
                         <p className="text-2xl font-black text-brand-night">85%</p>
                       </div>
-                      <div className="w-10 h-10 bg-primary/10 text-primary flex items-center justify-center rounded-xl">
+                      <div className="w-10 h-10 bg-primary/10 text-primary-deep flex items-center justify-center rounded-xl">
                         <Users size={20} />
                       </div>
                     </div>
@@ -332,7 +332,7 @@ export default function PaymentsPage() {
               {/* KPI Details */}
               <section>
                 <h3 className="text-sm font-black text-brand-night uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <CheckCircle2 size={18} className="text-primary" /> Indicadores Clave
+                  <CheckCircle2 size={18} className="text-primary-deep" /> Indicadores Clave
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {[
@@ -369,7 +369,7 @@ export default function PaymentsPage() {
           <div className="bg-white rounded-[3rem] w-full max-w-lg shadow-2xl relative animate-in zoom-in-95 duration-500 overflow-hidden flex flex-col">
             <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 bg-primary/10 text-primary-deep rounded-2xl flex items-center justify-center shadow-inner">
                   <Building size={24} />
                 </div>
                 <div>

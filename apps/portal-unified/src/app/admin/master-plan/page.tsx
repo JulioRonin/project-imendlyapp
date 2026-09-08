@@ -46,7 +46,7 @@ export default function MasterPlanPage() {
       <div className="max-w-5xl mx-auto px-8 py-20">
         <header className="mb-24 text-center">
           <Badge variant="success" className="mb-8 mx-auto">CONFIDENCIAL — USO INTERNO</Badge>
-          <h2 className="text-5xl md:text-7xl font-[600] tracking-tight mb-4 leading-[1.05]">I MENDLY<br /><span className="text-primary">MASTER PLAN</span></h2>
+          <h2 className="text-5xl md:text-7xl font-[600] tracking-tight mb-4 leading-[1.05]">I MENDLY<br /><span className="text-primary-deep">MASTER PLAN</span></h2>
           <p className="text-xs text-gray-soft uppercase tracking-[3px] font-[500]">Project Manager Certificado PMI · Marzo 2026</p>
         </header>
 
@@ -77,25 +77,25 @@ export default function MasterPlanPage() {
               <h4 className="text-black-rich font-[600] text-xl mb-6 italic">El Problema</h4>
               <ul className="space-y-5 text-gray-600 text-sm">
                 <li className="flex gap-3">
-                  <span className="text-primary">●</span>
+                  <span className="text-primary-deep">●</span>
                   Informalidad total en servicios (78% efectivo)
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-primary">●</span>
+                  <span className="text-primary-deep">●</span>
                   Sin verificación de proveedores (Riesgo total)
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-primary">●</span>
+                  <span className="text-primary-deep">●</span>
                   Anticipos sin respaldo → Fraudes frecuentes
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-primary">●</span>
+                  <span className="text-primary-deep">●</span>
                   Precios opacos sin estándar de mercado
                 </li>
               </ul>
             </Card>
             <Card variant="default" className="p-12 border-dashed border-primary/30">
-              <h4 className="text-primary font-[600] text-xl mb-6 italic">Propuesta de Valor</h4>
+              <h4 className="text-primary-deep font-[600] text-xl mb-6 italic">Propuesta de Valor</h4>
               <p className="text-lg text-black-rich leading-relaxed mb-8">
                 "Seguridad absoluta para el cliente, pago garantizado para el proveedor."
               </p>
@@ -109,7 +109,7 @@ export default function MasterPlanPage() {
           <Card variant="silver" className="p-12">
              <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
                 <div>
-                   <p className="text-5xl font-[600] text-primary mb-3">$41.9M</p>
+                   <p className="text-5xl font-[600] text-primary-deep mb-3">$41.9M</p>
                    <p className="text-[10px] font-[600] text-gray-soft uppercase tracking-widest">GMV Proyectado Año 1</p>
                 </div>
                 <div>
@@ -144,7 +144,7 @@ export default function MasterPlanPage() {
                 className={`p-10 ${f.status === 'todo' ? 'opacity-40 grayscale' : ''}`}
               >
                 <div className="flex items-center justify-between mb-6">
-                  <span className={`text-[10px] font-[600] uppercase tracking-widest ${f.status === 'active' ? 'text-primary' : 'text-gray-soft'}`}>{f.phase}</span>
+                  <span className={`text-[10px] font-[600] uppercase tracking-widest ${f.status === 'active' ? 'text-primary-deep' : 'text-gray-soft'}`}>{f.phase}</span>
                   {f.status === 'completed' && <Badge variant="success">READY</Badge>}
                   {f.status === 'active' && <Badge variant="default" className="animate-pulse">IN PROGRESS</Badge>}
                 </div>
@@ -184,7 +184,7 @@ export default function MasterPlanPage() {
                    { name: "Frontend Master", desc: "React/Next.js Design System." },
                  ].map((a, i) => (
                    <div key={i} className="p-8 rounded-md bg-white/5 border border-white/10 hover:bg-white/10 transition group">
-                      <p className="font-[600] text-primary uppercase text-sm mb-2 group-hover:translate-x-1 transition-transform">{a.name}</p>
+                      <p className="font-[600] text-primary-deep uppercase text-sm mb-2 group-hover:translate-x-1 transition-transform">{a.name}</p>
                       <p className="text-xs text-white/40">{a.desc}</p>
                    </div>
                  ))}
@@ -200,7 +200,7 @@ export default function MasterPlanPage() {
              <h3 className="text-3xl font-[600] uppercase tracking-tight">04. Supabase Schema</h3>
           </div>
           <Card variant="floating" className="p-10 bg-black-rich border-none overflow-x-auto">
-             <pre className="text-primary font-mono text-xs leading-relaxed">{`-- SQL SCHEMA I MENDLY v2.0
+             <pre className="text-primary-deep font-mono text-xs leading-relaxed">{`-- SQL SCHEMA I MENDLY v2.0
 CREATE TYPE user_role AS ENUM ('client', 'provider', 'admin');
 CREATE TYPE request_status AS ENUM ('pending', 'accepted', 'escrow_funded', ...);
 

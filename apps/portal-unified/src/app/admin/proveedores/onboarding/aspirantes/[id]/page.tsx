@@ -95,7 +95,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
         <div className="flex-1 flex flex-col items-center justify-center">
           <XCircle size={48} className="text-red-400 mb-4" />
           <h2 className="text-xl font-bold">Aspirante no encontrado</h2>
-          <Link href="/admin/proveedores/onboarding" className="mt-4 text-primary font-bold">Volver al pipe</Link>
+          <Link href="/admin/proveedores/onboarding" className="mt-4 text-primary-deep font-bold">Volver al pipe</Link>
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
           <div className="lg:col-span-2 space-y-8">
             <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
               <h3 className="text-lg font-[800] text-black-rich mb-8 uppercase tracking-widest flex items-center gap-2">
-                <FileText size={18} className="text-primary" /> Información de Perfil
+                <FileText size={18} className="text-primary-deep" /> Información de Perfil
               </h3>
               <div className="grid grid-cols-2 gap-y-10">
                 <div>
@@ -175,7 +175,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
 
             <Card variant="default" className="p-8 bg-white border-none shadow-sm rounded-3xl">
               <h3 className="text-lg font-[800] text-black-rich mb-8 uppercase tracking-widest flex items-center gap-2">
-                <ClipboardList size={18} className="text-primary" /> Servicios y Cobertura
+                <ClipboardList size={18} className="text-primary-deep" /> Servicios y Cobertura
               </h3>
               <div className="space-y-8">
                 <div>
@@ -261,7 +261,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <p className="text-sm font-[800] text-black-rich">{name || 'Sin nombre'}</p>
-                          <p className="text-[10px] text-primary font-bold uppercase tracking-widest">{contact || 'Sin contacto'}</p>
+                          <p className="text-[10px] text-primary-deep font-bold uppercase tracking-widest">{contact || 'Sin contacto'}</p>
                         </div>
                         <div className="flex text-emerald-500 gap-0.5">
                           {[...Array(5)].map((_, i) => (
@@ -290,7 +290,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
                       <FileText size={16} className="text-primary/60" />
                       <span className="text-xs font-[600] capitalize text-black-rich/80">{key.replace(/_/g, ' ')}</span>
                     </div>
-                    <Download size={14} className="text-gray-soft group-hover:text-primary transition-colors" />
+                    <Download size={14} className="text-gray-soft group-hover:text-primary-deep transition-colors" />
                   </div>
                 )) : <p className="text-sm text-gray-soft italic text-center p-4">Sin documentos</p>}
               </div>

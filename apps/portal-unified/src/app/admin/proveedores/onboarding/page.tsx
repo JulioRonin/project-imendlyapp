@@ -96,7 +96,7 @@ export default function OnboardingPage() {
             <div className="flex gap-4 items-center">
                <div className="text-right">
                   <p className="text-[10px] text-gray-soft uppercase font-[700] tracking-widest">Nuevos Hoy</p>
-                  <p className="text-xl font-[700] text-primary">+{candidates.filter(c => new Date(c.created_at).toDateString() === new Date().toDateString()).length}</p>
+                  <p className="text-xl font-[700] text-primary-deep">+{candidates.filter(c => new Date(c.created_at).toDateString() === new Date().toDateString()).length}</p>
                </div>
                <Button variant="primary" className="gap-2 shadow-lg shadow-primary/20">Invitar Proveedor</Button>
             </div>
@@ -151,7 +151,7 @@ export default function OnboardingPage() {
                           <div className="flex items-center gap-3">
                              <Avatar name={p.full_name} size="sm" className="shadow-sm" />
                              <div>
-                               <p className="text-sm font-[700] text-black-rich group-hover:text-primary transition-colors">{p.full_name}</p>
+                               <p className="text-sm font-[700] text-black-rich group-hover:text-primary-deep transition-colors">{p.full_name}</p>
                                <p className="text-[10px] text-gray-soft font-[500]">ID: {p.id.slice(0, 8)}</p>
                              </div>
                           </div>
@@ -168,7 +168,7 @@ export default function OnboardingPage() {
                  })}
               </div>
               <Link href="/admin/proveedores/onboarding/aspirantes">
-                <Button variant="ghost" size="sm" className="w-full mt-8 text-primary font-[700] hover:bg-primary/5 rounded-xl border border-primary/10">Ver listado completo de aspirantes</Button>
+                <Button variant="ghost" size="sm" className="w-full mt-8 text-primary-deep font-[700] hover:bg-primary/5 rounded-xl border border-primary/10">Ver listado completo de aspirantes</Button>
               </Link>
            </Card>
 
@@ -181,7 +181,7 @@ export default function OnboardingPage() {
                     <div className="flex items-center justify-between p-4 bg-silver-light/30 rounded-2xl">
                        <div className="flex items-center gap-3">
                           <div className="bg-primary/10 p-2 rounded-xl">
-                            <Users size={18} className="text-primary" />
+                            <Users size={18} className="text-primary-deep" />
                           </div>
                           <div>
                              <p className="text-sm font-[700] text-black-rich uppercase tracking-tight">Tasa Aprobación</p>
@@ -221,7 +221,7 @@ export default function OnboardingPage() {
                          .map(([name, count]: any, i) => (
                            <div key={name} className="flex justify-between items-center text-sm p-2 hover:bg-silver-light/20 rounded-lg transition-colors">
                               <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-[800] text-primary bg-primary/5 w-5 h-5 flex items-center justify-center rounded-sm">0{i+1}</span>
+                                <span className="text-[10px] font-[800] text-primary-deep bg-primary/5 w-5 h-5 flex items-center justify-center rounded-sm">0{i+1}</span>
                                 <span className="capitalize font-[600] text-black-rich/80">{name}</span>
                               </div>
                               <span className="font-[800] text-black-rich">{count}</span>
@@ -236,7 +236,7 @@ export default function OnboardingPage() {
               <Card variant="default" className="p-8 bg-black-rich text-white border-none shadow-xl rounded-2xl relative overflow-hidden group">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
                  <div className="flex items-center gap-3 mb-4 relative z-10">
-                    <CheckCircle2 size={20} className="text-primary" />
+                    <CheckCircle2 size={20} className="text-primary-deep" />
                     <h4 className="text-sm font-[700] uppercase tracking-widest">Protocolo de Oro</h4>
                  </div>
                  <p className="text-xs text-white/60 leading-relaxed relative z-10 font-[500]">

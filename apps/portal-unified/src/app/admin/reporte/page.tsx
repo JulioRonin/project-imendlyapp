@@ -68,7 +68,7 @@ export default function ReportPage() {
               <Logo size={48} variant="dark" />
               <div className="mt-12 space-y-4">
                  <div className="flex items-center gap-3">
-                    <Badge variant="silver" className="bg-primary text-white border-none px-4 py-1 text-[10px] font-bold tracking-widest uppercase">Confidencial</Badge>
+                    <Badge variant="silver" className="bg-primary text-ink border-none px-4 py-1 text-[10px] font-bold tracking-widest uppercase">Confidencial</Badge>
                     <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">ID: REP-2026-03-A</span>
                  </div>
                  <h1 className="text-7xl font-[600] tracking-tighter leading-none mb-2">Reporte <br /> Ejecutivo</h1>
@@ -80,14 +80,14 @@ export default function ReportPage() {
         {/* Executive Summary */}
         <section className="py-20 px-16">
            <div className="flex items-center gap-3 mb-10 pb-6 border-b border-black/5">
-              <Target className="text-primary" size={28} />
+              <Target className="text-primary-deep" size={28} />
               <h2 className="text-2xl font-[600] uppercase tracking-widest text-black-rich">1. Resumen Ejecutivo</h2>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
               <div className="md:col-span-2">
                 <p className="text-xl leading-relaxed text-gray-700 font-[300]">
                    El mes de Marzo 2026 ha consolidado la tendencia de crecimiento exponencial proyectada al cierre del Q1. 
-                   Con un GMV total de <strong className="text-black-rich font-[600]">$842,500</strong>, hemos superado el objetivo mensual en un <strong className="text-primary font-[600]">12.5%</strong>. 
+                   Con un GMV total de <strong className="text-black-rich font-[600]">$842,500</strong>, hemos superado el objetivo mensual en un <strong className="text-primary-deep font-[600]">12.5%</strong>. 
                    Este resultado está impulsado principalmente por la alta demanda en servicios de mantenimiento especializado y la optimización de los tiempos de asignación.
                 </p>
               </div>
@@ -96,15 +96,15 @@ export default function ReportPage() {
                  <div className="space-y-8">
                     <div className="flex justify-between items-center pb-2 border-b border-black/5">
                        <span className="text-[11px] text-gray-500 uppercase tracking-tighter">Eficiencia Escrow</span>
-                       <span className="text-lg font-[600] text-primary">99.5%</span>
+                       <span className="text-lg font-[600] text-primary-deep">99.5%</span>
                     </div>
                     <div className="flex justify-between items-center pb-2 border-b border-black/5">
                        <span className="text-[11px] text-gray-500 uppercase tracking-tighter">Retención</span>
-                       <span className="text-lg font-[600] text-primary">82.0%</span>
+                       <span className="text-lg font-[600] text-primary-deep">82.0%</span>
                     </div>
                     <div className="flex justify-between items-center">
                        <span className="text-[11px] text-gray-500 uppercase tracking-tighter">Satisfacción NPS</span>
-                       <span className="text-lg font-[600] text-primary">4.8 / 5</span>
+                       <span className="text-lg font-[600] text-primary-deep">4.8 / 5</span>
                     </div>
                  </div>
               </div>
@@ -114,7 +114,7 @@ export default function ReportPage() {
         {/* Global Performance Analysis */}
         <section className="py-20 px-16 bg-silver-light/10">
            <div className="flex items-center gap-3 mb-12 pb-6 border-b border-black/5">
-              <TrendingUp className="text-primary" size={28} />
+              <TrendingUp className="text-primary-deep" size={28} />
               <h2 className="text-2xl font-[600] uppercase tracking-widest text-black-rich">2. Análisis de Rendimiento</h2>
            </div>
            
@@ -122,12 +122,12 @@ export default function ReportPage() {
               <Card variant="dark" className="p-12 border-none bg-black-rich text-white shadow-xl flex flex-col items-center justify-center text-center">
                  <p className="text-[10px] uppercase font-[600] opacity-40 mb-4 tracking-[0.2em]">GMV TOTAL</p>
                  <p className="text-5xl font-[600] tracking-tighter mb-4">$842k</p>
-                 <Badge variant="silver" className="bg-primary/20 text-primary border-none text-[10px] font-bold">+12.5% VS LAST MONTH</Badge>
+                 <Badge variant="silver" className="bg-primary/20 text-primary-deep border-none text-[10px] font-bold">+12.5% VS LAST MONTH</Badge>
               </Card>
               <Card variant="default" className="p-12 border-none bg-white shadow-none flex flex-col items-center justify-center text-center">
                  <p className="text-[10px] uppercase font-[600] text-gray-soft mb-4 tracking-[0.2em]">Revenue Neto</p>
                  <p className="text-5xl font-[600] text-black-rich tracking-tighter mb-4">$101k</p>
-                 <p className="text-[10px] font-[600] text-primary uppercase">12% Margen Promedio</p>
+                 <p className="text-[10px] font-[600] text-primary-deep uppercase">12% Margen Promedio</p>
               </Card>
               <Card variant="default" className="p-12 border-none bg-white shadow-none flex flex-col items-center justify-center text-center">
                  <p className="text-[10px] uppercase font-[600] text-gray-soft mb-4 tracking-[0.2em]">CAC Promedio</p>
@@ -157,7 +157,7 @@ export default function ReportPage() {
 
                  {/* Indicators */}
                  <div className="absolute top-12 right-12 text-right">
-                    <p className="text-xs font-bold text-primary uppercase tracking-widest mb-1">Peak Performance</p>
+                    <p className="text-xs font-bold text-primary-deep uppercase tracking-widest mb-1">Peak Performance</p>
                     <p className="text-[11px] text-gray-400 font-[300]">Marzo 2026 · Semana 4</p>
                  </div>
               </div>
@@ -172,7 +172,7 @@ export default function ReportPage() {
         {/* Services & Providers Breakdown */}
         <section className="py-20 px-16 page-break-before">
            <div className="flex items-center gap-3 mb-12 pb-6 border-b border-black/5">
-              <Briefcase className="text-primary" size={28} />
+              <Briefcase className="text-primary-deep" size={28} />
               <h2 className="text-2xl font-[600] uppercase tracking-widest text-black-rich">3. Desglose de Operaciones</h2>
            </div>
 
@@ -194,7 +194,7 @@ export default function ReportPage() {
                       <div key={i} className="grid grid-cols-4 items-center">
                          <span className="text-sm font-[600]">{item.s}</span>
                          <span className="text-sm text-center text-gray-600">{item.v} servicios</span>
-                         <span className="text-sm text-center font-[600] text-primary">{item.c}</span>
+                         <span className="text-sm text-center font-[600] text-primary-deep">{item.c}</span>
                          <span className="text-sm text-right font-[600]">#{item.r}</span>
                       </div>
                     ))}
@@ -203,7 +203,7 @@ export default function ReportPage() {
 
               <div className="grid grid-cols-2 gap-8">
                  <div className="p-8 border border-black/5 rounded-xl">
-                    <div className="flex items-center gap-2 mb-4 text-primary">
+                    <div className="flex items-center gap-2 mb-4 text-primary-deep">
                        <ShieldCheck size={20} />
                        <h4 className="text-sm font-[600]">Seguridad y Escrow</h4>
                     </div>
@@ -213,7 +213,7 @@ export default function ReportPage() {
                     <Badge variant="success">Estatus: Saludable</Badge>
                  </div>
                  <div className="p-8 border border-black/5 rounded-xl">
-                    <div className="flex items-center gap-2 mb-4 text-primary">
+                    <div className="flex items-center gap-2 mb-4 text-primary-deep">
                        <PieIcon size={20} />
                        <h4 className="text-sm font-[600]">Crecimiento Red</h4>
                     </div>

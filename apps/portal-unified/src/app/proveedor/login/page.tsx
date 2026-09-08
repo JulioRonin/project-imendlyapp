@@ -93,7 +93,7 @@ export default function ProfessionalLoginPage() {
         </div>
 
         <div className="v3-blur-in absolute inset-x-5 bottom-5 lg:inset-x-10 lg:bottom-10 glass rounded-[1.9rem] p-6 lg:p-8 max-w-lg" style={{ animationDelay: '200ms' }}>
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-2">Para profesionales</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Para profesionales</p>
           <h2 className="text-[24px] lg:text-[32px] font-semibold tracking-tight leading-tight text-ink">
             Tu oficio, con clientes reales y cobro garantizado.
           </h2>
@@ -161,7 +161,7 @@ export default function ProfessionalLoginPage() {
             href="/proveedor/onboarding"
             className="v2-rise v2-d4 group mt-6 flex items-center gap-4 bg-cream rounded-[1.75rem] p-5 v2-shadow-soft v2-press"
           >
-            <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-primary-light text-primary flex items-center justify-center">
+            <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-primary-light text-primary-deep flex items-center justify-center">
               <Briefcase size={19} />
             </span>
             <div className="flex-1 min-w-0">

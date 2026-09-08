@@ -1,42 +1,55 @@
-# I mendly Design System — "Arcilla & Lino"
+# I mendly Design System — "Nocturne Atelier"
 > Línea de diseño DEFINITIVA para toda la app (cliente, proveedor, admin, auth).
-> Sustituye la paleta verde original y las specs v2/v3 anteriores.
+> Paleta propuesta por Manus (ver `nocturne-atelier.md`), cableada aquí como tokens.
 > Referencias: apps editoriales de mobiliario y lifestyle — la fotografía es el diseño.
 
 ## 1. Paleta (única fuente de verdad: `globals.css` → `@theme`)
 
 ```
-SUPERFICIES CÁLIDAS
-  linen   #F4F0E8   fondo de toda pantalla            → bg-linen
-  sand    #EAE3D8   superficies secundarias, inputs    → bg-sand
-  cream   #FBF8F2   tarjetas sólidas                   → bg-cream
-  white   #FFFFFF   solo dentro de vidrio / pills
+SUPERFICIES
+  linen (Warm Cloud)  #FAF8F4   fondo principal claro           → bg-linen
+  sand  (Warm Sand)   #F1EEE8   secciones alternas, inputs      → bg-sand
+  cream               #FFFFFF   tarjetas sólidas sobre claro    → bg-cream
+  ink   (Ink Night)   #111111   nav, modales, hero oscuro, CTA fuerte → bg-ink
+  ink-900 (Soft Black)#191919   tarjetas oscuras                → bg-ink-900
+  ink-800 (Graphite)  #262626   bordes/campos sobre oscuro      → bg-ink-800
 
-TINTA
-  ink     #1F1C18   texto principal, botones fuertes   → text-ink / bg-ink
-  muted   #7B7267   texto secundario                   → text-muted
-  faint   #ADA398   placeholders, iconos inactivos     → text-faint
-  line    rgba(31,28,24,.07) bordes casi invisibles    → border-line
+TEXTO
+  text-ink   #111111 · text-muted (Stone) #6F6B66 · text-faint #A39E97
+  on-dark (Moon) #F8F5F0 sobre superficies oscuras            → text-on-dark
+  line rgba(17,17,17,.07) bordes casi invisibles               → border-line
 
-ACENTO — ARCILLA (el único acento de acción)
-  primary       #C8663E   CTAs, links, dots activos    → bg-primary / text-primary
-  primary-dark  #B0552F   hover / pressed              → bg-primary-dark
-  primary-light #F6E6DD   tintes, pills suaves         → bg-primary-light
-  clay-deep     #8A4529   tarjeta sombra apilada, texto sobre claro → bg-clay-deep
+ACENTO DE ACCIÓN — ATELIER PEACH
+  primary        #FFAA78   CTA primario: bg-primary + TEXTO INK (nunca blanco)
+  primary-light  #FFD0B4   hover, chips, tintes                → bg-primary-light
+  primary-dark   #E98C5A   pressed                             → bg-primary-dark
+  primary-deep   #C26A38   peach LEGIBLE para texto/íconos     → text-primary-deep
+  ⚠ El peach nunca va como texto pequeño sobre claro: usa text-primary-deep.
 
-SECUNDARIO — SALVIA (verificado / éxito / naturaleza)
-  sage        #7F9A78                                    → text-sage / bg-sage
-  sage-light  #E9EFE5                                    → bg-sage-light
+FIRMA DE MARCA — ELECTRIC LAVENDER
+  lavender       #BBA7F6   nav activa, filtro seleccionado, recomendaciones → bg-lavender
+  lavender-light #E6DFFF   fondos de insight/onboarding        → bg-lavender-light
+  lavender-deep  #3D315B   tarjeta sombra apilada, cierre de gradiente oscuro → bg-clay-deep
 
-SEMÁNTICOS (con moderación)
-  warning #C98A2B (ocre)   error #B8402E (teja)
+CONFIANZA — VERIFIED MINT (solo semántico)
+  mint #3CBFA1 · mint-light #DDF5EE · mint-deep #1F8A72 (texto)
+  alias: sage / sage-light apuntan a mint.
 
-GRADIENTE HERO (clase .v2-hero-grad, ahora arcilla):
-  linear-gradient(150deg, #D98A66 0%, #C8663E 45%, #8A4529 100%)
+EMOCIÓN — SIGNAL ROSE (escaso)
+  rose #F486A1: favoritos, incidencias, campañas              → bg-rose / text-rose
+
+SEMÁNTICOS: warning #B8641F · error #D0466B (texto legible; el rose es el fondo suave)
+
+GRADIENTES
+  .v2-hero-grad     Atelier Glow     135deg #FFAA78 → #F486A1 → #BBA7F6  (hero/bienvenida)
+  .v3-night-grad    Night Concierge  145deg #111111 → #262626 → #3D315B  (nav, pago protegido)
+  .v3-verified-grad Verified Horizon 120deg #3CBFA1 → #BBA7F6            (logros, muy puntual)
 ```
 
-Regla: **un solo acento de acción (arcilla)**. La salvia comunica estado
-(verificado, completado, garantía), nunca acción. Nada de slate/gray de Tailwind.
+Reglas: **peach = acción, lavanda = marca/estado activo, mint = confianza, rose = emoción.**
+El negro editorial (ink) es el botón fuerte y el fondo de los momentos de alta emoción
+(entrada, garantía, pago protegido); la contratación vuelve a superficies claras.
+Nada de slate/gray de Tailwind.
 
 ## 2. Tipografía — Urbanist (300–800)
 

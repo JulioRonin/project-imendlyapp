@@ -1,28 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  /* ═══ PALETA "ARCILLA & LINO" — línea de diseño definitiva ═══
-     Ver docs/design/design-system.md. Los nombres --im-* se conservan
-     por compatibilidad pero apuntan a la paleta nueva. */
-  --im-clay:       #C8663E;   /* acento de acción (antes verde) */
-  --im-clay-dk:    #B0552F;
-  --im-clay-lt:    #F6E6DD;
-  --im-clay-deep:  #8A4529;
-  --im-sage:       #7F9A78;   /* secundario: verificado / éxito */
-  --im-sage-lt:    #E9EFE5;
+  /* ═══ PALETA "NOCTURNE ATELIER" — línea de diseño definitiva ═══
+     Propuesta de Manus (docs/design/nocturne-atelier.md) cableada como
+     tokens. Los nombres --im-* y los alias antiguos se conservan por
+     compatibilidad pero apuntan a esta paleta. */
+  --im-ink-950:        #111111;   /* Ink Night — nav, modales, alto contraste */
+  --im-ink-900:        #191919;   /* Soft Black — tarjetas oscuras */
+  --im-ink-800:        #262626;   /* Graphite — bordes y campos oscuros */
+  --im-cloud-50:       #FAF8F4;   /* Warm Cloud — fondo principal */
+  --im-cloud-100:      #F1EEE8;   /* Warm Sand — secciones alternas, inputs */
+  --im-peach-500:      #FFAA78;   /* Atelier Peach — CTA primario (texto ink encima) */
+  --im-peach-300:      #FFD0B4;   /* Soft Peach — hover, chips, tintes */
+  --im-peach-deep:     #C26A38;   /* Peach legible para texto/íconos sobre claro */
+  --im-lavender-400:   #BBA7F6;   /* Electric Lavender — firma de marca, nav activa */
+  --im-lavender-200:   #E6DFFF;   /* Lavender Mist */
+  --im-lavender-deep:  #3D315B;   /* cierre del gradiente Night Concierge */
+  --im-rose-400:       #F486A1;   /* Signal Rose — favoritos, alertas suaves */
+  --im-mint-500:       #3CBFA1;   /* Verified Mint — solo semántico de confianza */
+  --im-mint-100:       #DDF5EE;   /* Mint Wash */
+  --im-mint-deep:      #1F8A72;   /* Mint legible para texto */
+  --im-text-primary:   #171717;   /* Carbon Text */
+  --im-text-secondary: #6F6B66;   /* Stone Text */
+  --im-text-faint:     #A39E97;
+  --im-text-on-dark:   #F8F5F0;   /* Moon Text */
+  --im-white:          #FFFFFF;
+  --im-line:           rgba(17, 17, 17, 0.07);
 
-  --im-linen:      #F4F0E8;
-  --im-sand:       #EAE3D8;
-  --im-cream:      #FBF8F2;
-  --im-white:      #FFFFFF;
+  /* nombres de superficie que usa la app */
+  --im-linen:      var(--im-cloud-50);
+  --im-sand:       var(--im-cloud-100);
+  --im-cream:      var(--im-white);
+  --im-ink:        var(--im-ink-950);
+  --im-muted:      var(--im-text-secondary);
+  --im-faint:      var(--im-text-faint);
 
-  --im-ink:        #1F1C18;
-  --im-muted:      #7B7267;
-  --im-faint:      #ADA398;
-  --im-line:       rgba(31, 28, 24, 0.07);
+  /* acento de acción y secundarios (alias de la etapa Arcilla) */
+  --im-clay:       var(--im-peach-500);
+  --im-clay-dk:    #E98C5A;
+  --im-clay-lt:    var(--im-peach-300);
+  --im-clay-deep:  var(--im-lavender-deep);
+  --im-sage:       var(--im-mint-500);
+  --im-sage-lt:    var(--im-mint-100);
 
-  --im-warning:    #C98A2B;
-  --im-error:      #B8402E;
+  --im-warning:    #B8641F;
+  --im-error:      #D0466B;
 
   /* alias heredados */
   --im-green:      var(--im-clay);
@@ -57,9 +79,20 @@
   --color-primary: var(--im-clay);
   --color-primary-dark: var(--im-clay-dk);
   --color-primary-light: var(--im-clay-lt);
+  --color-primary-deep: var(--im-peach-deep);
   --color-clay-deep: var(--im-clay-deep);
   --color-sage: var(--im-sage);
   --color-sage-light: var(--im-sage-lt);
+  --color-lavender: var(--im-lavender-400);
+  --color-lavender-light: var(--im-lavender-200);
+  --color-lavender-deep: var(--im-lavender-deep);
+  --color-mint: var(--im-mint-500);
+  --color-mint-light: var(--im-mint-100);
+  --color-mint-deep: var(--im-mint-deep);
+  --color-rose: var(--im-rose-400);
+  --color-ink-900: var(--im-ink-900);
+  --color-ink-800: var(--im-ink-800);
+  --color-on-dark: var(--im-text-on-dark);
 
   --color-linen: var(--im-linen);
   --color-sand: var(--im-sand);
@@ -109,18 +142,27 @@ body {
    Spec: docs/design/ui-cliente-v2.md
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --v2-ground: #F4F0E8;
+  --v2-ground: #FAF8F4;
   --v2-card: #FFFFFF;
-  --v2-card-soft: #FBF8F2;
-  --v2-ink: #1F1C18;
-  --v2-muted: #7B7267;
-  --v2-faint: #ADA398;
+  --v2-card-soft: #FFFFFF;
+  --v2-ink: #111111;
+  --v2-muted: #6F6B66;
+  --v2-faint: #A39E97;
   --v2-line: rgba(21, 23, 20, 0.06);
-  --v2-tint: #F6E6DD;
+  --v2-tint: #FFD0B4;
 }
 
+/* Atelier Glow — solo hero, bienvenida y campañas */
 .v2-hero-grad {
-  background: linear-gradient(150deg, #D98A66 0%, #C8663E 45%, #8A4529 100%);
+  background: linear-gradient(135deg, #FFAA78 0%, #F486A1 48%, #BBA7F6 100%);
+}
+/* Night Concierge — nav, pago protegido, proveedor curado */
+.v3-night-grad {
+  background: linear-gradient(145deg, #111111 0%, #262626 64%, #3D315B 100%);
+}
+/* Verified Horizon — estados de confianza, muy puntual */
+.v3-verified-grad {
+  background: linear-gradient(120deg, #3CBFA1 0%, #BBA7F6 100%);
 }
 
 .v2-shadow-soft  { box-shadow: 0 2px 10px rgba(21, 23, 20, 0.04); }
@@ -170,7 +212,7 @@ body {
 }
 
 .v2-shimmer {
-  background: linear-gradient(90deg, #EAE3D8 0%, #F4F0E8 40%, #EAE3D8 80%);
+  background: linear-gradient(90deg, #F1EEE8 0%, #FAF8F4 40%, #F1EEE8 80%);
   background-size: 800px 100%;
   animation: v2-shimmer 1.4s linear infinite;
 }
@@ -188,12 +230,12 @@ body {
    Fondos cálidos, vidrio esmerilado, fotografía protagonista.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --v3-linen: #F4F0E8;
+  --v3-linen: #FAF8F4;
   --v3-sand: #EBE6DC;
-  --v3-cream: #FBF8F2;
-  --v3-ink: #1F1C18;
-  --v3-muted: #7B7267;
-  --v3-faint: #ADA398;
+  --v3-cream: #FFFFFF;
+  --v3-ink: #111111;
+  --v3-muted: #6F6B66;
+  --v3-faint: #A39E97;
 }
 
 /* Vidrio esmerilado sobre fotografía */

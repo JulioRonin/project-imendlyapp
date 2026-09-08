@@ -49,7 +49,7 @@ export default function DisputeDetailPage({ params }: { params: { id: string } }
             <Link key={i} href={item.href}>
               <div className={`
                 flex items-center gap-3 px-4 py-3 rounded-pill transition-all
-                ${item.active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/50 hover:text-white hover:bg-white/5'}
+                ${item.active ? 'bg-primary text-ink shadow-lg shadow-primary/20' : 'text-white/50 hover:text-white hover:bg-white/5'}
               `}>
                 {item.icon}
                 <span className="text-sm font-[500]">{item.label}</span>
@@ -91,7 +91,7 @@ export default function DisputeDetailPage({ params }: { params: { id: string } }
                        <Avatar name="Carlos Slim" size="md" />
                        <div>
                           <p className="text-lg font-[600] text-black-rich">Carlos Slim</p>
-                          <p className="text-xs text-primary">Cliente Verificado</p>
+                          <p className="text-xs text-primary-deep">Cliente Verificado</p>
                        </div>
                     </div>
                  </Card>
@@ -119,7 +119,7 @@ export default function DisputeDetailPage({ params }: { params: { id: string } }
                     {[1,2].map(i => (
                       <div key={i} className="aspect-video bg-silver-light/30 rounded-lg border-[0.5px] border-black/5 flex items-center justify-center group cursor-pointer hover:bg-silver-light/50 transition-colors">
                          <div className="text-center">
-                            <FileText size={32} className="mx-auto text-gray-soft mb-2 group-hover:text-primary transition-colors" />
+                            <FileText size={32} className="mx-auto text-gray-soft mb-2 group-hover:text-primary-deep transition-colors" />
                             <p className="text-[10px] text-gray-soft uppercase font-[600]">Foto_Evidencia_{i}.jpg</p>
                          </div>
                       </div>
