@@ -33,7 +33,7 @@ export default function AdminOnboardingPage() {
                 <Avatar name={p.name} size="md" />
                 <div>
                   <h3 className="text-lg font-black text-brand-night tracking-tight">{p.name}</h3>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-widest">{p.category}</p>
+                  <p className="text-[10px] font-black text-primary-deep uppercase tracking-widest">{p.category}</p>
                 </div>
               </div>
 
@@ -50,7 +50,7 @@ export default function AdminOnboardingPage() {
 
               <div className="flex items-center justify-between mb-8">
                 <span className="text-[10px] font-bold text-brand-night/30 uppercase tracking-widest">{p.date}</span>
-                <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Ver Expediente</button>
+                <button className="text-[10px] font-black text-primary-deep uppercase tracking-widest hover:underline">Ver Expediente</button>
               </div>
 
               <div className="flex gap-3">

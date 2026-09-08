@@ -62,7 +62,7 @@ export default function AdminDashboard() {
 
             <div className="text-center mb-10">
               <h1 className="text-3xl font-black text-white tracking-tight mb-2 uppercase">Admin Entry</h1>
-              <p className="text-primary text-[10px] font-black uppercase tracking-[0.5em] opacity-80">Security Protocol Required</p>
+              <p className="text-primary-deep text-[10px] font-black uppercase tracking-[0.5em] opacity-80">Security Protocol Required</p>
             </div>
 
             <form onSubmit={handleVerify} className="space-y-6">
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
 
               <Button 
                 type="submit" 
-                className={`w-full h-16 text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all ${error ? 'bg-red-500 text-white' : 'bg-primary text-white hover:bg-primary/80 shadow-[0_20px_48px_rgba(124,58,237,0.3)]'}`}
+                className={`w-full h-16 text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all ${error ? 'bg-red-500 text-white' : 'bg-primary text-ink hover:bg-primary/80 shadow-[0_20px_48px_rgba(124,58,237,0.3)]'}`}
               >
                 {error ? 'Invalid' : 'Authorize Access'}
               </Button>
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
             <h2 className="text-4xl font-[600] tracking-tight text-black-rich mb-2">Resumen de Operación</h2>
             <div className="flex items-center gap-4">
                <p className="text-gray-soft text-sm">Insights avanzados del mes de</p>
-               <select className="bg-transparent border-none text-primary font-[600] text-sm focus:ring-0 cursor-pointer outline-none">
+               <select className="bg-transparent border-none text-primary-deep font-[600] text-sm focus:ring-0 cursor-pointer outline-none">
                   <option>Marzo 2026</option>
                   <option>Febrero 2026</option>
                   <option>Enero 2026</option>
@@ -165,10 +165,10 @@ export default function AdminDashboard() {
           {stats.map((s, i) => (
             <Card key={i} variant="floating" className="flex flex-col items-start p-6 group">
               <div className="flex justify-between w-full mb-4">
-                 <div className="w-8 h-8 rounded-pill bg-silver-light/50 flex items-center justify-center text-black-rich/60 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                 <div className="w-8 h-8 rounded-pill bg-silver-light/50 flex items-center justify-center text-black-rich/60 group-hover:bg-primary/10 group-hover:text-primary-deep transition-colors">
                     {s.icon}
                  </div>
-                 <div className="flex items-center gap-1 text-[9px] font-[600] text-primary">
+                 <div className="flex items-center gap-1 text-[9px] font-[600] text-primary-deep">
                     <ArrowUpRight size={10} />
                     {s.growth}
                  </div>
@@ -180,10 +180,10 @@ export default function AdminDashboard() {
           {/* New Active Services Metric */}
           <Card variant="dark" className="flex flex-col items-start p-6 group">
               <div className="flex justify-between w-full mb-4">
-                 <div className="w-8 h-8 rounded-pill bg-white/10 flex items-center justify-center text-primary">
+                 <div className="w-8 h-8 rounded-pill bg-white/10 flex items-center justify-center text-primary-deep">
                     <Zap size={16} />
                  </div>
-                 <div className="flex items-center gap-1 text-[9px] font-[600] text-primary">
+                 <div className="flex items-center gap-1 text-[9px] font-[600] text-primary-deep">
                     <ArrowUpRight size={10} />
                     +15.2%
                  </div>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                   <div key={i} className="space-y-2">
                     <div className="flex justify-between text-sm items-end">
                        <span className="font-[600] text-black-rich">{service.name}</span>
-                       <span className="text-xs text-gray-soft">{service.sales} ventas · <span className={service.growth > 0 ? 'text-primary' : 'text-im-error'}>{service.growth}%</span></span>
+                       <span className="text-xs text-gray-soft">{service.sales} ventas · <span className={service.growth > 0 ? 'text-primary-deep' : 'text-im-error'}>{service.growth}%</span></span>
                     </div>
                     <div className="h-2 bg-silver-light rounded-pill overflow-hidden">
                        <div 

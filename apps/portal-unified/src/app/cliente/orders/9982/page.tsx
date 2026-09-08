@@ -23,7 +23,7 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
           </div>
           <Card className="shrink-0 flex items-center gap-6 py-4 px-8 border-primary/20 bg-primary/5">
                 <div className="text-center">
-                    <p className="text-xs font-black text-primary uppercase tracking-widest mb-1">Total Protegido</p>
+                    <p className="text-xs font-black text-primary-deep uppercase tracking-widest mb-1">Total Protegido</p>
                     <p className="text-2xl font-black text-brand-night">$535.00</p>
                 </div>
           </Card>

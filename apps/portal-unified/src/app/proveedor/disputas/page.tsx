@@ -213,7 +213,7 @@ export default function DisputesPage() {
                                         </label>
                                         <div className="border-2 border-dashed border-slate-200 bg-slate-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:bg-white hover:border-primary/40 transition-colors cursor-pointer group">
                                             <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                                <History size={20} className="text-primary" />
+                                                <History size={20} className="text-primary-deep" />
                                             </div>
                                             <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Arrastra tus fotos aquí o haz clic para subir</p>
                                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Soporta JPG, PNG o MP4 (Max 10MB)</p>
@@ -285,7 +285,7 @@ export default function DisputesPage() {
                                                 {dispute.priority}
                                             </Badge>
                                         </div>
-                                        <h4 className="text-[15px] font-black text-brand-night leading-tight group-hover:text-primary transition-colors">{dispute.reason}</h4>
+                                        <h4 className="text-[15px] font-black text-brand-night leading-tight group-hover:text-primary-deep transition-colors">{dispute.reason}</h4>
                                         <div className="flex items-center gap-3 mt-2">
                                             <Avatar size="sm" name={dispute.client} className="w-5 h-5" />
                                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">{dispute.client} • {dispute.service}</p>
@@ -312,7 +312,7 @@ export default function DisputesPage() {
                     <div className="p-8 rounded-[2.5rem] border border-brand-night bg-brand-night shadow-2xl shadow-brand-night/20">
                         <div className="flex flex-col items-center text-center">
                             <div className="w-16 h-16 bg-white/10 rounded-3xl flex items-center justify-center mb-6">
-                                <MessageCircle size={32} className="text-primary" />
+                                <MessageCircle size={32} className="text-primary-deep" />
                             </div>
                             <h4 className="text-lg font-black mb-2 uppercase tracking-tight text-white">Chat con Mediador</h4>
                             <p className="text-white/60 text-[11px] font-medium leading-[1.6] mb-8">
@@ -336,7 +336,7 @@ export default function DisputesPage() {
                             >
                                 <div className="flex items-center justify-between">
                                     <span className="text-[11px] font-bold text-slate-600 group-hover:text-brand-night transition-colors pr-4">{faq.q}</span>
-                                    <ChevronRight size={14} className={`text-slate-300 group-hover:text-primary transition-transform duration-300 shrink-0 ${expandedFaq === i ? 'rotate-90 text-primary' : ''}`} />
+                                    <ChevronRight size={14} className={`text-slate-300 group-hover:text-primary-deep transition-transform duration-300 shrink-0 ${expandedFaq === i ? 'rotate-90 text-primary-deep' : ''}`} />
                                 </div>
                                 
                                 {expandedFaq === i && (

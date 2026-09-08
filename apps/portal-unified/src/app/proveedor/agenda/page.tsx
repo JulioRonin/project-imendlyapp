@@ -170,7 +170,7 @@ export default function AgendaPage() {
                                 : 'bg-slate-50/30 border-transparent opacity-30 pointer-events-none'
                         } ${isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-white scale-105 z-10 shadow-lg shadow-primary/10' : ''}`}
                     >
-                        <span className={`text-[11px] font-black ${isSelected ? 'text-primary' : 'text-brand-night'}`}>
+                        <span className={`text-[11px] font-black ${isSelected ? 'text-primary-deep' : 'text-brand-night'}`}>
                             {isCurrentMonth ? dayNum : ''}
                         </span>
                         
@@ -196,7 +196,7 @@ export default function AgendaPage() {
                     d.getDate() === selectedDateObj.getDate() && d.getMonth() === selectedDateObj.getMonth() ? 'bg-primary/5' : 'hover:bg-slate-50'
                 }`} onClick={() => setSelectedDateObj(d)}>
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{DAYS_ES[d.getDay()]}</span>
-                    <span className={`text-lg font-black ${d.getDate() === selectedDateObj.getDate() && d.getMonth() === selectedDateObj.getMonth() ? 'text-primary' : 'text-brand-night'}`}>
+                    <span className={`text-lg font-black ${d.getDate() === selectedDateObj.getDate() && d.getMonth() === selectedDateObj.getMonth() ? 'text-primary-deep' : 'text-brand-night'}`}>
                         {d.getDate()}
                     </span>
                 </div>
@@ -258,7 +258,7 @@ export default function AgendaPage() {
                     <h3 className="text-2xl font-black text-brand-night">{DAYS_ES[selectedDateObj.getDay()]}, {selectedDateObj.getDate()} {MONTHS_ES[selectedDateObj.getMonth()]}</h3>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Línea de tiempo diaria</p>
                 </div>
-                <Badge variant="default" className="bg-primary/10 text-primary border-none text-[10px] uppercase font-black px-4 py-2">{dayEvents.length} Eventos Hoy</Badge>
+                <Badge variant="default" className="bg-primary/10 text-primary-deep border-none text-[10px] uppercase font-black px-4 py-2">{dayEvents.length} Eventos Hoy</Badge>
             </div>
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <div className="space-y-6">
@@ -268,7 +268,7 @@ export default function AgendaPage() {
                         return (
                             <div key={hour} className="flex gap-6 group relative">
                                 <div className="w-16 text-right shrink-0">
-                                    <span className="text-[12px] font-black text-slate-300 group-hover:text-primary transition-colors">{hour}</span>
+                                    <span className="text-[12px] font-black text-slate-300 group-hover:text-primary-deep transition-colors">{hour}</span>
                                 </div>
                                 <div className="absolute left-[88px] top-4 bottom-0 w-[2px] bg-slate-50 group-last:hidden" />
                                 <div className="absolute left-[84px] top-1.5 w-2.5 h-2.5 rounded-full bg-slate-200 border-2 border-white group-hover:bg-primary transition-colors" />
@@ -288,7 +288,7 @@ export default function AgendaPage() {
                                                     <h4 className="text-sm font-black text-brand-night">{ev.title}</h4>
                                                     <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">{ev.time} • {ev.client}</p>
                                                 </div>
-                                                <Button variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-300 hover:text-primary bg-slate-50">
+                                                <Button variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-300 hover:text-primary-deep bg-slate-50">
                                                     <ChevronRight size={14} />
                                                 </Button>
                                             </div>
@@ -398,7 +398,7 @@ export default function AgendaPage() {
                                 <div className="flex-1 p-6 flex flex-col justify-between">
                                     <div>
                                         <div className="flex justify-between items-start mb-1">
-                                            <span className="text-[14px] font-black text-brand-night leading-tight group-hover:text-primary transition-colors">{event.title}</span>
+                                            <span className="text-[14px] font-black text-brand-night leading-tight group-hover:text-primary-deep transition-colors">{event.title}</span>
                                             <button className="text-slate-300 hover:text-brand-night transition-colors">
                                                 <MoreVertical size={16} />
                                             </button>
@@ -475,26 +475,26 @@ export default function AgendaPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-5 bg-white border border-slate-100 shadow-sm rounded-3xl">
                   <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
-                    <CalendarIcon size={14} className="text-primary" /> Fecha
+                    <CalendarIcon size={14} className="text-primary-deep" /> Fecha
                   </p>
                   <p className="text-sm font-black text-brand-night">{selectedEvent.day} Mar 2026</p>
                 </div>
                 <div className="p-5 bg-white border border-slate-100 shadow-sm rounded-3xl">
                   <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
-                    <Clock size={14} className="text-primary" /> Horario
+                    <Clock size={14} className="text-primary-deep" /> Horario
                   </p>
                   <p className="text-sm font-black text-brand-night">{selectedEvent.time}</p>
                 </div>
                 <div className="col-span-2 p-5 bg-white border border-slate-100 shadow-sm rounded-3xl">
                   <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
-                    <MapPin size={14} className="text-primary" /> Dirección
+                    <MapPin size={14} className="text-primary-deep" /> Dirección
                   </p>
                   <p className="text-sm font-black text-brand-night">{selectedEvent.address}</p>
                 </div>
               </div>
 
               <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Detalles del Servicio</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-primary-deep mb-2">Detalles del Servicio</p>
                 <p className="text-sm font-medium text-slate-600 leading-relaxed">{selectedEvent.details}</p>
               </div>
 

@@ -6,7 +6,7 @@ import { Button } from '@i-mendly/shared/components/Button';
 export const Step0Welcome: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext }) => {
   return (
     <div className="flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-700">
-      <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-8 border border-primary/20">
+      <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary-deep mb-8 border border-primary/20">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.63 3.11a14.98 14.98 0 0 0-4.41 8.23c-.49 2.15-.45 4.41.13 6.53l-3.84 2.21a.75.75 0 0 0 .33 1.39h5.91a2.25 2.25 0 0 1 2.25 2.25v1.386c0 .99 1.077 1.58 1.905.99l2.714-2.141a2.25 2.25 0 0 0 .893-1.78V15.5y-1.13Z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.63 3.11a14.98 14.98 0 0 0-4.41 8.23c-.49 2.15-.45 4.41.13 6.53l-3.84 2.21a.75.75 0 0 0 .33 1.39h5.91a2.25 2.25 0 0 1 2.25 2.25v1.386c0 .99 1.077 1.58 1.905.99l2.714-2.141a2.25 2.25 0 0 0 .893-1.78V15.5y-1.13Z" />
@@ -32,7 +32,7 @@ export const Step0Welcome: React.FC<{ onNext: () => void; onBack: () => void }> 
         </div>
         
         <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10 text-left">
-          <div className="bg-primary/20 text-primary p-2 rounded-lg">
+          <div className="bg-primary/20 text-primary-deep p-2 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>

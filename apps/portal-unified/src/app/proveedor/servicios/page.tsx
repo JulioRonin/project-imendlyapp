@@ -89,7 +89,7 @@ export default function ServicesPage() {
                     
                     <div className="mb-8">
                         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20">
-                            <Plus size={24} className="text-primary" />
+                            <Plus size={24} className="text-primary-deep" />
                         </div>
                         <h3 className="text-xl font-black text-brand-night tracking-tight uppercase">Crear Servicio</h3>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Ingresa los detalles de tu nuevo catálogo</p>
@@ -161,7 +161,7 @@ export default function ServicesPage() {
                     <div className="h-48 relative overflow-hidden">
                         <img src={s.image} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={s.name} />
                         <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
-                            <p className="text-[9px] font-black text-primary uppercase tracking-[0.3em] mb-1">{s.category}</p>
+                            <p className="text-[9px] font-black text-primary-deep uppercase tracking-[0.3em] mb-1">{s.category}</p>
                             <h4 className="text-lg font-black text-white uppercase tracking-tight">{s.name}</h4>
                         </div>
                         <button 
@@ -191,7 +191,7 @@ export default function ServicesPage() {
             {/* Empty Add Card inline */}
             <button 
                 onClick={() => setIsAdding(true)}
-                className="rounded-[2.5rem] border-4 border-dashed border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center p-12 text-slate-300 hover:border-primary/20 hover:bg-white hover:text-primary transition-all group min-h-[400px]"
+                className="rounded-[2.5rem] border-4 border-dashed border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center p-12 text-slate-300 hover:border-primary/20 hover:bg-white hover:text-primary-deep transition-all group min-h-[400px]"
             >
                 <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-primary/5 transition-colors">
                     <Plus size={32} />

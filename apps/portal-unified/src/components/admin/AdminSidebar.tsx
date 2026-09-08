@@ -55,11 +55,11 @@ export function AdminSidebar() {
               href={item.href}
               className={`flex items-center gap-3 h-11 px-4 rounded-[1rem] text-[13px] font-semibold transition-colors duration-300 v2-press ${
                 isActive
-                  ? 'bg-primary-light text-primary'
+                  ? 'bg-primary-light text-primary-deep'
                   : 'text-muted hover:text-ink hover:bg-sand/60'
               }`}
             >
-              <span className={isActive ? 'text-primary' : 'text-faint'}>{item.icon}</span>
+              <span className={isActive ? 'text-primary-deep' : 'text-faint'}>{item.icon}</span>
               <span className="flex-1">{item.label}</span>
               {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
             </Link>

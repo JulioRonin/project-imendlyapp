@@ -4,7 +4,7 @@ import { Badge } from '@i-mendly/shared/components/Badge';
 import { useOnboarding } from './OnboardingContext';
 
 const MODS = [
-  { id: 'mod-01', label: 'Valores I mendly', color: '#3DB87A', bg: 'bg-emerald-500', text: 'text-emerald-500' },
+  { id: 'mod-01', label: 'Valores I mendly', color: '#FFAA78', bg: 'bg-emerald-500', text: 'text-emerald-500' },
   { id: 'mod-02', label: 'Antes del servicio', color: '#0891B2', bg: 'bg-cyan-500', text: 'text-cyan-500' },
   { id: 'mod-03', label: 'Durante y después', color: '#7C3AED', bg: 'bg-violet-600', text: 'text-violet-600' },
   { id: 'mod-04', label: 'Situaciones difíciles', color: '#F59E0B', bg: 'bg-amber-500', text: 'text-amber-500' },

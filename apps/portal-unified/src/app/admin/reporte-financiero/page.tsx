@@ -61,14 +61,14 @@ export default function FinancialReportPage() {
               <div>
                  <Logo size={40} variant="dark" />
                  <div className="mt-12">
-                    <Badge variant="silver" className="bg-primary/20 text-primary border-none mb-4 tracking-widest px-4 py-1.5 font-[600]">MARZO 2026</Badge>
+                    <Badge variant="silver" className="bg-primary/20 text-primary-deep border-none mb-4 tracking-widest px-4 py-1.5 font-[600]">MARZO 2026</Badge>
                     <h1 className="text-6xl font-[600] tracking-tighter leading-none mb-4 text-white">Reporte de <br />Socios & Q1</h1>
                     <p className="text-xl text-white/40 max-w-md">Análisis de rendimiento financiero alineado con los objetivos del Master Plan v2.0.</p>
                  </div>
               </div>
               <div className="text-right flex flex-col items-end">
                  <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-12">
-                    <TrendingUp size={32} className="text-primary" />
+                    <TrendingUp size={32} className="text-primary-deep" />
                  </div>
                  <p className="text-[10px] uppercase font-[600] tracking-[0.3em] opacity-40">Financial Statement</p>
               </div>
@@ -79,7 +79,7 @@ export default function FinancialReportPage() {
         <section className="p-16 space-y-16">
            <div>
               <div className="flex items-center gap-3 mb-10">
-                 <Target className="text-primary" size={24} />
+                 <Target className="text-primary-deep" size={24} />
                  <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">1. GMV vs. Objetivos Master Plan</h2>
               </div>
               
@@ -102,15 +102,15 @@ export default function FinancialReportPage() {
                           <p className="text-3xl font-[600]">$750k</p>
                        </div>
                        <div className="p-8 border border-black/5 rounded-2xl bg-primary/5">
-                          <p className="text-[10px] uppercase font-[600] text-primary mb-2">Real Logrado</p>
-                          <p className="text-3xl font-[600] text-primary">$842k</p>
+                          <p className="text-[10px] uppercase font-[600] text-primary-deep mb-2">Real Logrado</p>
+                          <p className="text-3xl font-[600] text-primary-deep">$842k</p>
                        </div>
                     </div>
                  </div>
 
                  <div className="bg-black-rich p-10 rounded-3xl text-white relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Flag className="mb-6 text-primary" size={32} />
+                    <Flag className="mb-6 text-primary-deep" size={32} />
                     <h3 className="text-lg font-[600] mb-4">Interpretación Estratégica</h3>
                     <p className="text-sm leading-relaxed text-white/60 mb-8 font-[300]">
                        Hemos superado el target mensual en un **12.5%**. Este excedente se atribuye a la adopción temprana del modelo I MENDLY en zonas residenciales premium, 
@@ -124,16 +124,16 @@ export default function FinancialReportPage() {
            {/* Financial KPI Dashboard for Partners */}
            <div className="pt-16 border-t border-black/5">
               <div className="flex items-center gap-3 mb-12">
-                 <Briefcase className="text-primary" size={24} />
+                 <Briefcase className="text-primary-deep" size={24} />
                  <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">2. Indicadores Clave de Rentabilidad</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                  {[
-                   { label: 'Margen de Distribución', val: '12.0%', info: 'Comisiones netas post-procesamiento.', icon: <CheckCircle2 className="text-primary" size={16} /> },
-                   { label: 'Estructura de Costes (CAC)', val: '$42.50', info: 'Se mantiene bajo el umbral de $45 estipulado.', icon: <CheckCircle2 className="text-primary" size={16} /> },
-                   { label: 'LTV de Proveedor', val: '$18.4k', info: 'Ventas generadas por proveedor activo.', icon: <CheckCircle2 className="text-primary" size={16} /> },
-                   { label: 'Ticket Promedio', val: '$1,245', info: 'Aumento del 8% debido a servicios premium.', icon: <TrendingUp className="text-primary" size={16} /> },
+                   { label: 'Margen de Distribución', val: '12.0%', info: 'Comisiones netas post-procesamiento.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
+                   { label: 'Estructura de Costes (CAC)', val: '$42.50', info: 'Se mantiene bajo el umbral de $45 estipulado.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
+                   { label: 'LTV de Proveedor', val: '$18.4k', info: 'Ventas generadas por proveedor activo.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
+                   { label: 'Ticket Promedio', val: '$1,245', info: 'Aumento del 8% debido a servicios premium.', icon: <TrendingUp className="text-primary-deep" size={16} /> },
                  ].map((kpi, i) => (
                    <Card key={i} variant="default" className="p-8 border-[0.5px] border-black/5 flex flex-col justify-between hover:border-primary/20 transition-colors shadow-none">
                       <div>
@@ -154,7 +154,7 @@ export default function FinancialReportPage() {
            {/* New Section: Margin Breakdown Deep Dive */}
            <div className="pt-16 border-t border-black/5">
               <div className="flex items-center gap-3 mb-10">
-                 <PieIcon className="text-primary" size={24} />
+                 <PieIcon className="text-primary-deep" size={24} />
                  <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">3. Desglose de Márgenes y Revenue</h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -173,7 +173,7 @@ export default function FinancialReportPage() {
                                   <p className={`text-xs ${item.highlight ? 'font-[700] text-black-rich' : 'font-[500] text-gray-soft'}`}>{item.label}</p>
                                   <p className="text-[10px] text-gray-400">{item.pct} del volumen total</p>
                                </div>
-                               <p className={`text-lg ${item.highlight ? 'font-[700] text-primary' : 'font-[600] text-black-rich'}`}>{item.val}</p>
+                               <p className={`text-lg ${item.highlight ? 'font-[700] text-primary-deep' : 'font-[600] text-black-rich'}`}>{item.val}</p>
                             </div>
                           ))}
                        </div>
@@ -186,8 +186,8 @@ export default function FinancialReportPage() {
                        La estructura de costos se mantiene contenida en un 3%, permitiendo una escalabilidad lineal sin incrementar el burn-rate operativo significativamente.
                     </p>
                     <div className="flex items-center gap-4 p-6 bg-primary/5 rounded-2xl border border-primary/10">
-                       <ShieldCheck className="text-primary shrink-0" size={24} />
-                       <p className="text-xs text-primary font-[500]">El ticket promedio de **$1,245** valida nuestra estrategia de mercado premium.</p>
+                       <ShieldCheck className="text-primary-deep shrink-0" size={24} />
+                       <p className="text-xs text-primary-deep font-[500]">El ticket promedio de **$1,245** valida nuestra estrategia de mercado premium.</p>
                     </div>
                  </div>
               </div>
@@ -196,14 +196,14 @@ export default function FinancialReportPage() {
            {/* New Section: Strategic Recommendations */}
            <div className="pt-16 border-t border-black/5">
               <div className="flex items-center gap-3 mb-10">
-                 <Zap className="text-primary" size={24} />
+                 <Zap className="text-primary-deep" size={24} />
                  <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">4. Recomendaciones Estratégicas</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-6">
                     <div className="p-8 border border-black/5 rounded-2xl group hover:bg-black-rich transition-all duration-500">
                        <h5 className="text-sm font-[600] text-black-rich group-hover:text-white mb-4 flex items-center gap-2">
-                          <Users size={18} className="text-primary" /> Expansión de Proveedores
+                          <Users size={18} className="text-primary-deep" /> Expansión de Proveedores
                        </h5>
                        <p className="text-xs leading-relaxed text-gray-500 group-hover:text-white/60 font-[300]">
                           Déficit proyectado del 15% en categorías de Electricidad para el Q2. Se recomienda acelerar el onboarding en la zona **Valle del Sol** para cubrir la demanda vespertina.
@@ -221,7 +221,7 @@ export default function FinancialReportPage() {
                  <div className="space-y-6">
                     <div className="p-8 border border-black/5 rounded-2xl group hover:bg-black-rich transition-all duration-500">
                        <h5 className="text-sm font-[600] text-black-rich group-hover:text-white mb-4 flex items-center gap-2">
-                          <TrendingUp size={18} className="text-primary" /> Presencia en Zona
+                          <TrendingUp size={18} className="text-primary-deep" /> Presencia en Zona
                        </h5>
                        <p className="text-xs leading-relaxed text-gray-500 group-hover:text-white/60 font-[300]">
                           Baja penetración en **Pradera Dorada** contrastada con alto volumen de búsquedas. Oportunidad para campaña de marketing dirigida a residenciales de esa área.
@@ -230,7 +230,7 @@ export default function FinancialReportPage() {
                     <div className="p-8 bg-black-rich rounded-3xl text-white relative overflow-hidden shadow-xl">
                        <div className="relative z-10">
                           <h5 className="text-sm font-[600] mb-4 flex items-center gap-2">
-                             <CheckCircle2 size={18} className="text-primary" /> Próximo Paso Crítico
+                             <CheckCircle2 size={18} className="text-primary-deep" /> Próximo Paso Crítico
                           </h5>
                           <p className="text-xs leading-relaxed opacity-60 mb-6 font-[300]">
                              Reactivar el módulo de 'Incentivos a Proveedores' para mantener la retención sobre el 80% durante la temporada alta de verano.

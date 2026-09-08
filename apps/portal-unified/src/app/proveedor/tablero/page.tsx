@@ -132,7 +132,7 @@ export default function TableroProveedorPage() {
     <main className="min-h-screen bg-slate-50 pb-24 flex-1">
       <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-40">
         <div className="flex items-center gap-4">
-          <Newspaper className="text-primary w-8 h-8" strokeWidth={2.5} />
+          <Newspaper className="text-primary-deep w-8 h-8" strokeWidth={2.5} />
           <div>
             <h1 className="text-2xl font-black text-brand-night uppercase tracking-tighter">Tablero de Proyectos</h1>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Clientes buscando tu trabajo — oferta y gana</p>
@@ -158,7 +158,7 @@ export default function TableroProveedorPage() {
           {tab === 'disponibles' && (
             <button
               onClick={() => setOnlyMyCategory(v => !v)}
-              className={`ml-auto flex items-center gap-2 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${onlyMyCategory ? 'bg-primary/10 text-primary' : 'bg-white text-slate-400 shadow-sm'}`}
+              className={`ml-auto flex items-center gap-2 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${onlyMyCategory ? 'bg-primary/10 text-primary-deep' : 'bg-white text-slate-400 shadow-sm'}`}
             >
               <Filter size={14} /> {onlyMyCategory ? 'Mi especialidad' : 'Todas'}
             </button>
@@ -167,7 +167,7 @@ export default function TableroProveedorPage() {
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center p-20 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <Loader2 className="w-10 h-10 text-primary-deep animate-spin" />
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Buscando proyectos...</p>
           </div>
         )}
@@ -180,7 +180,7 @@ export default function TableroProveedorPage() {
                 <Hammer size={32} className="text-slate-200 mb-4" />
                 <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No hay proyectos abiertos {onlyMyCategory ? 'en tu especialidad' : ''} por ahora</p>
                 {onlyMyCategory && (
-                  <button onClick={() => setOnlyMyCategory(false)} className="mt-4 text-primary text-[10px] font-black uppercase tracking-widest underline">Ver todas las categorías</button>
+                  <button onClick={() => setOnlyMyCategory(false)} className="mt-4 text-primary-deep text-[10px] font-black uppercase tracking-widest underline">Ver todas las categorías</button>
                 )}
               </div>
             )}
@@ -188,10 +188,10 @@ export default function TableroProveedorPage() {
             {projects.map(p => (
               <Card key={p.id} className="p-7 rounded-[2.5rem] border-none shadow-card bg-white space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">{p.display_id}</span>
+                  <span className="text-[10px] font-black text-primary-deep uppercase tracking-[0.3em] font-mono">{p.display_id}</span>
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-bold text-slate-300">{timeAgo(p.created_at)}</span>
-                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${p.offers_count >= p.max_offers ? 'bg-red-50 text-red-400' : 'bg-primary/10 text-primary'}`}>
+                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${p.offers_count >= p.max_offers ? 'bg-red-50 text-red-400' : 'bg-primary/10 text-primary-deep'}`}>
                       <Users size={12} /> {p.offers_count}/{p.max_offers}
                     </div>
                   </div>
@@ -243,13 +243,13 @@ export default function TableroProveedorPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => setOfferType('price')}
-                        className={`py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${offerType === 'price' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 bg-white text-slate-400'}`}
+                        className={`py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${offerType === 'price' ? 'border-primary bg-primary/5 text-primary-deep' : 'border-slate-200 bg-white text-slate-400'}`}
                       >
                         Doy precio directo
                       </button>
                       <button
                         onClick={() => setOfferType('visit')}
-                        className={`py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${offerType === 'visit' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 bg-white text-slate-400'}`}
+                        className={`py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${offerType === 'visit' ? 'border-primary bg-primary/5 text-primary-deep' : 'border-slate-200 bg-white text-slate-400'}`}
                       >
                         Necesito visita (gratis)
                       </button>
@@ -283,20 +283,20 @@ export default function TableroProveedorPage() {
                           />
                           <button
                             onClick={() => setIncludesMaterials(v => !v)}
-                            className={`flex-1 h-13 py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${includesMaterials ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 bg-white text-slate-400'}`}
+                            className={`flex-1 h-13 py-3.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-wide transition-all ${includesMaterials ? 'border-primary bg-primary/5 text-primary-deep' : 'border-slate-200 bg-white text-slate-400'}`}
                           >
                             {includesMaterials ? '✓ Incluye materiales' : 'Sin materiales'}
                           </button>
                         </div>
                         <div>
                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
-                            <ShieldCheck size={13} className="text-primary" /> Anticipo protegido: {depositPercent}%
+                            <ShieldCheck size={13} className="text-primary-deep" /> Anticipo protegido: {depositPercent}%
                           </label>
                           <input
                             type="range" min={0} max={50} step={10}
                             value={depositPercent}
                             onChange={e => setDepositPercent(Number(e.target.value))}
-                            className="w-full accent-[#3DB87A]"
+                            className="w-full accent-[#FFAA78]"
                           />
                           <p className="text-[10px] font-bold text-slate-300 mt-1">El cliente paga el anticipo por la plataforma — tú arrancas con dinero seguro y él con garantía.</p>
                         </div>
@@ -320,7 +320,7 @@ export default function TableroProveedorPage() {
                       onClick={() => submitOffer(p)}
                       disabled={sending}
                       variant="primary"
-                      className="w-full py-4 rounded-2xl bg-primary text-white hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                      className="w-full py-4 rounded-2xl bg-primary text-ink hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
                     >
                       {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={15} />}
                       Enviar oferta
@@ -354,7 +354,7 @@ export default function TableroProveedorPage() {
               return (
                 <Card key={o.id} className="p-6 rounded-[2rem] border-none shadow-card bg-white">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">{o.projects?.display_id}</span>
+                    <span className="text-[10px] font-black text-primary-deep uppercase tracking-[0.3em] font-mono">{o.projects?.display_id}</span>
                     <Badge variant={st.tone} className="text-[9px] font-black uppercase px-3 py-1">{st.label}</Badge>
                   </div>
                   <h3 className="font-black text-brand-night uppercase tracking-tight mb-1">{o.projects?.title}</h3>
@@ -365,7 +365,7 @@ export default function TableroProveedorPage() {
                     </span>
                   </div>
                   {o.status === 'accepted' && (
-                    <div className="mt-3 p-3 rounded-xl bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest text-center">
+                    <div className="mt-3 p-3 rounded-xl bg-primary/5 text-primary-deep text-[10px] font-black uppercase tracking-widest text-center">
                       ¡El cliente te eligió! Revisa tus órdenes para coordinar.
                     </div>
                   )}

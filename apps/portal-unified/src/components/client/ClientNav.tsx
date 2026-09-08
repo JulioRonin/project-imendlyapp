@@ -37,10 +37,10 @@ export function ClientNav() {
         <item.icon
           size={22}
           strokeWidth={active ? 2.4 : 2}
-          className={`transition-colors duration-300 ${active ? 'text-[#1F1C18]' : 'text-[#ADA398]'}`}
+          className={`transition-colors duration-300 ${active ? 'text-[#111111]' : 'text-[#A39E97]'}`}
         />
         <span
-          className={`absolute bottom-2 w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+          className={`absolute bottom-2 w-1.5 h-1.5 rounded-full bg-lavender transition-all duration-300 ${active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
         />
       </Link>
     );
@@ -53,7 +53,7 @@ export function ClientNav() {
         <button
           onClick={() => router.push('/cliente/proyectos/nuevo')}
           aria-label="Publicar proyecto"
-          className="mx-1 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/30 v2-press hover:bg-primary-dark transition-colors"
+          className="mx-1 w-14 h-14 rounded-full bg-primary text-ink flex items-center justify-center shadow-lg shadow-primary/30 v2-press hover:bg-primary-dark transition-colors"
         >
           <Plus size={24} strokeWidth={2.5} />
         </button>

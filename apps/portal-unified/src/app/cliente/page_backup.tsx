@@ -64,7 +64,7 @@ export default function ClientHome() {
         
         <div className="flex items-center gap-6">
           <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
-            <MapPin size={12} className="text-primary" />
+            <MapPin size={12} className="text-primary-deep" />
             {location}
           </div>
           
@@ -99,7 +99,7 @@ export default function ClientHome() {
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Nueva versión 1.0 disponible en {location}</span>
         </div>
         <h1 className="text-5xl md:text-7xl font-black text-brand-night leading-[1.1] mb-8 tracking-tighter max-w-4xl mx-auto">
-          Servicios del hogar <span className="text-primary italic">con confianza</span> y certeza.
+          Servicios del hogar <span className="text-primary-deep italic">con confianza</span> y certeza.
         </h1>
         <p className="text-lg md:text-xl text-brand-night/60 mb-12 max-w-2xl mx-auto font-medium">
           Conectamos a los mejores profesionales certificados con quienes buscan calidad, rapidez y seguridad en cada rincón de su hogar.
@@ -109,7 +109,7 @@ export default function ClientHome() {
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col md:flex-row gap-4 p-2 bg-white rounded-[2.5rem] shadow-[0_32px_128px_-12px_rgba(0,0,0,0.12)] border border-slate-50">
             <div className="flex-1 relative group">
-              <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" />
+              <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-deep transition-colors" />
               <input 
                 type="text"
                 placeholder="¿Qué servicio necesitas?"
@@ -124,7 +124,7 @@ export default function ClientHome() {
               disabled={isLocating}
               className="flex items-center gap-3 px-8 h-16 rounded-2xl md:rounded-[2rem] hover:bg-slate-50 text-slate-400 font-bold transition-all whitespace-nowrap"
             >
-              <Navigation size={18} className={isLocating ? 'animate-spin text-primary' : ''} />
+              <Navigation size={18} className={isLocating ? 'animate-spin text-primary-deep' : ''} />
               <span className="text-[11px] font-black uppercase tracking-widest">
                 {isLocating ? 'Buscando...' : 'Mi ubicación'}
               </span>
@@ -143,7 +143,7 @@ export default function ClientHome() {
             <h2 className="text-3xl font-black text-brand-night tracking-tight uppercase">Categorías</h2>
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Servicios más solicitados</p>
           </div>
-          <Link href="/cliente/categories" className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:gap-3 transition-all">
+          <Link href="/cliente/categories" className="flex items-center gap-2 text-[10px] font-black text-primary-deep uppercase tracking-[0.3em] hover:gap-3 transition-all">
             Ver todas <ChevronRight size={14} />
           </Link>
         </div>
@@ -174,11 +174,11 @@ export default function ClientHome() {
             </div>
             <div className="relative mb-8 w-24 h-24">
               <Avatar name="Juan Pérez" size="lg" className="w-full h-full ring-8 ring-slate-50 shadow-xl" />
-              <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-xl shadow-lg border-4 border-white">
+              <div className="absolute -bottom-2 -right-2 bg-primary text-ink p-2 rounded-xl shadow-lg border-4 border-white">
                 <Zap size={16} fill="white" />
               </div>
             </div>
-            <h3 className="text-3xl font-black text-brand-night mb-2 tracking-tight uppercase group-hover:text-primary transition-colors">Juan Pérez</h3>
+            <h3 className="text-3xl font-black text-brand-night mb-2 tracking-tight uppercase group-hover:text-primary-deep transition-colors">Juan Pérez</h3>
             <p className="text-[11px] font-black text-slate-300 mb-8 uppercase tracking-[0.2em]">Electricista Certificado Master</p>
             <p className="text-sm text-brand-night/60 leading-relaxed mb-10 font-medium opacity-80 group-hover:opacity-100 transition-opacity">
               Especialista en sistemas de alta tensión y domótica residencial con certificación internacional.
@@ -222,7 +222,7 @@ export default function ClientHome() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(124,58,237,0.05),_transparent_70%)]" />
             
             <div className="relative z-10">
-              <div className="w-16 h-16 rounded-[2rem] bg-white shadow-xl flex items-center justify-center mb-10 text-primary group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
+              <div className="w-16 h-16 rounded-[2rem] bg-white shadow-xl flex items-center justify-center mb-10 text-primary-deep group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
                 <Shield size={32} strokeWidth={1.5} />
               </div>
               <h3 className="text-3xl font-black text-brand-night mb-6 uppercase tracking-tight leading-none">Garantía <br/>Escrow</h3>
@@ -249,12 +249,12 @@ export default function ClientHome() {
         <div className="relative z-10 max-w-7xl mx-auto">
           <Logo size={40} className="mx-auto mb-8 grayscale opacity-50 contrast-125" />
           <div className="flex justify-center gap-12 mb-12 text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
-            <a href="#" className="hover:text-primary transition-colors">Servicios</a>
-            <a href="#" className="hover:text-primary transition-colors">Zonas</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacidad</a>
-            <a href="#" className="hover:text-primary transition-colors">Soporte</a>
+            <a href="#" className="hover:text-primary-deep transition-colors">Servicios</a>
+            <a href="#" className="hover:text-primary-deep transition-colors">Zonas</a>
+            <a href="#" className="hover:text-primary-deep transition-colors">Privacidad</a>
+            <a href="#" className="hover:text-primary-deep transition-colors">Soporte</a>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] mb-4 text-primary">I mendly · 2026</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] mb-4 text-primary-deep">I mendly · 2026</p>
           <p className="text-xs max-w-sm mx-auto opacity-30 font-medium leading-relaxed">
             Plataforma confidencial para gestión de servicios domésticos premium. <br/>Calidad, rapidez y seguridad garantizada.
           </p>

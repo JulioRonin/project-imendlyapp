@@ -98,17 +98,17 @@ export default function ClientHome() {
         <div className="flex items-center gap-3">
           <Avatar name="Julio" size="md" className="ring-2 ring-primary/10 shadow-lg" />
           <div onClick={requestLocation} className="cursor-pointer group">
-            <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest group-hover:text-primary transition-colors">Tu Ubicación {isLocating ? '(Buscando...)' : ''}</p>
+            <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest group-hover:text-primary-deep transition-colors">Tu Ubicación {isLocating ? '(Buscando...)' : ''}</p>
             <p className="text-xs font-bold text-brand-night flex items-center gap-1.5 uppercase tracking-tighter">
-              San Pedro Garza García <MapPin size={12} className="text-primary group-hover:scale-125 transition-transform" strokeWidth={3} />
+              San Pedro Garza García <MapPin size={12} className="text-primary-deep group-hover:scale-125 transition-transform" strokeWidth={3} />
             </p>
           </div>
         </div>
         <div className="flex gap-4">
-          <button className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-brand-night/40 hover:text-primary hover:scale-110 transition-all">
+          <button className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-brand-night/40 hover:text-primary-deep hover:scale-110 transition-all">
             <Bell size={18} strokeWidth={2} />
           </button>
-          <button className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-brand-night/40 hover:text-primary hover:scale-110 transition-all">
+          <button className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-brand-night/40 hover:text-primary-deep hover:scale-110 transition-all">
             <Settings size={18} strokeWidth={2} />
           </button>
         </div>
@@ -142,14 +142,14 @@ export default function ClientHome() {
         <section>
           <div className="flex items-center justify-between mb-8 px-2">
             <h2 className="text-2xl font-black text-brand-night tracking-tight">Categorías Populares</h2>
-            <Link href="/cliente/categories" className="text-xs font-black text-primary uppercase tracking-[0.2em] hover:underline">Ver Todo</Link>
+            <Link href="/cliente/categories" className="text-xs font-black text-primary-deep uppercase tracking-[0.2em] hover:underline">Ver Todo</Link>
           </div>
           
           <div className="flex flex-wrap justify-center gap-6 pb-8 px-2">
             {CATEGORIES.map((cat, i) => (
               <Link key={i} href={`/cliente/search?q=${cat.name}`} className="flex-shrink-0">
                 <Card className={`w-32 h-36 rounded-[2.5rem] border-none shadow-[0_20px_40px_-10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center gap-4 hover:scale-105 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer bg-white group p-0`}>
-                  <div className={`w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:bg-primary/5 transition-colors duration-500 text-brand-night/40 group-hover:text-primary`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:bg-primary/5 transition-colors duration-500 text-brand-night/40 group-hover:text-primary-deep`}>
                     {cat.icon}
                   </div>
                   <p className="text-[10px] font-black uppercase text-brand-night/60 group-hover:text-brand-night tracking-widest transition-colors">{cat.name}</p>
@@ -163,7 +163,7 @@ export default function ClientHome() {
         <section>
           <div className="flex items-center justify-between mb-8 px-2">
             <h2 className="text-2xl font-black text-brand-night tracking-tight">Selección I mendly</h2>
-            <span className="px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-black rounded-full uppercase tracking-widest shadow-sm">Top Rated</span>
+            <span className="px-4 py-1.5 bg-primary/10 text-primary-deep text-[10px] font-black rounded-full uppercase tracking-widest shadow-sm">Top Rated</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 px-2 pb-20">
@@ -187,7 +187,7 @@ export default function ClientHome() {
                 <div className="p-10 bg-white">
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-3">En tu radio (20km)</p>
+                      <p className="text-[10px] font-black text-primary-deep uppercase tracking-[0.3em] mb-3">En tu radio (20km)</p>
                       <h3 className="text-2xl font-black text-brand-night mb-2 tracking-tight uppercase tracking-tighter">{p.category}</h3>
                       <div className="flex items-center gap-3">
                         <Avatar name={p.name} size="sm" />
@@ -235,7 +235,7 @@ export default function ClientHome() {
             <div className="bg-white p-4 rounded-2xl rounded-tl-sm text-xs font-bold text-brand-night shadow-sm max-w-[80%]">
               ¡Hola Julio! Soy tu asistente IA. ¿Necesitas ayuda para encontrar un proveedor de pintura o clima hoy?
             </div>
-            <div className="bg-primary/5 p-4 rounded-2xl rounded-tr-sm text-xs font-bold text-primary shadow-sm max-w-[80%] ml-auto text-right">
+            <div className="bg-primary/5 p-4 rounded-2xl rounded-tr-sm text-xs font-bold text-primary-deep shadow-sm max-w-[80%] ml-auto text-right">
               Busco un pintor cerca de San Pedro para este fin de semana.
             </div>
             <div className="bg-white p-4 rounded-2xl rounded-tl-sm text-xs font-bold text-brand-night shadow-sm max-w-[80%]">
@@ -245,7 +245,7 @@ export default function ClientHome() {
 
           <div className="p-6 bg-white border-t border-slate-50 flex gap-3">
             <input type="text" placeholder="Escribe tu mensaje..." className="flex-1 bg-slate-50 rounded-xl px-5 text-xs font-bold outline-none" />
-            <button className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <button className="w-10 h-10 bg-primary text-ink rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
               <Send size={16} />
             </button>
           </div>

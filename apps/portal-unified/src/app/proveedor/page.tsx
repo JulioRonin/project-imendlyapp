@@ -35,7 +35,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_TONE: Record<string, string> = {
-  PENDING: 'bg-primary-light text-primary',
+  PENDING: 'bg-primary-light text-primary-deep',
   ACCEPTED: 'bg-sage-light text-sage',
   REJECTED: 'bg-error/10 text-error',
   COUNTER_OFFER: 'bg-sand text-muted',
@@ -113,7 +113,7 @@ export default function ProviderDashboard() {
 
             <div className="absolute inset-x-4 bottom-4 md:inset-x-7 md:bottom-7 glass rounded-[1.9rem] p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-5">
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-2">Tu día de trabajo</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Tu día de trabajo</p>
                 <h1 className="text-[32px] md:text-[42px] font-semibold tracking-tight leading-[1.02] text-ink">
                   Hola, {currentUser?.email.split('@')[0] || 'Profesional'}
                 </h1>
@@ -148,7 +148,7 @@ export default function ProviderDashboard() {
             <div key={i} className={`v2-rise v2-d${i + 1} bg-cream rounded-[1.75rem] p-6 v2-shadow-soft v2-float`}>
               <div className="flex items-center justify-between">
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">{stat.label}</p>
-                <span className="w-10 h-10 rounded-[0.9rem] bg-primary-light text-primary flex items-center justify-center">
+                <span className="w-10 h-10 rounded-[0.9rem] bg-primary-light text-primary-deep flex items-center justify-center">
                   <stat.icon size={17} />
                 </span>
               </div>
@@ -165,7 +165,7 @@ export default function ProviderDashboard() {
 
             {myOrders.length === 0 && (
               <div className="v2-rise v2-d2 bg-cream rounded-[2rem] p-10 flex flex-col items-center text-center v2-shadow-soft">
-                <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary flex items-center justify-center mb-4">
+                <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
                   <CheckCircle2 size={26} />
                 </span>
                 <h3 className="text-[17px] font-semibold text-ink">No tienes servicios activos</h3>
@@ -180,12 +180,12 @@ export default function ProviderDashboard() {
               {myOrders.map((service, i) => (
                 <article key={service.id} className={`v2-rise v2-d${Math.min(i + 2, 8)} bg-cream rounded-[1.75rem] p-5 md:p-6 v2-shadow-soft`}>
                   <div className="flex items-start gap-4">
-                    <span className="w-14 h-14 shrink-0 rounded-[1.15rem] bg-primary-light text-primary flex items-center justify-center">
+                    <span className="w-14 h-14 shrink-0 rounded-[1.15rem] bg-primary-light text-primary-deep flex items-center justify-center">
                       <Clock size={20} />
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">ORD-{service.id}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">ORD-{service.id}</span>
                         <span className={`px-3 h-7 inline-flex items-center rounded-full text-[11px] font-semibold ${STATUS_TONE[service.status] || 'bg-sand text-muted'}`}>
                           {STATUS_LABEL[service.status] || service.status}
                         </span>
@@ -233,7 +233,7 @@ export default function ProviderDashboard() {
             <div className="v2-rise v2-d3 relative overflow-hidden bg-ink rounded-[2.25rem] p-7 text-white v2-shadow-lift">
               <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-primary/25 blur-3xl" />
               <div className="relative">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Servicio activo</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">Servicio activo</p>
                 {activeOrder ? (
                   <>
                     <h3 className="mt-2 text-[20px] font-semibold tracking-tight leading-tight">{activeOrder.serviceName}</h3>

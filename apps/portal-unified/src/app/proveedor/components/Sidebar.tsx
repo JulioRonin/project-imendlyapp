@@ -82,14 +82,14 @@ export function ProviderSidebar() {
                 className={cn(
                   "flex items-center gap-3.5 h-12 px-4 rounded-[1.15rem] text-[13px] font-semibold transition-colors duration-300 v2-press",
                   isActive
-                    ? "bg-primary-light text-primary"
+                    ? "bg-primary-light text-primary-deep"
                     : "text-muted hover:text-ink hover:bg-sand/60"
                 )}
               >
                 <item.icon
                   size={18}
                   strokeWidth={isActive ? 2.2 : 2}
-                  className={cn("shrink-0 transition-colors", isActive ? "text-primary" : "text-faint")}
+                  className={cn("shrink-0 transition-colors", isActive ? "text-primary-deep" : "text-faint")}
                 />
                 <span className="flex-1 truncate">{item.label}</span>
                 {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
@@ -101,7 +101,7 @@ export function ProviderSidebar() {
         {/* Soporte + cerrar sesión */}
         <div className="p-4 space-y-2">
           <div className="bg-linen rounded-[1.5rem] p-4 flex items-center gap-3">
-            <span className="w-10 h-10 shrink-0 rounded-[0.9rem] bg-primary-light text-primary flex items-center justify-center">
+            <span className="w-10 h-10 shrink-0 rounded-[0.9rem] bg-primary-light text-primary-deep flex items-center justify-center">
               <LifeBuoy size={17} />
             </span>
             <div className="flex-1 min-w-0">

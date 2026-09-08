@@ -55,7 +55,7 @@ export default function RequestPage({ params }: { params: { id: string } }) {
         <div className="md:col-span-3 space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-700">
           <section className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-100 border border-slate-50">
             <h2 className="text-2xl font-black text-brand-night mb-10 tracking-tight flex items-center gap-4">
-              <span className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm">1</span>
+              <span className="w-10 h-10 rounded-full bg-primary text-ink flex items-center justify-center text-sm">1</span>
               Detalles del Servicio
             </h2>
             <div className="space-y-8">
@@ -76,7 +76,7 @@ export default function RequestPage({ params }: { params: { id: string } }) {
 
           <section className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-100 border border-slate-50">
             <h2 className="text-2xl font-black text-brand-night mb-8 tracking-tight flex items-center gap-4">
-              <span className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm">2</span>
+              <span className="w-10 h-10 rounded-full bg-primary text-ink flex items-center justify-center text-sm">2</span>
               Ubicación de Visita
             </h2>
             <Input label="Dirección de tu hogar" placeholder="CALLE, NUMERO, CP" className="py-4 px-6 font-bold" />
@@ -91,7 +91,7 @@ export default function RequestPage({ params }: { params: { id: string } }) {
               <div>
                 <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest leading-none mb-1">Profesional Seleccionado</p>
                 <p className="text-xl font-black text-brand-night tracking-tight">Indigo</p>
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mt-1">Moda y Costura</p>
+                <p className="text-[10px] uppercase font-bold text-primary-deep tracking-widest mt-1">Moda y Costura</p>
               </div>
             </div>
 
@@ -106,7 +106,7 @@ export default function RequestPage({ params }: { params: { id: string } }) {
               </div>
               <div className="flex justify-between items-center pt-8 border-t border-slate-100 border-dashed">
                 <span className="text-xl font-black text-brand-night uppercase tracking-tighter">Total</span>
-                <span className="text-4xl font-black text-primary tracking-tighter">$535.00</span>
+                <span className="text-4xl font-black text-primary-deep tracking-tighter">$535.00</span>
               </div>
             </div>
 

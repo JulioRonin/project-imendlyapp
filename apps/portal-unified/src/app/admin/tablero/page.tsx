@@ -84,7 +84,7 @@ export default function AdminTableroPage() {
   return (
     <main className="flex-1 min-h-screen bg-slate-50 pb-24">
       <header className="px-8 py-10 flex items-center gap-4">
-        <Newspaper className="text-primary w-8 h-8" strokeWidth={2.5} />
+        <Newspaper className="text-primary-deep w-8 h-8" strokeWidth={2.5} />
         <div>
           <h1 className="text-2xl font-black text-brand-night uppercase tracking-tighter">Moderación del Tablero</h1>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Cada proyecto se revisa antes de publicarse</p>
@@ -106,7 +106,7 @@ export default function AdminTableroPage() {
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center p-20 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <Loader2 className="w-10 h-10 text-primary-deep animate-spin" />
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Cargando...</p>
           </div>
         )}
@@ -124,7 +124,7 @@ export default function AdminTableroPage() {
             <Card key={p.id} className="p-7 rounded-[2.5rem] border-none shadow-card bg-white space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">{p.display_id}</span>
+                  <span className="text-[10px] font-black text-primary-deep uppercase tracking-[0.3em] font-mono">{p.display_id}</span>
                   <Badge variant={st.tone} className="text-[9px] font-black uppercase px-3 py-1">{st.label}</Badge>
                   {contactFlag && (
                     <span className="flex items-center gap-1.5 text-[10px] font-black uppercase text-red-500 bg-red-50 px-3 py-1 rounded-full">
@@ -202,7 +202,7 @@ export default function AdminTableroPage() {
                       onClick={() => approve(p.id)}
                       disabled={acting === p.id}
                       variant="primary"
-                      className="flex-1 py-4 rounded-2xl bg-primary text-white hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                      className="flex-1 py-4 rounded-2xl bg-primary text-ink hover:bg-primary-dark border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
                     >
                       {acting === p.id ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />} Aprobar y publicar
                     </Button>

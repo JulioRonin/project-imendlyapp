@@ -86,7 +86,7 @@ export default function AspirantesListPage() {
                             <Link href={`/admin/proveedores/onboarding/aspirantes/${p.id}`} className="flex items-center gap-4">
                                <Avatar name={p.name} size="sm" />
                                <div>
-                                  <p className="text-sm font-[600] text-black-rich group-hover:text-primary transition-colors">{p.name}</p>
+                                  <p className="text-sm font-[600] text-black-rich group-hover:text-primary-deep transition-colors">{p.name}</p>
                                   <p className="text-[10px] text-gray-soft">{p.city}</p>
                                </div>
                             </Link>
@@ -99,7 +99,7 @@ export default function AspirantesListPage() {
                          <td className="px-8 py-6 text-right">
                             <div className="flex justify-end gap-2">
                                <Link href={`/admin/proveedores/onboarding/aspirantes/${p.id}`}>
-                                 <Button variant="ghost" size="sm" className="w-8 h-8 p-0 rounded-pill hover:bg-primary/10 hover:text-primary transition-colors">
+                                 <Button variant="ghost" size="sm" className="w-8 h-8 p-0 rounded-pill hover:bg-primary/10 hover:text-primary-deep transition-colors">
                                     <ChevronRight size={18} />
                                  </Button>
                                </Link>

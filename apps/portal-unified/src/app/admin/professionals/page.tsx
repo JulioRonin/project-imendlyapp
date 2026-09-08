@@ -11,7 +11,7 @@ const FILTERS = ['Todos', 'Activo', 'Pendiente', 'Suspendido'];
 
 const STATUS_PILL: Record<string, string> = {
   Activo: 'bg-sage-light text-sage',
-  Pendiente: 'bg-primary-light text-primary',
+  Pendiente: 'bg-primary-light text-primary-deep',
   Suspendido: 'bg-error/10 text-error',
 };
 
@@ -90,7 +90,7 @@ export default function ProfessionalsManagementPage() {
           {/* ── Cabecera editorial ── */}
           <header className="v3-blur-in flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-2">Proveedores</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Proveedores</p>
               <h1 className="text-[36px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink">Profesionales</h1>
               <p className="mt-2 text-[14px] font-medium text-muted max-w-lg">Administra el talento, aprueba perfiles e inspecciona sus datos.</p>
             </div>
@@ -122,7 +122,7 @@ export default function ProfessionalsManagementPage() {
                   className={`relative shrink-0 pb-3 text-[14px] flex items-center gap-2 transition-colors duration-300 ${active ? 'font-semibold text-ink' : 'font-medium text-faint hover:text-muted'}`}
                 >
                   {status}
-                  <span className={`text-[11px] font-bold tabular-nums px-2 h-5 rounded-full flex items-center ${active ? 'bg-primary-light text-primary' : 'bg-sand text-muted'}`}>{countFor(status)}</span>
+                  <span className={`text-[11px] font-bold tabular-nums px-2 h-5 rounded-full flex items-center ${active ? 'bg-primary-light text-primary-deep' : 'bg-sand text-muted'}`}>{countFor(status)}</span>
                   <span className={`absolute left-0 right-0 -bottom-px h-[3px] rounded-full bg-primary transition-transform duration-500 origin-left ${active ? 'scale-x-100' : 'scale-x-0'}`} />
                 </button>
               );
@@ -181,7 +181,7 @@ export default function ProfessionalsManagementPage() {
           {/* ── Estado vacío ── */}
           {!isLoading && filteredProfessionals.length === 0 && (
             <div className="v2-rise mt-12 bg-cream rounded-[2.25rem] p-12 flex flex-col items-center text-center v2-shadow-soft">
-              <span className="w-16 h-16 rounded-[1.25rem] bg-primary-light text-primary flex items-center justify-center mb-5">
+              <span className="w-16 h-16 rounded-[1.25rem] bg-primary-light text-primary-deep flex items-center justify-center mb-5">
                 <Users size={26} />
               </span>
               <h3 className="text-[20px] font-semibold tracking-tight text-ink">Sin profesionales con este filtro</h3>

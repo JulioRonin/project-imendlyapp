@@ -58,7 +58,7 @@ export default function FinancePage() {
           <div className="flex gap-4 items-center">
              <div className="relative group">
                 <button className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-pill border-[0.5px] border-black/5 text-sm font-[600] text-black-rich hover:bg-silver-light/20 transition-all">
-                   <Calendar size={18} className="text-primary" />
+                   <Calendar size={18} className="text-primary-deep" />
                    {selectedMonth}
                 </button>
                 {/* Simulated dropdown */}
@@ -71,7 +71,7 @@ export default function FinancePage() {
                 </div>
              </div>
              <Link href="/admin/reporte-financiero">
-                <Button variant="primary" className="rounded-pill px-8 gap-2 bg-primary text-white">
+                <Button variant="primary" className="rounded-pill px-8 gap-2 bg-primary text-ink">
                    <FileText size={18} /> Generar Reporte
                 </Button>
              </Link>
@@ -87,7 +87,7 @@ export default function FinancePage() {
                  <p className="text-[10px] uppercase font-[600] tracking-widest leading-none">Total Ventas (GMV)</p>
               </div>
               <p className="text-5xl font-[600] tracking-tighter mb-4">$842,500</p>
-              <div className="flex items-center gap-2 text-[10px] font-[600] text-primary bg-primary/10 px-3 py-1.5 rounded-pill">
+              <div className="flex items-center gap-2 text-[10px] font-[600] text-primary-deep bg-primary/10 px-3 py-1.5 rounded-pill">
                  <ArrowUpRight size={12} />
                  +12.5% crec. mensual
               </div>
@@ -99,7 +99,7 @@ export default function FinancePage() {
                  <p className="text-[10px] uppercase font-[600] tracking-widest">Comisiones Netas</p>
               </div>
               <p className="text-4xl font-[600] text-black-rich tracking-tight mb-4">$101,100</p>
-              <div className="flex items-center gap-2 text-[10px] font-[600] text-primary">
+              <div className="flex items-center gap-2 text-[10px] font-[600] text-primary-deep">
                  <Zap size={12} />
                  12% Margen Promedio
               </div>
@@ -145,7 +145,7 @@ export default function FinancePage() {
                    <div key={i} className="grid grid-cols-4 items-center p-4 rounded-md hover:bg-silver-light/30 transition-colors group">
                       <span className="text-sm font-[600] text-black-rich">{cat.name}</span>
                       <span className="text-sm text-center text-black-rich/60 font-[500]">{activeTab === 'ventas' ? cat.sales : `${cat.volume} serv.`}</span>
-                      <span className="text-sm text-center font-[600] text-primary">{cat.commission}</span>
+                      <span className="text-sm text-center font-[600] text-primary-deep">{cat.commission}</span>
                       <span className="text-sm text-right font-[600] text-black-rich">{cat.revenue}</span>
                    </div>
                  ))}
@@ -157,7 +157,7 @@ export default function FinancePage() {
                          : `${categories.reduce((acc, cat) => acc + cat.volume, 0)} serv.`}
                     </span>
                     <span className="text-center text-gray-soft text-sm">--</span>
-                    <span className="text-right text-primary">
+                    <span className="text-right text-primary-deep">
                        {`$${categories.reduce((acc, cat) => acc + parseInt(cat.revenue.replace(/[^0-9]/g, '')), 0).toLocaleString()}`}
                     </span>
                  </div>
@@ -199,7 +199,7 @@ export default function FinancePage() {
                  <p className="text-[10px] text-gray-soft leading-relaxed">
                     Todos los montos mostrados son antes de IVA. Las facturas de comisiones se generan automáticamente al final de cada ciclo de pago.
                  </p>
-                 <Button variant="ghost" size="sm" className="mt-4 p-0 text-primary hover:bg-transparent hover:underline text-[10px] uppercase font-[600] tracking-widest">Configurar Facturación</Button>
+                 <Button variant="ghost" size="sm" className="mt-4 p-0 text-primary-deep hover:bg-transparent hover:underline text-[10px] uppercase font-[600] tracking-widest">Configurar Facturación</Button>
               </Card>
            </div>
         </div>
