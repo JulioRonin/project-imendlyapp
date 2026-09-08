@@ -12,7 +12,7 @@ export default function ProviderLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-[#F8F9FB]">
+    <div className="flex min-h-screen bg-linen">
       <ProviderSidebar />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {children}

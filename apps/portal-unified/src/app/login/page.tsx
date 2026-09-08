@@ -11,6 +11,7 @@ import Link from "next/link";
 import { usePlatformStore } from "@/store/usePlatformStore";
 
 import { supabase } from "@/lib/supabase";
+import { DevBypassPanel } from "@/components/DevBypass";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -77,7 +78,7 @@ export default function LoginPage() {
         login(email, userData.role as any);
         
         if (userData.role === 'provider') {
-          router.push("/proveedor/dashboard");
+          router.push("/proveedor");
         } else if (userData.role === 'admin') {
           router.push("/admin");
         } else {
@@ -215,21 +216,33 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button 
-                onClick={() => router.push('/cliente')}
-                variant="secondary" 
-                type="button" 
-                className="h-14 text-[10px] font-black uppercase tracking-widest gap-3 bg-slate-50/50 border-none shadow-none hover:bg-slate-100 transition-colors rounded-2xl"
+              {/* Pendientes de integrar: hasta que exista el flujo OAuth real
+                  quedan deshabilitados. Antes navegaban a /cliente sin
+                  autenticar, lo que dejaba entrar a cualquiera. */}
+              <Button
+                variant="secondary"
+                type="button"
+                disabled
+                title="Próximamente"
+                className="h-14 text-[10px] font-black uppercase tracking-widest gap-3 bg-slate-50/50 border-none shadow-none rounded-2xl opacity-40 cursor-not-allowed"
               >
                 <Globe size={18} className="text-slate-400" />
                 Google
               </Button>
-              <Button variant="secondary" type="button" className="h-14 text-[10px] font-black uppercase tracking-widest gap-3 bg-slate-50/50 border-none shadow-none hover:bg-slate-100 transition-colors rounded-2xl">
+              <Button
+                variant="secondary"
+                type="button"
+                disabled
+                title="Próximamente"
+                className="h-14 text-[10px] font-black uppercase tracking-widest gap-3 bg-slate-50/50 border-none shadow-none rounded-2xl opacity-40 cursor-not-allowed"
+              >
                 <Shield size={18} className="text-slate-400" />
                 Shield Id
               </Button>
             </div>
           </form>
+
+          <DevBypassPanel />
 
           <div className="mt-12 text-center">
             <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-relaxed">

@@ -3,15 +3,20 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Button } from '@i-mendly/shared/components/Button';
 import {
-  ArrowLeft, ChevronRight, ClipboardList, Hammer,
-  Loader2, MapPin, Plus, Users
+  ArrowLeft, ChevronRight, Hammer,
+  MapPin, Plus, Users
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { PROJECT_STATUS_LABELS, timeAgo, formatMXN } from '../../../lib/tablero';
+import { ClientNav } from '@/components/client/ClientNav';
+
+const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
+  success: 'bg-[#F6E6DD] text-primary',
+  warning: 'bg-amber-50 text-amber-700',
+  error: 'bg-red-50 text-red-600',
+  default: 'bg-black/[0.05] text-[#7B7267]',
+};
 
 export default function MisProyectosPage() {
   const router = useRouter();
@@ -42,82 +47,122 @@ export default function MisProyectosPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-24">
-      <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <div className="flex items-center gap-4">
-          <Link href="/cliente" className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-primary">
-            <ArrowLeft size={20} />
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
+      {/* Header interno v2 */}
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
+        <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
+          <Link
+            href="/cliente"
+            aria-label="Volver"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
+          >
+            <ArrowLeft size={19} />
           </Link>
-          <div>
-            <h1 className="text-2xl font-black text-brand-night uppercase tracking-tighter">Mis Proyectos</h1>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Publica y recibe ofertas de verificados</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+              Tablero de proyectos
+            </p>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">
+              Mis proyectos
+            </h1>
           </div>
+          <Link
+            href="/cliente/proyectos/nuevo"
+            className="shrink-0 h-12 px-5 rounded-full bg-primary text-white text-[13px] font-bold flex items-center gap-2 shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+          >
+            <Plus size={16} strokeWidth={2.5} /> Publicar
+          </Link>
         </div>
-        <Link href="/cliente/proyectos/nuevo">
-          <Button variant="primary" className="h-12 px-6 rounded-2xl bg-primary text-white border-none shadow-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-            <Plus size={16} /> Publicar
-          </Button>
-        </Link>
       </header>
 
-      <div className="px-8 max-w-3xl mx-auto space-y-5 animate-in fade-in slide-in-from-bottom-5 duration-700">
+      <div className="max-w-3xl mx-auto px-6 mt-2 space-y-4">
+        {/* Loading — skeleton shimmer */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center p-20 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Cargando proyectos...</p>
-          </div>
+          <>
+            {[0, 1, 2].map(i => (
+              <div key={i} className={`v2-rise v2-d${i + 1} h-40 rounded-[1.75rem] v2-shimmer`} />
+            ))}
+          </>
         )}
 
+        {/* Estado vacío */}
         {!isLoading && projects.length === 0 && (
-          <div className="p-16 border-4 border-dashed border-slate-100 rounded-[3.5rem] flex flex-col items-center text-center">
-            <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mb-6">
-              <Hammer size={32} className="text-primary" />
-            </div>
-            <h3 className="text-lg font-black text-brand-night uppercase tracking-tight mb-2">¿Necesitas un trabajo en casa?</h3>
-            <p className="text-slate-400 font-medium text-sm max-w-sm mb-6">Publica tu proyecto — una pérgola, una cocina, una reparación — y recibe hasta 5 ofertas de proveedores verificados de tu zona.</p>
-            <Link href="/cliente/proyectos/nuevo">
-              <Button variant="primary" className="h-14 px-10 rounded-2xl bg-brand-night text-white border-none shadow-lg text-[10px] font-black uppercase tracking-widest">
-                Publicar mi primer proyecto
-              </Button>
+          <div className="v2-rise v2-d1 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-14 flex flex-col items-center text-center">
+            <span className="w-20 h-20 rounded-[1.4rem] bg-[#F6E6DD] text-primary flex items-center justify-center mb-6">
+              <Hammer size={32} />
+            </span>
+            <h3 className="text-[19px] font-semibold tracking-tight text-[#1F1C18] mb-2">
+              ¿Necesitas un trabajo en casa?
+            </h3>
+            <p className="text-[14px] font-medium text-[#7B7267] max-w-sm mb-8">
+              Publica tu proyecto — una pérgola, una cocina, una reparación — y recibe
+              hasta 5 ofertas de proveedores verificados de tu zona.
+            </p>
+            <Link
+              href="/cliente/proyectos/nuevo"
+              className="h-14 px-9 rounded-full bg-primary text-white text-[13px] font-bold flex items-center justify-center shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+            >
+              Publicar mi primer proyecto
             </Link>
           </div>
         )}
 
-        {projects.map(p => {
+        {/* Tarjetas de proyecto */}
+        {projects.map((p, i) => {
           const st = PROJECT_STATUS_LABELS[p.status] ?? { label: p.status, tone: 'default' as const };
+          const hasOffers = p.offers_count > 0;
           return (
-            <div key={p.id} onClick={() => router.push(`/cliente/proyectos/${p.id}`)} className="cursor-pointer group">
-              <Card className="p-7 rounded-[2.5rem] border-none shadow-card bg-white hover:shadow-float transition-all duration-500">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">{p.display_id}</span>
-                  <Badge variant={st.tone} className="text-[9px] font-black uppercase px-3 py-1">{st.label}</Badge>
+            <div
+              key={p.id}
+              onClick={() => router.push(`/cliente/proyectos/${p.id}`)}
+              className={`v2-rise v2-d${Math.min(i + 1, 8)} cursor-pointer group`}
+            >
+              <article className="bg-white rounded-[1.75rem] v2-shadow-soft p-6 v2-press v2-float transition-shadow">
+                <div className="flex items-center justify-between gap-3 mb-2.5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+                    {p.display_id}
+                  </span>
+                  <span className={`shrink-0 inline-flex items-center h-7 px-3 rounded-full text-[11px] font-bold ${STATUS_PILL[st.tone]}`}>
+                    {st.label}
+                  </span>
                 </div>
-                <h3 className="text-lg font-black text-brand-night uppercase tracking-tight leading-tight mb-2">{p.title}</h3>
-                <div className="flex flex-wrap items-center gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded-full">{p.category}</span>
-                  <div className="flex items-center gap-1.5 text-slate-300">
-                    <MapPin size={12} />
-                    <span className="text-[10px] font-bold uppercase">{p.zone}</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-300">{timeAgo(p.created_at)}</span>
-                  <div className="ml-auto flex items-center gap-4">
-                    {(p.budget_min || p.budget_max) && (
-                      <span className="text-xs font-black text-emerald-500">
-                        {p.budget_min ? formatMXN(p.budget_min) : ''}{p.budget_min && p.budget_max ? '–' : ''}{p.budget_max ? formatMXN(p.budget_max) : ''}
-                      </span>
-                    )}
-                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${p.offers_count > 0 ? 'bg-primary/10 text-primary' : 'bg-slate-50 text-slate-300'}`}>
-                      <Users size={12} />
-                      {p.offers_count}/{p.max_offers} ofertas
-                    </div>
-                    <ChevronRight size={20} className="text-slate-100 group-hover:text-primary transition-colors" />
-                  </div>
+
+                <h3 className="text-[17px] font-semibold tracking-tight text-[#1F1C18] leading-snug mb-3">
+                  {p.title}
+                </h3>
+
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#F4F0E8] text-[12px] font-semibold text-[#7B7267]">
+                    {p.category}
+                  </span>
+                  <span className="flex items-center gap-1 text-[12px] font-medium text-[#ADA398]">
+                    <MapPin size={12} /> {p.zone}
+                  </span>
+                  <span className="text-[12px] font-medium text-[#ADA398]">{timeAgo(p.created_at)}</span>
                 </div>
-              </Card>
+
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-black/[0.05]">
+                  <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12px] font-bold ${hasOffers ? 'bg-[#F6E6DD] text-primary' : 'bg-[#F4F0E8] text-[#ADA398]'}`}>
+                    <Users size={13} />
+                    {p.offers_count}/{p.max_offers} ofertas
+                  </span>
+                  {(p.budget_min || p.budget_max) && (
+                    <span className="ml-auto text-[14px] font-bold text-primary tabular-nums">
+                      {p.budget_min ? formatMXN(p.budget_min) : ''}{p.budget_min && p.budget_max ? '–' : ''}{p.budget_max ? formatMXN(p.budget_max) : ''}
+                    </span>
+                  )}
+                  <ChevronRight
+                    size={18}
+                    className={`${(p.budget_min || p.budget_max) ? '' : 'ml-auto '}text-[#ADA398] transition-all group-hover:text-primary group-hover:translate-x-0.5`}
+                  />
+                </div>
+              </article>
             </div>
           );
         })}
       </div>
+
+      <ClientNav />
     </main>
   );
 }

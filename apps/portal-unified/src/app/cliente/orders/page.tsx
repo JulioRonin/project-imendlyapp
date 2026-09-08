@@ -1,21 +1,50 @@
 "use client";
 
-import { Card } from '@i-mendly/shared/components/Card';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Badge } from '@i-mendly/shared/components/Badge';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, Clock, CheckCircle2, 
-  MessageCircle, BarChart3, Home, User,
-  ChevronRight, Calendar, LogOut, Check
+import {
+  ArrowLeft, ClipboardList, Calendar, ChevronRight, MessageCircle,
 } from 'lucide-react';
-import { BottomNav } from '@i-mendly/shared';
 import Link from 'next/link';
 import { usePlatformStore } from '@/store/usePlatformStore';
+import { ClientNav } from '@/components/client/ClientNav';
+import { SegmentBar } from '@/components/client/ui';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+
+/** Mapea el status existente al avance del ciclo (4 segmentos). */
+const cycleDone = (status: string) => {
+  switch (status) {
+    case 'PENDING': return 1;
+    case 'SCHEDULED':
+    case 'ACCEPTED': return 2;
+    case 'IN_PROGRESS': return 3;
+    case 'COMPLETED':
+    case 'PAID': return 4;
+    default: return 0; // rechazado / cancelado
+  }
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  PENDING: 'Pendiente',
+  SCHEDULED: 'Agendado',
+  ACCEPTED: 'Aceptado',
+  IN_PROGRESS: 'En progreso',
+  COMPLETED: 'Completado',
+  PAID: 'Pagado',
+  REJECTED: 'Rechazado',
+  CANCELLED: 'Cancelado',
+  COUNTER_OFFER: 'Contraoferta',
+};
+
+/** Pill semántica de estado. */
+const statusPillClass = (status: string) => {
+  if (status === 'COMPLETED' || status === 'PAID') return 'bg-[#F6E6DD] text-[#2A9460]';
+  if (status === 'REJECTED' || status === 'CANCELLED') return 'bg-red-50 text-red-600';
+  if (status === 'PENDING' || status === 'COUNTER_OFFER') return 'bg-amber-50 text-amber-700';
+  return 'bg-[#F6E6DD] text-[#2A9460]';
+};
 
 export default function OrdersDashboard() {
   const router = useRouter();
@@ -94,137 +123,151 @@ export default function OrdersDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-24">
-      <header className="px-8 py-10 flex items-center justify-between sticky top-0 bg-slate-50/90 backdrop-blur-xl z-50">
-        <div className="flex items-center gap-4">
-           <BarChart3 className="text-primary w-8 h-8" strokeWidth={3} />
-           <h1 className="text-2xl font-black text-brand-night uppercase tracking-tighter">Mis Órdenes</h1>
+    <main className="min-h-screen bg-[#F4F0E8] pb-36">
+      {/* ── Header interno v2 ── */}
+      <header className="v2-rise sticky top-0 z-50 bg-[#F4F0E8]/85 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center gap-4">
+          <Link
+            href="/cliente"
+            aria-label="Volver al inicio"
+            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#1F1C18] v2-press"
+          >
+            <ArrowLeft size={19} />
+          </Link>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Tu actividad</p>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1F1C18] leading-tight">Mis órdenes</h1>
+          </div>
+          <span className="shrink-0 h-9 px-4 inline-flex items-center rounded-full bg-white v2-shadow-soft text-[12px] font-bold text-[#1F1C18] tabular-nums">
+            {myOrders.length} {myOrders.length === 1 ? 'activa' : 'activas'}
+          </span>
         </div>
-        <Badge variant="default" className="py-2.5 px-5 text-[9px] font-black tracking-widest uppercase shadow-sm">{myOrders.length} ACTIVOS</Badge>
       </header>
 
-      <div className="px-8 max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-        <section className="space-y-6">
-           {isLoading && (
-             <div className="flex flex-col items-center justify-center p-20 space-y-4">
-                <BarChart3 className="w-10 h-10 text-primary animate-pulse" />
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Sincronizando Órdenes...</p>
-             </div>
-           )}
+      <div className="max-w-5xl mx-auto px-6 mt-2">
+        {/* ── Cargando ── */}
+        {isLoading && (
+          <div className="space-y-4">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="h-40 rounded-[1.75rem] bg-white v2-shimmer" />
+            ))}
+          </div>
+        )}
 
-           {!isLoading && myOrders.length === 0 && (
-             <div className="p-16 border-4 border-dashed border-slate-100 rounded-[3.5rem] flex flex-col items-center text-center">
-                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                     <BarChart3 size={32} className="text-slate-200" />
-                 </div>
-                 <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No hay más órdenes pendientes</p>
-                 <Link href="/cliente" className="mt-6">
-                    <Button variant="ghost" className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Contratar nuevo servicio</Button>
-                 </Link>
-             </div>
-           )}
+        {/* ── Estado vacío ── */}
+        {!isLoading && myOrders.length === 0 && (
+          <div className="v2-rise v2-d1 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-16 flex flex-col items-center text-center">
+            <span className="w-20 h-20 rounded-[1.5rem] bg-[#F6E6DD] text-primary flex items-center justify-center mb-6">
+              <ClipboardList size={32} strokeWidth={1.8} />
+            </span>
+            <h2 className="text-[19px] font-semibold tracking-tight text-[#1F1C18] mb-2">
+              Aún no tienes órdenes
+            </h2>
+            <p className="text-[14px] font-medium text-[#7B7267] max-w-xs mb-8">
+              Cuando contrates un servicio, aquí verás su avance paso a paso.
+            </p>
+            <Link
+              href="/cliente"
+              className="h-14 px-8 inline-flex items-center rounded-full bg-primary text-white text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+            >
+              Contratar un servicio
+            </Link>
+          </div>
+        )}
 
-           {myOrders.map((p) => (
-             <div 
-               key={p.dbId} 
-               onClick={() => router.push(`/cliente/ordenes/${p.dbId}`)}
-               className="block relative cursor-pointer"
-             >
-                <Card className="p-8 rounded-[2.5rem] border-none shadow-[0_20px_64px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_32px_96px_-12px_rgba(124,58,237,0.15)] transition-all duration-500 group bg-white">
-                   <div className="flex flex-col md:flex-row md:items-center gap-6">
-                      <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center transition-colors shadow-inner
-                          ${p.status === 'PAID' ? 'bg-emerald-50 text-emerald-500' : 
-                            p.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
-                            'bg-primary/5 text-primary'}`}>
-                         {p.status === 'PAID' ? <CheckCircle2 size={32} /> : 
-                          p.status === 'REJECTED' ? <LogOut size={32} /> : <Clock size={32} />}
-                      </div>
-                      
-                      <div className="flex-1">
-                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-mono">ORD-{p.id}</span>
-                            <Badge variant={
-                               p.status === 'PENDING' ? 'default' :
-                               p.status === 'ACCEPTED' ? 'success' :
-                               p.status === 'REJECTED' ? 'error' :
-                               p.status === 'PAID' ? 'success' : 'warning'
-                            } className="text-[9px] font-black uppercase px-2 py-0.5 shadow-sm">
-                               {p.status}
-                            </Badge>
-                         </div>
-                         <h3 className="text-xl font-black text-brand-night mb-1 tracking-tight uppercase leading-none">{p.serviceName}</h3>
-                         
-                         {p.status === 'COUNTER_OFFER' && p.counterOffer && (
-                           <div className="my-4 p-4 rounded-xl bg-orange-50 border border-orange-100 flex items-start gap-3">
-                             <div className="flex-1">
-                               <p className="text-[10px] uppercase font-black tracking-widest text-orange-600 mb-1">El profesional sugiere otro horario:</p>
-                               <p className="text-sm font-bold text-orange-900">{p.counterOffer.date} - {p.counterOffer.time}</p>
-                               <p className="text-xs font-medium mt-1 text-orange-700">"{p.counterOffer.message}"</p>
-                             </div>
-                             <Button 
-                               onClick={() => handleAcceptCounterOffer(p.id)}
-                               variant="primary" 
-                               className="bg-orange-500 hover:bg-orange-600 text-white border-none text-[10px] h-8 rounded-lg uppercase font-black"
-                             >
-                               Aceptar Nuevo Horario
-                             </Button>
-                           </div>
-                         )}
+        {/* ── Lista de órdenes ── */}
+        <section className="space-y-4">
+          {myOrders.map((p, i) => (
+            <div
+              key={p.dbId}
+              onClick={() => router.push(`/cliente/ordenes/${p.dbId}`)}
+              className={`v2-rise ${i < 8 ? `v2-d${Math.min(i + 1, 8)}` : 'v2-d8'} cursor-pointer`}
+            >
+              <article className="bg-white rounded-[1.75rem] p-6 v2-shadow-soft v2-press v2-float group">
+                {/* Servicio + monto protagonista */}
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ADA398] mb-1 tabular-nums">
+                      ORD-{p.id}
+                    </p>
+                    <h3 className="text-[17px] font-semibold tracking-tight text-[#1F1C18] leading-snug">
+                      {p.serviceName}
+                    </h3>
+                  </div>
+                  <p className="shrink-0 text-[24px] font-bold tracking-tight text-[#1F1C18] tabular-nums">
+                    ${p.price.toFixed(2)}
+                  </p>
+                </div>
 
-                         <div className="flex items-center gap-4 mt-3">
-                            <div className="flex items-center gap-2">
-                               <Avatar src={p.providerAvatar} name={p.providerName} className="w-6 h-6 rounded-lg" />
-                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{p.providerName}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-slate-300">
-                               <Calendar size={12} />
-                               <span className="text-[10px] font-bold">{p.date} - {p.time}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-emerald-500 font-black ml-auto border border-emerald-100 bg-emerald-50 px-3 py-1 rounded-full text-xs">
-                               ${p.price.toFixed(2)}
-                            </div>
-                         </div>
-                      </div>
+                {/* Proveedor + fecha */}
+                <div className="flex items-center gap-4 mb-5 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Avatar src={p.providerAvatar} name={p.providerName} size="sm" />
+                    <span className="text-[13px] font-semibold text-[#7B7267] truncate">{p.providerName}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[#ADA398] shrink-0">
+                    <Calendar size={13} />
+                    <span className="text-[12.5px] font-medium tabular-nums">{p.date} · {p.time}</span>
+                  </div>
+                </div>
 
-                      <div className="hidden md:flex flex-col items-end gap-3 justify-center">
-                         {p.status === 'ACCEPTED' && (
-                           <Button 
-                              onClick={() => handlePayOrder(p.id)}
-                              variant="primary" 
-                              className="bg-brand-night text-white hover:bg-slate-800 text-[10px] uppercase font-black tracking-widest px-6 h-12 rounded-xl shadow-lg border-none"
-                           >
-                             Proceder al Pago
-                           </Button>
-                         )}
+                {/* Contraoferta */}
+                {p.status === 'COUNTER_OFFER' && p.counterOffer && (
+                  <div className="mb-5 p-5 rounded-[1.25rem] bg-amber-50 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700 mb-1">
+                        Sugerencia de nuevo horario
+                      </p>
+                      <p className="text-[14px] font-semibold text-[#1F1C18] tabular-nums">
+                        {p.counterOffer.date} · {p.counterOffer.time}
+                      </p>
+                      <p className="text-[13px] font-medium text-amber-700/80 mt-1">
+                        “{p.counterOffer.message}”
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleAcceptCounterOffer(p.id); }}
+                      className="shrink-0 h-11 px-5 rounded-full bg-[#1F1C18] text-white text-[12px] font-bold v2-press"
+                    >
+                      Aceptar horario
+                    </button>
+                  </div>
+                )}
 
-                         <div className="flex items-center gap-3">
-                           <button className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all">
-                              <MessageCircle size={20} />
-                           </button>
-                           <ChevronRight size={24} className="text-slate-100 group-hover:text-primary transition-colors cursor-pointer" />
-                         </div>
-                      </div>
-                   </div>
-                   
-                   {/* Mobile payment button fallback */}
-                   {p.status === 'ACCEPTED' && (
-                     <div className="mt-6 md:hidden">
-                       <Button 
-                          onClick={() => handlePayOrder(p.id)}
-                          variant="primary" 
-                          className="w-full bg-brand-night text-white hover:bg-slate-800 text-[10px] uppercase font-black tracking-widest h-12 rounded-xl shadow-lg border-none"
-                       >
-                         Proceder al Pago
-                       </Button>
-                     </div>
-                   )}
-                </Card>
-             </div>
-           ))}
+                {/* Ciclo + estado */}
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <SegmentBar total={4} done={cycleDone(p.status)} />
+                  </div>
+                  <span className={`shrink-0 inline-flex items-center h-8 px-3.5 rounded-full text-[11px] font-bold ${statusPillClass(p.status)}`}>
+                    {STATUS_LABEL[p.status] || p.status}
+                  </span>
+                </div>
+
+                {/* Acciones */}
+                <div className="mt-5 flex items-center gap-3">
+                  {p.status === 'ACCEPTED' && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handlePayOrder(p.id); }}
+                      className="flex-1 sm:flex-none h-14 px-8 rounded-full bg-[#1F1C18] text-white text-[13px] font-bold v2-press v2-shadow-lift"
+                    >
+                      Proceder al pago
+                    </button>
+                  )}
+                  <span className="ml-auto flex items-center gap-2">
+                    <span className="w-11 h-11 rounded-full bg-[#FBF8F2] text-[#ADA398] flex items-center justify-center group-hover:bg-[#F6E6DD] group-hover:text-primary transition-colors">
+                      <MessageCircle size={18} />
+                    </span>
+                    <ChevronRight size={19} className="text-[#ADA398] group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                  </span>
+                </div>
+              </article>
+            </div>
+          ))}
         </section>
       </div>
 
-      {/* Menú inferior eliminado a petición del cliente */}
+      <ClientNav />
     </main>
   );
 }

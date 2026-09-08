@@ -1,15 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, Filter, ChevronRight, Download, Calendar, 
-  CheckCircle2, Clock, AlertCircle, MoreVertical, Star, Loader2 
+import {
+  Search, ChevronRight, ArrowLeft, Calendar,
+  CheckCircle2, Clock, AlertCircle, Star,
+  Edit3, Camera, MapPin, Handshake, PenTool, ClipboardList
 } from 'lucide-react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Badge } from '@i-mendly/shared/components/Badge';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { Edit3, Camera, MapPin, Handshake, PenTool } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
 const ORDERS = [
@@ -65,6 +62,8 @@ const ORDERS = [
   }
 ];
 
+const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
+
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'scheduled' | 'in_progress' | 'completed' | 'cancelled'>('all');
   const [orders, setOrders] = useState<any[]>([]);
@@ -106,16 +105,17 @@ export default function OrdersPage() {
   const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
 
   const renderStatusBadge = (status: string) => {
+      const base = 'inline-flex items-center h-8 px-3.5 rounded-full text-[12px] font-semibold whitespace-nowrap';
       switch (status) {
           case 'pending':
-              return <Badge variant="warning" className="text-[9px] font-black px-3 py-1 uppercase tracking-widest bg-amber-500 text-white border-amber-500">Por Confirmar</Badge>;
+              return <span className={`${base} bg-primary-light text-primary`}>Por confirmar</span>;
           case 'scheduled':
           case 'in_progress':
-              return <Badge variant="default" className="text-[9px] font-black px-3 py-1 uppercase tracking-widest bg-blue-500 text-white border-blue-500">En Progreso</Badge>;
+              return <span className={`${base} bg-primary-light text-primary`}>En progreso</span>;
           case 'completed':
-              return <Badge variant="success" className="text-[9px] font-black px-3 py-1 uppercase tracking-widest bg-emerald-500 text-white border-emerald-500">Completado</Badge>;
+              return <span className={`${base} bg-sage-light text-sage`}>Completado</span>;
           case 'cancelled':
-              return <Badge variant="error" className="text-[9px] font-black px-3 py-1 uppercase tracking-widest bg-slate-400 text-white border-slate-400">Cancelado</Badge>;
+              return <span className={`${base} bg-sand text-muted`}>Cancelado</span>;
           default:
               return null;
       }
@@ -129,7 +129,7 @@ export default function OrdersPage() {
         .eq('id', orderId);
 
       if (error) throw error;
-      
+
       // Update local state
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       if (selectedOrder && selectedOrder.id === orderId) {
@@ -142,306 +142,315 @@ export default function OrdersPage() {
   };
 
   if (loading) return (
-    <div className="flex-1 flex items-center justify-center bg-[#F8F9FB]">
-        <Loader2 size={40} className="text-primary animate-spin" />
+    <div className="flex-1 bg-linen px-6 md:px-12 pt-10">
+        <div className="max-w-5xl mx-auto space-y-4">
+            <div className="h-10 w-56 rounded-full v2-shimmer" />
+            <div className="h-5 w-80 rounded-full v2-shimmer" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
+                {[0, 1, 2, 3].map(i => <div key={i} className="h-28 rounded-[1.75rem] v2-shimmer" />)}
+            </div>
+            <div className="space-y-3 pt-6">
+                {[0, 1, 2].map(i => <div key={i} className="h-24 rounded-[1.75rem] v2-shimmer" />)}
+            </div>
+        </div>
     </div>
   );
 
+  const TABS = [
+    { id: 'all', label: 'Todas' },
+    { id: 'pending', label: 'Por confirmar' },
+    { id: 'in_progress', label: 'En progreso' },
+    { id: 'completed', label: 'Completadas' },
+    { id: 'cancelled', label: 'Canceladas' },
+  ] as const;
+
+  const COUNTERS = [
+    { id: 'pending', label: 'Por confirmar', value: pendingCount, icon: Clock },
+    { id: 'in_progress', label: 'En progreso', value: inProgressCount, icon: PenTool },
+    { id: 'completed', label: 'Completadas', value: completedCount, icon: CheckCircle2 },
+    { id: 'cancelled', label: 'Canceladas', value: cancelledCount, icon: AlertCircle },
+  ] as const;
+
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#F8F9FB]">
-      {/* Header */}
-      <header className="h-24 px-10 border-b border-slate-100 bg-white flex items-center justify-between sticky top-0 z-10 shrink-0">
-        <div>
-          <h1 className="text-2xl font-black text-brand-night tracking-tight uppercase">Historial de Órdenes</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Consulta y gestiona tus trabajos pasados</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-            <div className="flex items-center bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2 w-64 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                <Search size={18} className="text-slate-400 mr-2" />
-                <input type="text" placeholder="Buscar orden o cliente..." className="bg-transparent border-none text-[11px] font-bold uppercase tracking-tight outline-none w-full placeholder:text-slate-300" />
-            </div>
-            <Button variant="outline" className="rounded-xl h-11 px-4 flex items-center gap-2 border-slate-200">
-                <Filter size={16} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Filtros</span>
-            </Button>
-            <Button variant="outline" className="rounded-xl h-11 px-4 flex items-center gap-2 border-slate-200">
-                <Download size={16} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Exportar</span>
-            </Button>
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-10 overflow-y-auto space-y-8 custom-scrollbar relative">
+    <div className="flex-1 flex flex-col min-h-0 bg-linen">
+      <main className="flex-1 overflow-y-auto px-6 md:px-12 pb-20">
+        <div className="max-w-5xl mx-auto">
         {!selectedOrder ? (
             <>
-                {/* Scoreboards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 animate-in fade-in duration-300">
-                    <div onClick={() => setActiveTab('pending')} className={`p-6 rounded-[2rem] cursor-pointer transition-all border ${activeTab === 'pending' ? 'bg-amber-500 text-white border-amber-500 shadow-xl shadow-amber-500/20' : 'bg-white hover:border-amber-500 border-slate-100'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <Clock size={20} className={activeTab === 'pending' ? 'text-white' : 'text-amber-500'} />
-                            <span className="text-3xl font-black tracking-tighter">{pendingCount}</span>
-                        </div>
-                        <p className={`text-[10px] font-black uppercase tracking-widest ${activeTab === 'pending' ? 'text-white/80' : 'text-slate-400'}`}>Por Confirmar</p>
+                {/* ── Cabecera editorial ── */}
+                <header className="pt-10 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <p className={`v3-blur-in ${EYEBROW} text-primary`}>Historial</p>
+                        <h1 className="v3-blur-in text-[34px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink mt-2" style={{ animationDelay: '100ms' }}>
+                            Tus órdenes
+                        </h1>
+                        <p className="v3-blur-in mt-2 text-[14px] font-medium text-muted" style={{ animationDelay: '200ms' }}>
+                            Consulta y gestiona los trabajos que has recibido
+                        </p>
                     </div>
-
-                    <div onClick={() => setActiveTab('in_progress')} className={`p-6 rounded-[2rem] cursor-pointer transition-all border ${activeTab === 'in_progress' ? 'bg-blue-500 text-white border-blue-500 shadow-xl shadow-blue-500/20' : 'bg-white hover:border-blue-500 border-slate-100'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <PenTool size={20} className={activeTab === 'in_progress' ? 'text-white' : 'text-blue-500'} />
-                            <span className="text-3xl font-black tracking-tighter">{inProgressCount}</span>
-                        </div>
-                        <p className={`text-[10px] font-black uppercase tracking-widest ${activeTab === 'in_progress' ? 'text-white/80' : 'text-slate-400'}`}>En Progreso</p>
+                    <div className="v3-blur-in flex items-center gap-3 h-12 px-5 rounded-full bg-cream v2-shadow-soft w-full md:w-72" style={{ animationDelay: '300ms' }}>
+                        <Search size={17} className="shrink-0 text-faint" />
+                        <input type="text" placeholder="Buscar orden o cliente" className="w-full bg-transparent text-[14px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none" />
                     </div>
+                </header>
 
-                    <div onClick={() => setActiveTab('completed')} className={`p-6 rounded-[2rem] cursor-pointer transition-all border ${activeTab === 'completed' ? 'bg-emerald-500 text-white border-emerald-500 shadow-xl shadow-emerald-500/20' : 'bg-white hover:border-emerald-500 border-slate-100'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <CheckCircle2 size={20} className={activeTab === 'completed' ? 'text-white' : 'text-emerald-500'} />
-                            <span className="text-3xl font-black tracking-tighter">{completedCount}</span>
-                        </div>
-                        <p className={`text-[10px] font-black uppercase tracking-widest ${activeTab === 'completed' ? 'text-white/80' : 'text-slate-400'}`}>Completadas</p>
-                    </div>
-
-                    <div onClick={() => setActiveTab('cancelled')} className={`p-6 rounded-[2rem] cursor-pointer transition-all border ${activeTab === 'cancelled' ? 'bg-slate-800 text-white border-slate-800 shadow-xl shadow-slate-800/20' : 'bg-white hover:border-slate-800 border-slate-100'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <AlertCircle size={20} className={activeTab === 'cancelled' ? 'text-white' : 'text-slate-800'} />
-                            <span className="text-3xl font-black tracking-tighter">{cancelledCount}</span>
-                        </div>
-                        <p className={`text-[10px] font-black uppercase tracking-widest ${activeTab === 'cancelled' ? 'text-white/80' : 'text-slate-400'}`}>Canceladas</p>
-                    </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex gap-8 border-b border-slate-100 pb-2">
-                    {(['all', 'pending', 'in_progress', 'completed', 'cancelled'] as const).map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab as any)}
-                            className={`text-[11px] font-black uppercase tracking-widest pb-3 transition-all relative ${
-                                activeTab === tab ? 'text-brand-night' : 'text-slate-300 hover:text-slate-400'
-                            }`}
-                        >
-                            {tab === 'all' ? 'Todas' : tab === 'pending' ? 'Por Confirmar' : tab === 'in_progress' ? 'En Progreso' : tab === 'completed' ? 'Completadas' : 'Canceladas'}
-                            {activeTab === tab && (
-                                <div className="absolute bottom-0 left-1 right-1 h-1 bg-primary rounded-full" />
-                            )}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Orders Table/List */}
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    <div className="grid grid-cols-6 px-8 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-4">
-                        <div className="col-span-2">Cliente & Servicio</div>
-                        <div>Fecha</div>
-                        <div>Importe</div>
-                        <div>Estatus</div>
-                        <div className="text-right">Calificación</div>
-                    </div>
-
-                    <div className="space-y-3">
-                        {filteredOrders.length === 0 ? (
-                            <div className="bg-white p-12 rounded-[2rem] border border-slate-100 flex flex-col items-center justify-center text-center shadow-sm">
-                                <Search size={32} className="text-slate-200 mb-4" />
-                                <p className="text-sm font-black text-brand-night uppercase tracking-tight">Sin Resultados</p>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">No hay órdenes en esta categoría.</p>
-                            </div>
-                        ) : filteredOrders.map((order) => {
-                            const client = order.clients;
-                            const amount = `$${order.total_amount.toLocaleString('es-MX')}`;
-                            const date = new Date(order.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
-                            
-                            return (
-                                <div 
-                                    key={order.id} 
-                                    onClick={() => setSelectedOrder(order)}
-                                    className="bg-white p-4 px-8 rounded-[1.5rem] border border-slate-100/60 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/20 transition-all group cursor-pointer"
-                                >
-                                    <div className="grid grid-cols-6 items-center">
-                                        <div className="col-span-2 flex items-center gap-4">
-                                            <div className="relative">
-                                                <Avatar size="md" name={client.full_name} src={client.avatar_url} className="rounded-[1rem]" />
-                                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
-                                                    {order.status === 'completed' ? <CheckCircle2 size={10} className="text-emerald-500" /> : <Clock size={10} className="text-amber-500" />}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="text-[14px] font-black text-brand-night leading-tight mb-0.5">{client.full_name}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{order.service_requested} • {order.display_id}</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
-                                            <Calendar size={14} className="text-slate-300" />
-                                            {date}
-                                        </div>
-
-                                        <div className="text-[14px] font-black text-brand-night italic">
-                                            {amount}
-                                        </div>
-
-                                        <div>
-                                            {renderStatusBadge(order.status)}
-                                        </div>
-
-                                        <div className="flex items-center justify-end gap-1 text-[12px] font-black text-brand-night">
-                                            {order.rating ? (
-                                                <>
-                                                    <Star size={14} fill="currentColor" className="text-amber-400" />
-                                                    {order.rating}
-                                                </>
-                                            ) : (
-                                                <span className="text-slate-200">—</span>
-                                            )}
-                                            <Button variant="ghost" size="sm" className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <ChevronRight size={18} className="text-slate-300" />
-                                            </Button>
-                                        </div>
-                                    </div>
+                {/* ── Contadores ── */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mt-9">
+                    {COUNTERS.map((c, i) => {
+                        const active = activeTab === c.id;
+                        const Icon = c.icon;
+                        return (
+                            <button
+                                key={c.id}
+                                type="button"
+                                onClick={() => setActiveTab(c.id)}
+                                className={`v2-rise v2-d${i + 1} text-left p-5 rounded-[1.75rem] v2-press v2-float transition-colors duration-300 ${
+                                    active ? 'bg-ink text-white' : 'bg-cream text-ink v2-shadow-soft'
+                                }`}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <span className={`w-10 h-10 rounded-[0.9rem] flex items-center justify-center ${active ? 'bg-white/10 text-primary' : 'bg-primary-light text-primary'}`}>
+                                        <Icon size={17} />
+                                    </span>
+                                    <span className="text-[30px] font-bold tabular-nums tracking-tight leading-none">{c.value}</span>
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <p className={`mt-4 text-[12.5px] font-semibold ${active ? 'text-white/70' : 'text-muted'}`}>{c.label}</p>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* ── Tabs subrayadas ── */}
+                <div className="v3-blur-in mt-9 -mx-6 md:mx-0 px-6 md:px-0 flex gap-7 overflow-x-auto no-scrollbar" style={{ animationDelay: '400ms' }}>
+                    {TABS.map((tab) => {
+                        const active = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as any)}
+                                className={`relative shrink-0 pb-3 text-[14px] transition-colors duration-300 ${active ? 'font-semibold text-ink' : 'font-medium text-faint hover:text-muted'}`}
+                            >
+                                {tab.label}
+                                <span className={`absolute left-0 right-0 -bottom-px h-[3px] rounded-full bg-primary transition-transform duration-500 origin-left ${active ? 'scale-x-100' : 'scale-x-0'}`} />
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* ── Lista de órdenes ── */}
+                <div className="mt-6 space-y-3">
+                    {filteredOrders.length === 0 ? (
+                        <div className="v2-rise bg-cream rounded-[2.25rem] px-8 py-14 flex flex-col items-center text-center v2-shadow-soft">
+                            <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary flex items-center justify-center mb-5">
+                                <ClipboardList size={26} />
+                            </span>
+                            <h3 className="text-[19px] font-semibold tracking-tight text-ink">Sin órdenes aquí</h3>
+                            <p className="mt-1.5 text-[13.5px] font-medium text-muted max-w-xs">No hay órdenes en esta categoría todavía. Cuando un cliente te contrate, aparecerá en esta lista.</p>
+                            <button type="button" onClick={() => setActiveTab('all')} className="mt-6 h-12 px-6 rounded-full bg-ink text-white text-[13px] font-bold v2-press">
+                                Ver todas
+                            </button>
+                        </div>
+                    ) : filteredOrders.map((order, i) => {
+                        const client = order.clients;
+                        const amount = `$${order.total_amount.toLocaleString('es-MX')}`;
+                        const date = new Date(order.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+
+                        return (
+                            <article
+                                key={order.id}
+                                onClick={() => setSelectedOrder(order)}
+                                className={`v2-rise v2-d${Math.min(i + 1, 8)} group bg-cream rounded-[1.75rem] p-4 md:p-5 v2-shadow-soft v2-press v2-float cursor-pointer`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <Avatar size="md" name={client.full_name} src={client.avatar_url} className="shrink-0 ring-4 ring-white" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[15px] font-semibold tracking-tight text-ink truncate">{order.service_requested}</p>
+                                        <p className="text-[12.5px] font-medium text-muted truncate mt-0.5">
+                                            {client.full_name} · <span className="text-faint">{order.display_id}</span>
+                                        </p>
+                                        <p className="md:hidden mt-1.5 text-[12px] font-medium text-muted flex items-center gap-1.5">
+                                            <Calendar size={12} className="text-faint" /> {date}
+                                        </p>
+                                    </div>
+
+                                    <div className="hidden md:flex items-center gap-1.5 text-[12.5px] font-medium text-muted w-32 shrink-0">
+                                        <Calendar size={13} className="text-faint" />
+                                        {date}
+                                    </div>
+
+                                    <div className="hidden md:block w-24 shrink-0">
+                                        {renderStatusBadge(order.status)}
+                                    </div>
+
+                                    <div className="hidden md:flex items-center gap-1 text-[13px] font-bold text-ink tabular-nums w-14 shrink-0">
+                                        {order.rating ? (
+                                            <>
+                                                <Star size={13} className="text-primary fill-primary" />
+                                                {order.rating}
+                                            </>
+                                        ) : (
+                                            <span className="text-faint font-medium">—</span>
+                                        )}
+                                    </div>
+
+                                    <div className="text-right shrink-0">
+                                        <p className="text-[19px] md:text-[21px] font-bold tabular-nums tracking-tight text-ink leading-none">{amount}</p>
+                                        <div className="md:hidden mt-2 flex justify-end">{renderStatusBadge(order.status)}</div>
+                                    </div>
+
+                                    <span className="hidden md:flex w-10 h-10 shrink-0 rounded-full bg-sand text-ink items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <ChevronRight size={16} />
+                                    </span>
+                                </div>
+                            </article>
+                        );
+                    })}
                 </div>
             </>
         ) : (
-            /* Detailed Order View */
-            <div className="animate-in fade-in slide-in-from-right-4 duration-300 max-w-4xl mx-auto space-y-6">
-                <button 
+            /* ── Detalle de la orden ── */
+            <div className="pt-8 md:pt-10 max-w-3xl mx-auto space-y-5">
+                <button
                     onClick={() => setSelectedOrder(null)}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-night transition-colors mb-2"
+                    className="v3-blur-in flex items-center gap-3 text-[13px] font-semibold text-muted hover:text-ink transition-colors"
                 >
-                    <span className="rotate-180"><ChevronRight size={14} /></span>
-                    Volver a Historial
+                    <span className="w-12 h-12 rounded-full bg-cream v2-shadow-soft flex items-center justify-center text-ink v2-press">
+                        <ArrowLeft size={18} />
+                    </span>
+                    Volver a órdenes
                 </button>
 
-                <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                    {/* Header Detail */}
-                    <div className="flex items-start justify-between mb-8">
-                        <div className="flex items-center gap-6">
-                            <Avatar size="lg" name={selectedOrder.clients.full_name} src={selectedOrder.clients.avatar_url} className="rounded-[1.5rem] w-20 h-20 shadow-inner" />
-                            <div>
-                                <div className="flex items-center gap-3 mb-1">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedOrder.display_id}</span>
+                <section className="v2-scale bg-cream rounded-[2.5rem] p-6 md:p-8 v2-shadow-soft">
+                    {/* Encabezado */}
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                        <div className="flex items-center gap-5 min-w-0">
+                            <Avatar size="lg" name={selectedOrder.clients.full_name} src={selectedOrder.clients.avatar_url} className="shrink-0 ring-4 ring-white" />
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-3 flex-wrap">
+                                    <span className={`${EYEBROW} text-primary`}>{selectedOrder.display_id}</span>
                                     {renderStatusBadge(selectedOrder.status)}
                                 </div>
-                                <h2 className="text-2xl font-black text-brand-night tracking-tight uppercase">{selectedOrder.service_requested}</h2>
-                                <p className="text-[12px] font-bold text-slate-500 uppercase tracking-tight flex items-center gap-2 mt-1">
-                                    {selectedOrder.clients.full_name} • {new Date(selectedOrder.created_at).toLocaleDateString('es-MX')} 
-                                    <MapPin size={12} className="ml-2 text-primary" /> 
-                                    {selectedOrder.address}
+                                <h2 className="mt-1.5 text-[24px] md:text-[28px] font-semibold tracking-tight leading-tight text-ink">{selectedOrder.service_requested}</h2>
+                                <p className="mt-1.5 text-[13px] font-medium text-muted flex items-center gap-2 flex-wrap">
+                                    {selectedOrder.clients.full_name} · {new Date(selectedOrder.created_at).toLocaleDateString('es-MX')}
+                                    <span className="inline-flex items-center gap-1"><MapPin size={12} className="text-primary" /> {selectedOrder.address}</span>
                                 </p>
                             </div>
                         </div>
-                        <div className="text-right bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Total Acordado</p>
-                            <p className="text-3xl font-black italic text-brand-night">${selectedOrder.total_amount.toLocaleString('es-MX')}</p>
+                        <div className="shrink-0 md:text-right bg-sand rounded-[1.5rem] px-6 py-4">
+                            <p className={`${EYEBROW} text-muted`}>Total acordado</p>
+                            <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">${selectedOrder.total_amount.toLocaleString('es-MX')}</p>
                         </div>
                     </div>
 
-                    {/* Interactive Roadmap */}
-                    <div className="bg-slate-50 p-8 rounded-[1.5rem] border border-slate-100 mb-8 relative">
-                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Roadmap de la Orden</h3>
-                        <div className="flex items-center justify-between relative mt-4">
-                            <div className="absolute top-1/2 left-0 w-full h-1.5 bg-slate-200 -translate-y-1/2 z-0 rounded-full"></div>
-                            <div className={`absolute top-1/2 left-0 h-1.5 bg-primary -translate-y-1/2 z-0 rounded-full transition-all duration-1000 ${
-                                selectedOrder.status === 'pending' ? 'w-[10%]' : 
-                                selectedOrder.status === 'scheduled' ? 'w-[50%]' : 
-                                selectedOrder.status === 'in_progress' ? 'w-[75%]' : 
-                                selectedOrder.status === 'completed' ? 'w-full' : 'w-full bg-slate-400'
-                            }`}></div>
-                            
+                    {/* Línea de tiempo */}
+                    <div className="mt-8 bg-linen rounded-[1.75rem] p-6">
+                        <p className={`${EYEBROW} text-muted mb-6`}>Avance de la orden</p>
+                        <div className="relative flex items-start justify-between">
+                            <div className="absolute top-3 left-4 right-4 h-[3px] bg-sand rounded-full" />
+                            <div className={`absolute top-3 left-4 h-[3px] rounded-full transition-all duration-1000 ${
+                                selectedOrder.status === 'cancelled' ? 'bg-faint' : 'bg-primary'
+                            } ${
+                                selectedOrder.status === 'pending' ? 'w-[10%]' :
+                                selectedOrder.status === 'scheduled' ? 'w-[45%]' :
+                                selectedOrder.status === 'in_progress' ? 'w-[70%]' :
+                                'right-4'
+                            }`} />
+
                             {[
                                 { label: 'Solicitud', active: true },
                                 { label: 'Confirmación', active: selectedOrder.status !== 'pending' },
-                                { label: 'En Progreso', active: selectedOrder.status === 'in_progress' || selectedOrder.status === 'completed' },
+                                { label: 'En progreso', active: selectedOrder.status === 'in_progress' || selectedOrder.status === 'completed' },
                                 { label: 'Finalización', active: selectedOrder.status === 'completed' || selectedOrder.status === 'cancelled' }
                             ].map((step, idx) => (
-                                <div key={idx} className="relative z-10 flex flex-col items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-[1rem] flex items-center justify-center border-4 border-slate-50 text-white shadow-sm transition-colors ${
-                                        step.active ? (selectedOrder.status === 'cancelled' ? 'bg-slate-400' : 'bg-primary') : 'bg-slate-300'
+                                <div key={idx} className="relative z-10 flex flex-col items-center gap-2.5 w-20">
+                                    <span className={`w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-linen transition-colors ${
+                                        step.active ? (selectedOrder.status === 'cancelled' ? 'bg-faint text-white' : 'bg-primary text-white') : 'bg-sand'
                                     }`}>
-                                        {step.active ? <CheckCircle2 size={16} /> : <div className="w-2.5 h-2.5 rounded-full bg-white/50" />}
-                                    </div>
-                                    <span className={`text-[9px] font-black uppercase tracking-widest ${
-                                        step.active ? 'text-brand-night' : 'text-slate-400'
-                                    }`}>{step.label}</span>
+                                        {step.active ? <CheckCircle2 size={13} /> : <span className="w-1.5 h-1.5 rounded-full bg-faint" />}
+                                    </span>
+                                    <span className={`text-[11.5px] font-semibold text-center ${step.active ? 'text-ink' : 'text-faint'}`}>{step.label}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Contextual Action Areas */}
-                    <div className="space-y-6">
+                    {/* Acciones contextuales */}
+                    <div className="mt-6 space-y-4">
                         {selectedOrder.status === 'pending_confirmation' && (
-                            <div className="bg-brand-night p-8 rounded-[1.5rem] text-center shadow-xl shadow-brand-night/10">
-                                <h4 className="text-[14px] font-black uppercase tracking-widest text-white mb-2">Orden Requiere Confirmación</h4>
-                                <p className="text-[11px] font-medium text-white/60 mb-8 max-w-lg mx-auto">Revisa los detalles y la dirección antes de aceptar. Puedes sugerir un cambio de horario o aceptar tal como se solicitó.</p>
-                                <div className="flex items-center justify-center gap-4">
-                                    <Button variant="outline" className="h-12 px-8 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10 text-white hover:bg-white hover:text-brand-night transition-colors">
-                                        Contra Ofertar Horario
-                                    </Button>
-                                    <Button 
-                                        variant="primary" 
-                                        className="h-12 px-10 rounded-xl text-[10px] font-black uppercase tracking-widest bg-primary hover:bg-emerald-500 border-none"
-                                        onClick={() => updateOrderStatus(selectedOrder.id, 'scheduled')}
-                                    >
-                                        Aceptar Servicio Ahora
-                                    </Button>
+                            <div className="relative overflow-hidden bg-ink rounded-[2rem] p-7 md:p-8 text-white">
+                                <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
+                                <div className="relative">
+                                    <p className={`${EYEBROW} text-primary`}>Requiere tu confirmación</p>
+                                    <h4 className="mt-2 text-[21px] font-semibold tracking-tight leading-tight">Revisa y acepta la orden</h4>
+                                    <p className="mt-2 text-[13.5px] font-medium text-white/60 max-w-lg">Revisa los detalles y la dirección antes de aceptar. Puedes sugerir otro horario o aceptar tal como se solicitó.</p>
+                                    <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                                        <button type="button" className="h-14 px-6 rounded-full bg-white/10 text-white text-[13px] font-bold v2-press hover:bg-white/15 transition-colors">
+                                            Contraofertar horario
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="h-14 px-8 rounded-full bg-primary text-white text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
+                                            onClick={() => updateOrderStatus(selectedOrder.id, 'scheduled')}
+                                        >
+                                            Aceptar servicio
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
 
                         {(selectedOrder.status === 'in_progress' || selectedOrder.status === 'pending_client_approval') && (
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="bg-blue-50 border border-blue-100 p-6 rounded-[1.5rem] flex flex-col items-start hover:shadow-md transition-shadow">
-                                    <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
-                                        <Edit3 size={18} />
-                                    </div>
-                                    <h4 className="text-[12px] font-black uppercase tracking-widest text-brand-night mb-2">Modificar Costo Acordado / Servicio</h4>
-                                    <p className="text-[10px] font-bold text-slate-500 leading-relaxed mb-6">Si durante la revisión física notas que se requiere más trabajo, puedes recalcular el costo. El cliente deberá aceptar antes de continuar.</p>
-                                    <Button variant="outline" className="w-full mt-auto h-11 text-[10px] font-black uppercase tracking-widest border-blue-200 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition-colors">
-                                        Crear Ajuste
-                                    </Button>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
+                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary flex items-center justify-center mb-4">
+                                        <Edit3 size={19} />
+                                    </span>
+                                    <h4 className="text-[16px] font-semibold tracking-tight text-ink">Ajustar costo o alcance</h4>
+                                    <p className="mt-1.5 text-[13px] font-medium text-muted leading-relaxed mb-6">Si al revisar notas que se requiere más trabajo, recalcula el costo. El cliente deberá aceptarlo antes de continuar.</p>
+                                    <button type="button" className="mt-auto h-12 rounded-full bg-cream text-ink text-[13px] font-bold v2-press v2-shadow-soft">
+                                        Crear ajuste
+                                    </button>
                                 </div>
 
-                                <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-[1.5rem] flex flex-col items-start hover:shadow-md transition-shadow">
-                                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                                        <Camera size={18} />
-                                    </div>
-                                    <h4 className="text-[12px] font-black uppercase tracking-widest text-brand-night mb-2">Entregar Servicio</h4>
-                                    <p className="text-[10px] font-bold text-slate-500 leading-relaxed mb-6">Sube evidencia del trabajo completado para que el cliente pueda liberar los fondos a tu cuenta.</p>
-                                    <Button 
-                                        variant="primary" 
-                                        className="w-full mt-auto h-11 text-[10px] font-black uppercase tracking-widest bg-emerald-500 hover:bg-emerald-600 border-none shadow-lg shadow-emerald-500/20"
+                                <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
+                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary flex items-center justify-center mb-4">
+                                        <Camera size={19} />
+                                    </span>
+                                    <h4 className="text-[16px] font-semibold tracking-tight text-ink">Entregar servicio</h4>
+                                    <p className="mt-1.5 text-[13px] font-medium text-muted leading-relaxed mb-6">Sube evidencia del trabajo terminado para que el cliente libere los fondos a tu cuenta.</p>
+                                    <button
+                                        type="button"
+                                        className="mt-auto h-12 rounded-full bg-ink text-white text-[13px] font-bold v2-press"
                                         onClick={() => updateOrderStatus(selectedOrder.id, 'completed')}
                                     >
-                                        Subir Evidencias y Finalizar
-                                    </Button>
+                                        Marcar completado
+                                    </button>
                                 </div>
                             </div>
                         )}
 
                         {selectedOrder.status === 'completed' && (
-                            <div className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 flex items-center justify-between">
+                            <div className="bg-sage-light rounded-[1.75rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                                    <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-sage flex items-center justify-center">
                                         <Handshake size={20} />
-                                    </div>
+                                    </span>
                                     <div>
-                                        <p className="text-[12px] font-black uppercase tracking-widest text-brand-night">Trabajo Finalizado y Pagado</p>
-                                        <p className="text-[10px] font-bold text-slate-500 mt-1">Fondos liberados y listos para cobro.</p>
+                                        <p className="text-[15px] font-semibold tracking-tight text-ink">Trabajo finalizado y pagado</p>
+                                        <p className="text-[12.5px] font-medium text-muted mt-0.5">Fondos liberados y listos para cobro.</p>
                                     </div>
                                 </div>
-                                <Button variant="outline" className="h-10 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest border-slate-200 text-slate-600 hover:bg-white hover:text-brand-night transition-colors">
-                                    Ver Recibo
-                                </Button>
+                                <button type="button" className="h-11 px-5 rounded-full bg-white text-ink text-[12.5px] font-bold v2-press shrink-0">
+                                    Ver recibo
+                                </button>
                             </div>
                         )}
                     </div>
-                </div>
+                </section>
             </div>
         )}
+        </div>
       </main>
     </div>
   );

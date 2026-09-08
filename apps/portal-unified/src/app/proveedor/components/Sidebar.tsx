@@ -3,18 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  ClipboardList, 
-  Wallet, 
-  MessageSquareWarning, 
+import {
+  LayoutDashboard,
+  Calendar,
+  ClipboardList,
+  Wallet,
+  MessageSquareWarning,
   Settings,
   Menu,
   X,
   LogOut,
   Briefcase,
-  Newspaper
+  Newspaper,
+  LifeBuoy,
+  ArrowUpRight
 } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
 
@@ -41,76 +43,85 @@ export function ProviderSidebar() {
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button 
+      {/* Botón flotante (móvil) */}
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed bottom-6 right-6 z-[60] w-14 h-14 bg-brand-night text-white rounded-2xl shadow-2xl flex items-center justify-center transition-transform active:scale-95"
+        aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+        className="lg:hidden fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full bg-ink text-white flex items-center justify-center v2-shadow-float v2-press"
       >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {isOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {/* Sidebar Overlay */}
+      {/* Velo (móvil) */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[50] lg:hidden animate-in fade-in duration-300"
+        <div
+          className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-[50] lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar */}
       <aside className={cn(
-        "fixed lg:sticky top-0 left-0 h-screen w-[280px] bg-white border-r border-slate-100 z-[55] flex flex-col transition-transform duration-500 lg:translate-x-0 outline-none",
+        "fixed lg:sticky top-0 left-0 h-screen w-[272px] bg-cream border-r border-line z-[55] flex flex-col transition-transform duration-500 lg:translate-x-0 outline-none",
         !isOpen && "-translate-x-full"
       )}>
-        {/* Logo Section */}
-        <div className="flex items-center gap-3 px-2 mb-10">
-            <Logo size={32} />
+        {/* Logo */}
+        <div className="px-7 pt-8 pb-7">
+          <Logo size={30} />
         </div>
 
-        {/* Navigation Section */}
-        <nav className="flex-1 px-4 space-y-2">
+        {/* Navegación */}
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link 
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 group relative",
-                  isActive 
-                    ? "bg-primary/5 text-primary shadow-sm" 
-                    : "text-slate-400 hover:text-brand-night hover:bg-slate-50"
+                  "flex items-center gap-3.5 h-12 px-4 rounded-[1.15rem] text-[13px] font-semibold transition-colors duration-300 v2-press",
+                  isActive
+                    ? "bg-primary-light text-primary"
+                    : "text-muted hover:text-ink hover:bg-sand/60"
                 )}
               >
-                {isActive && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-full" />
-                )}
-                <item.icon size={20} className={cn(
-                    "transition-transform duration-300 group-hover:scale-110",
-                    isActive ? "text-primary" : "text-slate-300 group-hover:text-brand-night"
-                )} />
-                <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+                <item.icon
+                  size={18}
+                  strokeWidth={isActive ? 2.2 : 2}
+                  className={cn("shrink-0 transition-colors", isActive ? "text-primary" : "text-faint")}
+                />
+                <span className="flex-1 truncate">{item.label}</span>
+                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
               </Link>
             );
           })}
         </nav>
 
-        {/* Support & Logout Card */}
-        <div className="p-6 space-y-4">
-          <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 mb-2">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center">¿Necesitas ayuda?</p>
-            <button className="w-full py-3 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-night hover:text-white transition-all shadow-sm">
-              Soporte VIP
+        {/* Soporte + cerrar sesión */}
+        <div className="p-4 space-y-2">
+          <div className="bg-linen rounded-[1.5rem] p-4 flex items-center gap-3">
+            <span className="w-10 h-10 shrink-0 rounded-[0.9rem] bg-primary-light text-primary flex items-center justify-center">
+              <LifeBuoy size={17} />
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-ink leading-tight">¿Necesitas ayuda?</p>
+              <p className="text-[11.5px] font-medium text-muted mt-0.5 truncate">Soporte para profesionales</p>
+            </div>
+            <button
+              aria-label="Contactar soporte"
+              className="w-9 h-9 shrink-0 rounded-full bg-ink text-white flex items-center justify-center v2-press"
+            >
+              <ArrowUpRight size={15} />
             </button>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => window.location.href = '/role-selection'}
-            className="w-full h-14 flex items-center justify-center gap-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 font-urbanist text-[11px] font-black uppercase tracking-widest group border border-red-100/50"
+            className="w-full h-12 flex items-center gap-3.5 px-4 rounded-[1.15rem] text-[13px] font-semibold text-error/80 hover:text-error hover:bg-error/5 transition-colors v2-press"
           >
-            <LogOut size={18} className="transition-transform group-hover:-translate-x-1" />
-            Cerrar Sesión
+            <LogOut size={18} className="shrink-0" />
+            Cerrar sesión
           </button>
         </div>
       </aside>

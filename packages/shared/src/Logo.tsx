@@ -16,8 +16,9 @@ export const Logo: React.FC<{
   const isDark = variant === 'dark';
   const isVertical = orientation === 'vertical';
   const isDarkBg = variant === 'darkBg';
-  const iconColor = isDark ? '#FFFFFF' : '#3DB87A';
-  const textColor = (isDark || isDarkBg) ? '#FFFFFF' : '#1F1F1F';
+  // Paleta "Arcilla & Lino" (docs/design/design-system.md)
+  const iconColor = isDark ? '#FFFFFF' : '#C8663E';
+  const textColor = (isDark || isDarkBg) ? '#FFFFFF' : '#1F1C18';
 
   return (
     <div className={`flex ${isVertical ? 'flex-col' : 'items-center'} gap-4 ${className}`} style={{ minHeight: size }}>
