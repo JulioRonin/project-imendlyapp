@@ -116,7 +116,7 @@ export default function PrivacidadPage() {
             solicitaste.
           </li>
           <li>
-            <strong>Encargados:</strong> procesador de pagos, proveedores de alojamiento en la nube y base de datos, y servicios de
+            <strong>Encargados:</strong> procesador de pagos (Stripe), proveedores de alojamiento en la nube y base de datos, y servicios de
             envío de correos y mensajes. Actúan por cuenta de I mendly, con obligaciones de confidencialidad.
           </li>
           <li><strong>Autoridades:</strong> cuando lo exija la ley o una orden de autoridad competente.</li>

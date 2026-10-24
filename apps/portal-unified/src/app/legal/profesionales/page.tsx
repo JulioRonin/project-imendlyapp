@@ -7,6 +7,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalDoc, Section, Callout } from '@/components/legal/LegalDoc';
+import { PLAN, TIER_LABEL, formatMxn, pct, type ProviderTier } from '@/lib/pricing';
 import { COMPANY, LEGAL_LINKS } from '@/lib/legal';
 
 export const metadata: Metadata = {
@@ -67,12 +68,13 @@ export default function TerminosProfesionalesPage() {
       <Section n={3} title="Niveles y comisiones">
         <p>Tu comisión baja conforme mejora tu calidad comprobada:</p>
         <ul>
-          <li><strong>Verificado:</strong> 10% del monto del trabajo.</li>
-          <li><strong>Certificado:</strong> 8%.</li>
-          <li><strong>Élite:</strong> 6%.</li>
+          {(Object.keys(TIER_LABEL) as ProviderTier[]).map(t => (
+            <li key={t}><strong>{TIER_LABEL[t]}:</strong> {pct(PLAN.commission[t])} del precio del trabajo, más IVA.</li>
+          ))}
         </ul>
         <p>
-          La comisión tiene un <strong>tope de $1,500 MXN por proyecto</strong>. Antes de enviar cada oferta verás cuánto
+          La comisión tiene un <strong>tope de {formatMxn(PLAN.commissionCap)} por orden</strong>, más IVA. Al cliente se le cobra
+          aparte una tarifa de servicio que no sale de tu precio. Antes de enviar cada oferta verás cuánto
           recibirás después de comisión. Los criterios para subir o bajar de nivel se publican en tu portal. Cualquier cambio en
           comisiones te lo avisaremos con al menos 15 días naturales de anticipación y no aplicará a trabajos ya aceptados.
         </p>
@@ -82,9 +84,18 @@ export default function TerminosProfesionalesPage() {
         <ul>
           <li>El cliente paga dentro de la app. Cuando el trabajo lo requiere, se cobra un anticipo al aceptar tu oferta.</li>
           <li>
-            Recibes la liquidación <strong>al día siguiente de que el cliente confirme la entrega</strong> o de que venza el plazo
-            para reportar un problema de entrega, lo que ocurra primero, menos la comisión de tu nivel.
+            Para recibir pagos debes registrar una cuenta de cobro con <strong>Stripe</strong>, nuestro procesador de pagos. Stripe
+            valida tu identidad y tu CLABE; I mendly no ve ni guarda tus datos bancarios.
           </li>
+          <li>
+            Si pediste anticipo, al <strong>iniciar el trabajo</strong> te adelantamos esa parte del precio para materiales.
+          </li>
+          <li>
+            El resto, menos la comisión de tu nivel con su IVA, se te envía <strong>{PLAN.holdHours} horas después de que el
+            cliente confirme la entrega</strong>. Si el cliente ya pagó todo y no responde, la entrega se confirma sola{' '}
+            {PLAN.autoConfirmHours} horas después de que la marques como terminada.
+          </li>
+          <li>Stripe deposita en tu banco según el calendario de depósitos de tu cuenta.</li>
           <li>Si hay un reclamo abierto, el monto en disputa se retiene hasta que se resuelva la mediación.</li>
         </ul>
       </Section>

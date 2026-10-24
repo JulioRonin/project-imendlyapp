@@ -4,6 +4,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalDoc, Section, Callout } from '@/components/legal/LegalDoc';
+import { PLAN, formatMxn, pct } from '@/lib/pricing';
 import { COMPANY, LEGAL_LINKS } from '@/lib/legal';
 
 export const metadata: Metadata = {
@@ -68,12 +69,24 @@ export default function TerminosClientesPage() {
       <Section n={4} title="Pagos">
         <ul>
           <li>
-            Todos los pagos, incluido el anticipo, se hacen <strong>dentro de la app</strong> mediante nuestro procesador de
-            pagos. I mendly no almacena los datos completos de tu tarjeta.
+            Todos los pagos, incluido el anticipo, se hacen <strong>dentro de la app</strong> con tarjeta, en efectivo en OXXO o
+            por transferencia SPEI, mediante nuestro procesador de pagos, Stripe. I mendly no almacena los datos de tu tarjeta.
           </li>
           <li>
-            Cuando el servicio lo requiere, se cobra un anticipo al aceptar la oferta. El resto se cobra al confirmar la
-            entrega. El profesional recibe su pago al día siguiente de la entrega, salvo que reportes un problema.
+            <strong>Reservas directas:</strong> pagas el total al reservar. <strong>Proyectos del tablero:</strong> si el
+            profesional lo pidió en su oferta, pagas un anticipo de hasta {PLAN.maxDepositPercent}% al aceptarla y el saldo al
+            confirmar la entrega.
+          </li>
+          <li>
+            Al precio del profesional se suma una <strong>tarifa de servicio de {pct(PLAN.clientFee)}</strong> (mínimo{' '}
+            {formatMxn(PLAN.clientFeeMin)}, máximo {formatMxn(PLAN.clientFeeMax)} por orden), que cubre el pago protegido y la
+            Garantía I mendly. Siempre ves el desglose antes de pagar.
+          </li>
+          <li>
+            I mendly retiene tu pago y se lo entrega al profesional {PLAN.holdHours} horas después de que confirmes que el trabajo
+            quedó bien. Si el profesional pidió anticipo para materiales, esa parte se le adelanta cuando inicia el trabajo. Si ya
+            pagaste todo y no respondes, la entrega se confirma sola {PLAN.autoConfirmHours} horas después de que el profesional
+            la marque como terminada.
           </li>
           <li>Los precios se muestran en pesos mexicanos e incluyen los impuestos que correspondan, salvo que se indique otra cosa.</li>
           <li>
@@ -115,7 +128,8 @@ export default function TerminosClientesPage() {
 
       <Section n={8} title="Reclamos y aclaraciones">
         <p>
-          Si algo sale mal, repórtalo desde la orden en la app dentro de los 15 días naturales siguientes a la entrega. El
+          Si algo sale mal, repórtalo desde la orden en la app dentro de los {PLAN.claimDays} días naturales siguientes a la entrega.
+          Al reportarlo, el pago pendiente al profesional se congela mientras se resuelve. El
           profesional tiene 48 horas para responder y nuestro equipo media y resuelve en un máximo de 72 horas hábiles después
           de recibir ambas versiones.
         </p>

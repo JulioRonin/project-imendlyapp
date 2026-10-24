@@ -1,18 +1,19 @@
 // BORRADOR DE TRABAJO — basado en docs/legal/garantia-imendly.md, pendiente de
-// revisión por abogado. El tope ($10,000 MXN) debe ajustarse al fondo real.
+// revisión por abogado. El tope sale de PLAN.guaranteeCap (src/lib/pricing.ts).
 // Al cambiar el contenido, sube LEGAL_VERSION en src/lib/legal.ts.
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalDoc, Section, Callout } from '@/components/legal/LegalDoc';
 import { LEGAL_LINKS } from '@/lib/legal';
+import { PLAN, formatMxn } from '@/lib/pricing';
 
 export const metadata: Metadata = {
   title: 'Garantía I mendly · I mendly',
   description: 'Qué cubre la Garantía I mendly, hasta cuánto y cómo reclamarla.',
 };
 
-const GUARANTEE_CAP = '$10,000 MXN';
+const GUARANTEE_CAP = formatMxn(PLAN.guaranteeCap);
 
 export default function GarantiaPage() {
   return (
@@ -44,7 +45,7 @@ export default function GarantiaPage() {
           <li>Contrataste el servicio en la app, aceptando una oferta.</li>
           <li><strong>Pagaste el 100% dentro de la app, incluido el anticipo.</strong> Cualquier pago por fuera anula la cobertura.</li>
           <li>El profesional estaba verificado o certificado al momento del servicio.</li>
-          <li>Reportaste el problema en la app dentro de los <strong>15 días naturales</strong> siguientes a la entrega.</li>
+          <li>Reportaste el problema en la app dentro de los <strong>{PLAN.claimDays} días naturales</strong> siguientes a la entrega.</li>
           <li>Permites revisar el trabajo con fotos, visita o videollamada, y participas en la mediación.</li>
         </ol>
       </Section>
@@ -75,7 +76,7 @@ export default function GarantiaPage() {
 
       <Section n={5} title="Cómo reclamar">
         <ol>
-          <li>Reporta desde la orden en la app, con fotos y una descripción, dentro de los 15 días naturales.</li>
+          <li>Reporta desde la orden en la app, con fotos y una descripción, dentro de los {PLAN.claimDays} días naturales. El pago al profesional se congela.</li>
           <li>El profesional tiene 48 horas para responder con su versión y evidencia.</li>
           <li>Nuestro equipo media y dictamina en un máximo de 72 horas hábiles después de recibir ambas versiones.</li>
           <li>La resolución se ejecuta y queda registrada. El dictamen agota la cobertura para ese reclamo.</li>

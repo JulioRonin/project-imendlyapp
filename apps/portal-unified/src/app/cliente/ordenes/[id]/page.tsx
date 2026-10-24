@@ -1,14 +1,39 @@
 "use client";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { ArrowLeft, MapPin, MessageCircle, XCircle, ShieldCheck, Smartphone, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, MessageCircle, XCircle, ShieldCheck, Smartphone, Loader2, CircleCheck, Clock, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../../lib/supabase';
 import { ClientNav } from '@/components/client/ClientNav';
 import { Reveal } from '@/components/client/ui';
 import { RequireSession } from '@/components/auth/RequireSession';
+import { apiPost } from '@/lib/api';
+import { PLAN, formatMxn } from '@/lib/pricing';
+import { LEGAL_LINKS } from '@/lib/legal';
+import { PriceBreakdown } from '@/components/payments/PriceBreakdown';
+import { StripePay } from '@/components/payments/StripePay';
+
+/** ¿Qué le toca pagar al cliente ahora? */
+function paymentDue(o: any): { kind: 'full' | 'deposit' | 'balance'; amount: number } | null {
+  if (o.status === 'cancelled') return null;
+  if (o.origin === 'booking' && o.payment_status === 'pending') return { kind: 'full', amount: Number(o.total_amount) };
+  if (o.origin === 'project' && Number(o.deposit_amount) > 0 && o.payment_status === 'pending') return { kind: 'deposit', amount: Number(o.deposit_amount) };
+  if (o.status === 'completed' && !o.confirmed_at && Number(o.balance_amount) > 0 && o.payment_status !== 'paid') return { kind: 'balance', amount: Number(o.balance_amount) };
+  return null;
+}
+
+/** Etiqueta honesta del estado del dinero (nunca "Pagado" si no lo está). */
+function paymentLabel(o: any): { label: string; cls: string } {
+  if (Number(o.refunded_amount) > 0 || o.payment_status === 'refunded') return { label: 'Reembolsado', cls: 'bg-sand text-muted' };
+  if (o.status === 'cancelled') return { label: 'Cancelado', cls: 'bg-rose/20 text-rose' };
+  if (o.payment_status === 'paid') return { label: 'Pagado', cls: 'bg-mint-light text-mint-deep' };
+  if (o.payment_status === 'deposit_paid') return { label: 'Anticipo pagado', cls: 'bg-mint-light text-mint-deep' };
+  if (o.payment_status === 'due_on_delivery') return { label: 'Pagas al terminar', cls: 'bg-primary-light text-primary-deep' };
+  if (o.payment_status === 'not_required') return { label: 'Sin costo', cls: 'bg-sand text-muted' };
+  return { label: 'Pago pendiente', cls: 'bg-primary text-ink' };
+}
 
 const CANCEL_REASONS = [
   "Encontré otro profesional",
@@ -21,7 +46,7 @@ const CANCEL_REASONS = [
 const STAGES = [
   { id: 'solicitado', label: 'Solicitado', description: 'Esperando que el proveedor acepte el requerimiento.', active: true, done: true },
   { id: 'confirmado', label: 'Confirmado', description: 'El profesional ha aceptado tu servicio y está agendado.', active: true, done: false },
-  { id: 'en-camino', label: 'En Camino', description: 'El profesional está dirigiéndose a tu ubicación.', active: false, done: false },
+  { id: 'en-camino', label: 'En curso', description: 'El profesional está trabajando en tu servicio.', active: false, done: false },
   { id: 'finalizado', label: 'Finalizado', description: 'Servicio completado. Liberación de fondos pendiente.', active: false, done: false },
 ];
 
@@ -39,12 +64,24 @@ function OrderDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const orderId = params.id as string;
+  const search = useSearchParams();
+  const payFlag = search.get('pago');
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [pay, setPay] = useState<{ clientSecret: string; amount: number; kind: string } | null>(null);
+  const [notice, setNotice] = useState<string | null>(
+    payFlag === 'succeeded' ? 'Pago recibido. Estamos actualizando tu orden.' :
+    payFlag === 'processing' ? 'Tu pago se está procesando. Si pagaste en OXXO o por SPEI, se confirmará en cuanto llegue el dinero.' : null,
+  );
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -65,29 +102,48 @@ function OrderDetailsPage() {
     };
 
     if (orderId) fetchOrder();
-  }, [orderId]);
+  }, [orderId, reloadKey]);
+
+  // Tras pagar, el webhook de Stripe actualiza la orden en segundos
+  useEffect(() => {
+    if (!payFlag) return;
+    const t = setTimeout(() => setReloadKey(k => k + 1), 3500);
+    return () => clearTimeout(t);
+  }, [payFlag]);
+
+  const act = async (action: string, note?: string) => {
+    setBusy(action);
+    setActionError(null);
+    try {
+      await apiPost('/api/ordenes/accion', { orderId, action, note });
+      setReloadKey(k => k + 1);
+      return true;
+    } catch (e: any) {
+      setActionError(e.message);
+      return false;
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const startPayment = async () => {
+    setBusy('pagar');
+    setActionError(null);
+    try {
+      setPay(await apiPost('/api/ordenes/pagar', { orderId }));
+    } catch (e: any) {
+      setActionError(e.message);
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const handleCancel = async () => {
-    if (!selectedReason) return alert("Por favor selecciona una razón");
+    if (!selectedReason) return;
     setCancelling(true);
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({
-          status: 'cancelled',
-          cancellation_reason: selectedReason
-        })
-        .eq('id', orderId);
-
-      if (error) throw error;
-      setOrder({ ...order, status: 'cancelled' });
-      setIsCancelModalOpen(false);
-    } catch (err) {
-      console.error('Error cancelling order:', err);
-      alert("Error al cancelar la orden");
-    } finally {
-      setCancelling(false);
-    }
+    const ok = await act('cancelar', selectedReason);
+    setCancelling(false);
+    if (ok) setIsCancelModalOpen(false);
   };
 
   if (loading) return (
@@ -115,13 +171,17 @@ function OrderDetailsPage() {
   const provider = order.providers;
   const providerUser = provider.users;
   const serviceName = order.service_requested;
-  const total = `$${order.total_amount.toLocaleString('es-MX')}`;
+  const total = formatMxn(Number(order.total_amount));
+  const due = paymentDue(order);
+  const payPill = paymentLabel(order);
+  const canCancel = order.status === 'pending' || order.status === 'scheduled';
+  const releaseDate = order.release_at ? new Date(order.release_at).toLocaleString('es-MX', { weekday: 'long', hour: '2-digit', minute: '2-digit' }) : null;
 
   const getStages = (status: string) => [
     { id: 'solicitado', label: 'Solicitado', description: 'Esperando que el proveedor acepte el requerimiento.', active: status === 'pending', done: ['scheduled', 'in_progress', 'completed'].includes(status) || status === 'pending' },
     { id: 'confirmado', label: 'Confirmado', description: 'El profesional ha aceptado tu servicio y está agendado.', active: status === 'scheduled', done: ['in_progress', 'completed'].includes(status) },
     { id: 'en-camino', label: 'En Camino', description: 'El profesional está dirigiéndose a tu ubicación.', active: status === 'in_progress', done: status === 'completed' },
-    { id: 'finalizado', label: 'Finalizado', description: 'Servicio completado. Liberación de fondos pendiente.', active: false, done: status === 'completed' },
+    { id: 'finalizado', label: 'Finalizado', description: order.confirmed_at ? 'Confirmaste la entrega. El profesional recibe su pago 24 h después.' : 'El profesional terminó. Revisa el trabajo y confirma la entrega.', active: status === 'completed' && !order.confirmed_at, done: status === 'completed' && !!order.confirmed_at },
   ];
 
   const stages = getStages(order.status);
@@ -167,9 +227,74 @@ function OrderDetailsPage() {
               </p>
               <p className="text-[13px] font-medium text-on-dark/50 mt-3">{serviceName}</p>
             </div>
-            <span className={`shrink-0 inline-flex items-center h-9 px-4 rounded-full text-[11px] font-bold ${order.status === 'cancelled' ? 'bg-rose/20 text-rose' : 'bg-primary text-ink'}`}>
-              {order.status === 'cancelled' ? 'Cancelado' : 'Pagado'}
+            <span className={`shrink-0 inline-flex items-center h-9 px-4 rounded-full text-[11px] font-bold ${payPill.cls}`}>
+              {payPill.label}
             </span>
+          </div>
+        </section>
+
+        {notice && (
+          <div className="p-4 rounded-[1.5rem] bg-mint-light text-mint-deep text-[13px] font-semibold flex items-start gap-2.5">
+            <Clock size={16} className="shrink-0 mt-0.5" /> {notice}
+            <button onClick={() => setNotice(null)} className="ml-auto text-[12px] underline">Ocultar</button>
+          </div>
+        )}
+
+        {/* ── Tu pago ── */}
+        <section className="v2-rise v2-d2 bg-cream rounded-[2.25rem] p-7 md:p-9 v2-shadow-soft">
+          <h2 className="text-xl font-semibold tracking-tight text-ink mb-6">Tu pago</h2>
+          {order.subtotal != null ? (
+            <PriceBreakdown
+              subtotal={Number(order.subtotal)} clientFee={Number(order.client_fee)} total={Number(order.total_amount)}
+              deposit={Number(order.deposit_amount)} balance={Number(order.balance_amount)} depositPercent={order.deposit_percent}
+            />
+          ) : (
+            <p className="text-[14px] font-medium text-muted">Total: <span className="font-semibold text-ink">{total}</span></p>
+          )}
+
+          <div className="mt-6 space-y-3">
+            {due && !pay && (
+              <button
+                onClick={startPayment}
+                disabled={busy !== null}
+                className="w-full h-14 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-60"
+              >
+                {busy === 'pagar' ? <Loader2 size={16} className="animate-spin" /> : <>
+                  {due.kind === 'deposit' ? 'Pagar anticipo' : due.kind === 'balance' ? 'Pagar saldo y confirmar entrega' : 'Completar pago'} · {formatMxn(due.amount)}
+                </>}
+              </button>
+            )}
+            {pay && (
+              <StripePay
+                clientSecret={pay.clientSecret}
+                amount={pay.amount}
+                returnUrl={`${window.location.origin}/cliente/ordenes/${orderId}?pago=processing`}
+                onDone={(r) => { setPay(null); setNotice(r === 'succeeded' ? 'Pago recibido. Estamos actualizando tu orden.' : 'Tu pago se está procesando.'); setTimeout(() => setReloadKey(k => k + 1), 3500); }}
+              />
+            )}
+            {order.status === 'completed' && !order.confirmed_at && !due && (
+              <button
+                onClick={() => act('confirmar')}
+                disabled={busy !== null}
+                className="w-full h-14 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-60"
+              >
+                {busy === 'confirmar' ? <Loader2 size={16} className="animate-spin" /> : <><CircleCheck size={16} /> El trabajo quedó bien, confirmar entrega</>}
+              </button>
+            )}
+            {order.confirmed_at && (
+              <p className="p-4 rounded-[1.25rem] bg-mint-light text-mint-deep text-[13px] font-semibold">
+                Confirmaste la entrega. {releaseDate ? `El profesional recibe su pago a partir del ${releaseDate}.` : ''}
+              </p>
+            )}
+            {(order.started_at || order.delivered_at) && order.status !== 'cancelled' && (
+              <button onClick={() => setReportOpen(true)} className="w-full h-12 rounded-full text-[13px] font-semibold text-muted hover:text-ink flex items-center justify-center gap-2">
+                <TriangleAlert size={15} /> Reportar un problema
+              </button>
+            )}
+            {actionError && <p className="p-4 rounded-[1.25rem] bg-rose/15 text-error text-[13px] font-semibold text-center">{actionError}</p>}
+            <p className="text-[11.5px] font-medium text-faint text-center">
+              Tienes {PLAN.claimDays} días después de la entrega para reportar un problema. <Link href={LEGAL_LINKS.garantia} className="underline">Así funciona la garantía</Link>.
+            </p>
           </div>
         </section>
 
@@ -227,7 +352,7 @@ function OrderDetailsPage() {
                   <div className="flex-1 rounded-[1.25rem] p-4 bg-rose/15">
                     <h4 className="text-[14.5px] font-semibold tracking-tight text-error mb-1">Servicio cancelado</h4>
                     <p className="text-[13px] font-medium leading-relaxed text-error/80">
-                      Esta orden ha sido cancelada por el cliente.
+                      Esta orden se canceló.{Number(order.refunded_amount) > 0 ? ` Te devolvimos ${formatMxn(Number(order.refunded_amount))}.` : Number(order.paid_amount) > 0 ? ' Tu reembolso está en proceso.' : ''}
                     </p>
                   </div>
                 </div>
@@ -275,7 +400,7 @@ function OrderDetailsPage() {
                 </button>
               </div>
 
-              {order.status !== 'cancelled' && order.status !== 'completed' && (
+              {canCancel && (
                 <button
                   onClick={() => setIsCancelModalOpen(true)}
                   className="w-full h-12 rounded-full text-error hover:bg-rose/15 text-[13px] font-semibold flex items-center justify-center gap-2 v2-press transition-colors"
@@ -311,12 +436,12 @@ function OrderDetailsPage() {
                 <div className="pt-5 border-t border-line flex items-end justify-between gap-4">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-1.5">
-                      Monto pagado
+                      Pagado hasta ahora
                     </p>
-                    <p className="text-[28px] font-bold tracking-tight text-ink tabular-nums">{total}</p>
+                    <p className="text-[28px] font-bold tracking-tight text-ink tabular-nums">{formatMxn(Number(order.paid_amount || 0))}</p>
                   </div>
-                  <span className={`inline-flex items-center h-8 px-3.5 rounded-full text-[11px] font-bold ${order.status === 'cancelled' ? 'bg-rose/15 text-error' : 'bg-mint-light text-mint-deep'}`}>
-                    {order.status === 'cancelled' ? 'Cancelado' : 'Pagado'}
+                  <span className={`inline-flex items-center h-8 px-3.5 rounded-full text-[11px] font-bold ${payPill.cls}`}>
+                    {payPill.label}
                   </span>
                 </div>
               </div>
@@ -331,7 +456,7 @@ function OrderDetailsPage() {
           <div className="v2-scale max-w-md w-full bg-cream rounded-[2.25rem] p-8 v2-shadow-float">
             <h3 className="text-[22px] font-semibold tracking-tight text-ink mb-2">Cancelar servicio</h3>
             <p className="text-[13.5px] font-medium text-muted leading-relaxed mb-7">
-              Lamentamos que quieras cancelar. Por favor dinos la razón para mejorar nuestro servicio.
+              Como el trabajo no ha iniciado, te devolvemos todo lo que pagaste al mismo medio de pago. Dinos la razón para mejorar.
             </p>
 
             <div className="space-y-2 mb-8">
@@ -368,6 +493,35 @@ function OrderDetailsPage() {
                 className="flex-1 h-14 rounded-full bg-error text-on-dark text-[13px] font-bold v2-press transition-colors disabled:opacity-40 disabled:pointer-events-none"
               >
                 {cancelling ? 'Cancelando…' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {reportOpen && (
+        <div className="fixed inset-0 bg-ink/60 backdrop-blur-md z-[100] flex items-center justify-center p-6">
+          <div className="v2-scale max-w-md w-full bg-cream rounded-[2.25rem] p-8 v2-shadow-float">
+            <h3 className="text-[22px] font-semibold tracking-tight text-ink mb-2">Reportar un problema</h3>
+            <p className="text-[13.5px] font-medium text-muted leading-relaxed mb-5">
+              Congelamos el pago al profesional mientras nuestro equipo revisa. Describe qué pasó; después te pediremos fotos.
+            </p>
+            <textarea
+              value={reportText}
+              onChange={e => setReportText(e.target.value)}
+              rows={4}
+              placeholder="Ej. La fuga volvió a salir al día siguiente…"
+              className="w-full bg-sand rounded-[1.25rem] px-5 py-4 text-[14px] font-medium text-ink outline-none focus:ring-2 focus:ring-lavender/60 resize-none"
+            />
+            {actionError && <p className="mt-3 text-[12.5px] font-semibold text-error">{actionError}</p>}
+            <div className="mt-6 flex gap-3">
+              <button onClick={() => setReportOpen(false)} className="flex-1 h-14 rounded-full bg-cream border border-line text-ink text-[13px] font-semibold v2-press">Volver</button>
+              <button
+                disabled={reportText.trim().length < 10 || busy !== null}
+                onClick={async () => { if (await act('reportar', reportText)) { setReportOpen(false); setNotice('Recibimos tu reporte. El pago al profesional queda congelado mientras lo revisamos.'); } }}
+                className="flex-1 h-14 rounded-full bg-ink text-white text-[13px] font-bold v2-press disabled:opacity-40"
+              >
+                {busy === 'reportar' ? 'Enviando…' : 'Enviar reporte'}
               </button>
             </div>
           </div>

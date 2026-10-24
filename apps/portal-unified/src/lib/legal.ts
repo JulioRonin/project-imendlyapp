@@ -5,7 +5,7 @@
 // documento, sube LEGAL_VERSION: el registro guarda la versión aceptada
 // (tabla legal_acceptances) y así se sabe qué texto aceptó cada persona.
 
-export const LEGAL_VERSION = '2026-10';
+export const LEGAL_VERSION = '2026-10.2';
 export const LEGAL_UPDATED = '24 de octubre de 2026';
 
 // Datos del responsable. Completar al constituir la sociedad — se muestran

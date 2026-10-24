@@ -52,7 +52,6 @@ function OrdersDashboard() {
   const [myOrders, setMyOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = usePlatformStore(state => state.currentUser);
-  const updateOrderStatus = usePlatformStore(state => state.updateOrderStatus);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -73,6 +72,11 @@ function OrdersDashboard() {
             status,
             total_amount,
             scheduled_date,
+            origin,
+            payment_status,
+            deposit_amount,
+            balance_amount,
+            confirmed_at,
             provider_id,
             providers (
               users (
@@ -96,7 +100,13 @@ function OrdersDashboard() {
             status: o.status.toUpperCase(),
             date: new Date(o.scheduled_date).toLocaleDateString(),
             time: new Date(o.scheduled_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            price: Number(o.total_amount)
+            price: Number(o.total_amount),
+            // ¿Le toca pagar algo al cliente ahora mismo?
+            paymentDue:
+              o.status !== 'cancelled' && (
+                (o.payment_status === 'pending' && (o.origin === 'booking' || Number(o.deposit_amount) > 0)) ||
+                (o.status === 'completed' && !o.confirmed_at && Number(o.balance_amount) > 0 && o.payment_status !== 'paid')
+              ),
           }));
           setMyOrders(mappedOrders);
         }
@@ -114,14 +124,6 @@ function OrdersDashboard() {
     router.push('/cliente');
   };
 
-  const handlePayOrder = (id: string) => {
-    updateOrderStatus(id, 'PAID');
-    alert("¡Pago simulado exitoso vía Stripe! La orden está en proceso.");
-  };
-
-  const handleAcceptCounterOffer = (id: string) => {
-    updateOrderStatus(id, 'ACCEPTED');
-  };
 
   return (
     <main className="min-h-screen bg-linen pb-36">
@@ -212,29 +214,6 @@ function OrdersDashboard() {
                   </div>
                 </div>
 
-                {/* Contraoferta */}
-                {p.status === 'COUNTER_OFFER' && p.counterOffer && (
-                  <div className="mb-5 p-5 rounded-[1.25rem] bg-primary-light flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-warning mb-1">
-                        Sugerencia de nuevo horario
-                      </p>
-                      <p className="text-[14px] font-semibold text-ink tabular-nums">
-                        {p.counterOffer.date} · {p.counterOffer.time}
-                      </p>
-                      <p className="text-[13px] font-medium text-warning/80 mt-1">
-                        “{p.counterOffer.message}”
-                      </p>
-                    </div>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleAcceptCounterOffer(p.id); }}
-                      className="shrink-0 h-11 px-5 rounded-full bg-ink text-on-dark text-[12px] font-bold v2-press"
-                    >
-                      Aceptar horario
-                    </button>
-                  </div>
-                )}
-
                 {/* Ciclo + estado */}
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
@@ -247,12 +226,12 @@ function OrdersDashboard() {
 
                 {/* Acciones */}
                 <div className="mt-5 flex items-center gap-3">
-                  {p.status === 'ACCEPTED' && (
+                  {p.paymentDue && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); handlePayOrder(p.id); }}
+                      onClick={(e) => { e.stopPropagation(); router.push(`/cliente/ordenes/${p.dbId}`); }}
                       className="flex-1 sm:flex-none h-14 px-8 rounded-full bg-ink text-on-dark text-[13px] font-bold v2-press v2-shadow-lift"
                     >
-                      Proceder al pago
+                      Pagar ahora
                     </button>
                   )}
                   <span className="ml-auto flex items-center gap-2">

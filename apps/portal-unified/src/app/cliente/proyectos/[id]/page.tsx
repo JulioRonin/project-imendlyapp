@@ -7,8 +7,10 @@ import {
   ArrowLeft, BadgeCheck, Calendar, Check, Clock,
   Loader2, MapPin, ShieldCheck, Users, X
 } from 'lucide-react';
+import { apiPost } from '@/lib/api';
+import { quote } from '@/lib/pricing';
 import { supabase } from '../../../../lib/supabase';
-import { PROJECT_STATUS_LABELS, timingLabel, timeAgo, formatMXN, genDisplayId } from '../../../../lib/tablero';
+import { PROJECT_STATUS_LABELS, timingLabel, timeAgo, formatMXN } from '../../../../lib/tablero';
 import { ClientNav } from '@/components/client/ClientNav';
 import { RatingPill } from '@/components/client/ui';
 import { RequireSession } from '@/components/auth/RequireSession';
@@ -78,47 +80,9 @@ function ProyectoDetallePage() {
     setAccepting(offer.id);
     setError(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Inicia sesión de nuevo.');
-
-      // 1. Crear la orden que conecta con el flujo existente (pago, seguimiento)
-      const { data: order, error: ordErr } = await supabase
-        .from('orders')
-        .insert({
-          display_id: genDisplayId('ORD'),
-          client_id: user.id,
-          provider_id: offer.provider_id,
-          service_requested: `${project.category}: ${project.title}`,
-          status: 'pending',
-          total_amount: offer.amount || 0,
-          payment_status: 'pending',
-        })
-        .select('id')
-        .single();
-      if (ordErr) throw ordErr;
-
-      // 2. Marcar oferta aceptada y cerrar las demás
-      const { error: accErr } = await supabase
-        .from('project_offers')
-        .update({ status: 'accepted' })
-        .eq('id', offer.id);
-      if (accErr) throw accErr;
-
-      await supabase
-        .from('project_offers')
-        .update({ status: 'declined' })
-        .eq('project_id', projectId)
-        .neq('id', offer.id)
-        .eq('status', 'active');
-
-      // 3. Asignar el proyecto
-      const { error: projErr } = await supabase
-        .from('projects')
-        .update({ status: 'assigned', accepted_offer_id: offer.id, order_id: order.id })
-        .eq('id', projectId);
-      if (projErr) throw projErr;
-
-      router.push(`/cliente/ordenes/${order.id}`);
+      // El servidor congela el precio de la oferta, crea la orden y cierra las demás ofertas
+      const { orderId } = await apiPost<{ orderId: string }>('/api/proyectos/aceptar', { offerId: offer.id });
+      router.push(`/cliente/ordenes/${orderId}`);
     } catch (err: any) {
       console.error('Error accepting offer:', err);
       setError(err.message || 'No se pudo aceptar la oferta.');
@@ -318,6 +282,10 @@ function ProyectoDetallePage() {
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-0.5">Oferta</p>
                   <p className="text-[27px] font-bold tracking-tight text-ink tabular-nums leading-none">
                     {formatMXN(offer.amount)}{offer.amount_max ? ` – ${formatMXN(offer.amount_max)}` : ''}
+                  </p>
+                  <p className="mt-1.5 text-[12px] font-medium text-faint tabular-nums">
+                    Pagas {formatMXN(quote(Number(offer.amount), 'verificado', 0).total)} con la tarifa de servicio
+                    {offer.amount_max ? ' · al aceptar se toma el monto inicial del rango' : ''}
                   </p>
                 </div>
               ) : (

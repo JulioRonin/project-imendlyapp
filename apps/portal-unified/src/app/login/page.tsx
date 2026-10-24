@@ -1,5 +1,6 @@
 "use client";
 
+import { PLAN, formatMxn } from '@/lib/pricing';
 import { ArrowUpRight, ArrowLeft, Globe, Shield, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -145,7 +146,7 @@ export default function LoginPage() {
             Proveedores verificados, anticipo protegido y Garantía I mendly.
           </p>
           <p className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-mint-deep">
-            <ShieldCheck size={15} /> Garantía de hasta $10,000 MXN
+            <ShieldCheck size={15} /> Garantía de hasta {formatMxn(PLAN.guaranteeCap)}
           </p>
         </div>
       </section>
