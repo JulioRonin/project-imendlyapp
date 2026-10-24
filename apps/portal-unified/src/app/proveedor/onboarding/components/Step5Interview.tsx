@@ -1,5 +1,7 @@
-import { Button } from '@i-mendly/shared/components/Button';
+import { ArrowRight, Check, Video } from 'lucide-react';
 import { useOnboarding } from './OnboardingContext';
+
+const LABEL_CLS = 'block text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-3';
 
 export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
   const { data, updateData } = useOnboarding();
@@ -30,83 +32,96 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
     updateData({ interview: { ...data.interview, time } });
   };
 
-  return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <h2 className="text-3xl font-black mb-2 tracking-tight">Entrevista de calidad</h2>
-      <p className="text-white/50 mb-8 font-medium">Agenda una breve videollamada de 15 min con nuestro equipo de CX.</p>
+  const canNext = !!(selectedDate && selectedTime);
 
-      <div className="space-y-6 mb-10">
-        <p className="text-sm font-black text-white/40 uppercase tracking-widest mb-4">Selecciona un Día</p>
-        
-        {/* Date Selector Carousel */}
-        <div className="flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
-          {upcomingDays.map(day => (
-            <button
-              key={day.id}
-              onClick={() => handleDateSelect(day.id)}
-              className={`flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-[2rem] border transition-all duration-300
-                ${selectedDate === day.id 
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.05]' 
-                  : 'border-white/10 bg-white/5 text-white/50 hover:bg-white/10'
-                }`}
-            >
-              <span className={`text-xs font-black uppercase tracking-widest ${selectedDate === day.id ? 'text-emerald-400' : 'text-white/40'}`}>{day.name}</span>
-              <span className={`text-sm font-bold mt-1 ${selectedDate === day.id ? 'text-white' : 'text-white/80'}`}>{day.date}</span>
-            </button>
-          ))}
+  return (
+    <div className="flex-1 flex flex-col space-y-5">
+      <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
+        <p className="text-[14px] font-medium text-muted">Agenda una breve videollamada de 15 min con nuestro equipo de CX.</p>
+
+        <div>
+          <label className={LABEL_CLS}>Selecciona un día</label>
+          {/* Date Selector Carousel */}
+          <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-6 px-6 no-scrollbar">
+            {upcomingDays.map(day => {
+              const active = selectedDate === day.id;
+              return (
+                <button
+                  key={day.id}
+                  type="button"
+                  onClick={() => handleDateSelect(day.id)}
+                  className={`shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-[1.5rem] v2-press transition-colors duration-300 ${
+                    active ? 'bg-ink text-white v2-shadow-lift' : 'bg-sand text-ink hover:bg-primary-light'
+                  }`}
+                >
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.18em] ${active ? 'text-white/60' : 'text-muted'}`}>{day.name}</span>
+                  <span className="text-[16px] font-semibold mt-1.5 tabular-nums">{day.date}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Time Selector Grid */}
         {selectedDate && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <p className="text-sm font-black text-white/40 uppercase tracking-widest mb-4">Selecciona el Horario</p>
-            <div className="grid grid-cols-2 gap-3">
-              {timesMap[selectedDate]?.map(time => (
-                <button
-                  key={time}
-                  onClick={() => handleTimeSelect(time)}
-                  className={`py-4 px-6 rounded-2xl border transition-all text-sm font-bold
-                    ${selectedTime === time 
-                      ? 'border-emerald-500 bg-emerald-500 text-brand-night shadow-[0_4px_15px_rgba(16,185,129,0.3)]' 
-                      : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:bg-white/10'
+          <div className="v2-rise">
+            <label className={LABEL_CLS}>Selecciona el horario</label>
+            <div className="grid grid-cols-2 gap-2.5">
+              {timesMap[selectedDate]?.map(time => {
+                const active = selectedTime === time;
+                return (
+                  <button
+                    key={time}
+                    type="button"
+                    onClick={() => handleTimeSelect(time)}
+                    className={`h-12 px-4 rounded-full text-[13px] font-semibold tabular-nums v2-press transition-colors duration-300 flex items-center justify-center gap-2 ${
+                      active ? 'bg-ink text-white v2-shadow-lift' : 'bg-sand text-muted hover:text-ink'
                     }`}
-                >
-                  {time}
-                </button>
-              ))}
+                  >
+                    {active && <Check size={14} />} {time}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="bg-white/5 rounded-3xl p-6 mb-10">
-        <h4 className="text-sm font-black uppercase tracking-widest text-emerald-500 mb-3">¿Qué revisaremos?</h4>
-        <ul className="text-sm text-white/60 space-y-3 font-medium">
-          <li className="flex gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-500/50"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" /></svg>
-            Protocolo de servicio al cliente I mendly
-          </li>
-          <li className="flex gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-500/50"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" /></svg>
-            Confirmación de herramientas y equipo
-          </li>
-          <li className="flex gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-500/50"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" /></svg>
-            Dudas sobre pagos y el modelo escrow
-          </li>
-        </ul>
-      </div>
+      <section className="v2-scale bg-lavender-light rounded-[1.75rem] p-6 flex items-start gap-4" style={{ animationDelay: '120ms' }}>
+        <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-cream text-ink flex items-center justify-center v2-shadow-soft">
+          <Video size={20} />
+        </span>
+        <div>
+          <p className="text-[14px] font-semibold text-ink mb-2">¿Qué revisaremos?</p>
+          <ul className="space-y-2">
+            {[
+              'Protocolo de servicio al cliente I mendly',
+              'Confirmación de herramientas y equipo',
+              'Dudas sobre pagos y el modelo escrow',
+            ].map(item => (
+              <li key={item} className="flex items-start gap-2.5 text-[13px] font-medium text-ink/80">
+                <Check size={14} className="shrink-0 mt-0.5 text-ink" /> {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
-      <div className="flex gap-4">
-        <Button variant="ghost" onClick={onBack} className="flex-1 text-white/40 hover:text-white border-white/10">Atrás</Button>
-        <Button 
-          variant="primary" 
-          onClick={onNext} 
-          disabled={!selectedDate || !selectedTime}
-          className={`flex-[2] border-none transition-all ${(!selectedDate || !selectedTime) ? 'bg-white/5 text-white/30 cursor-not-allowed opacity-50' : 'bg-emerald-600 hover:bg-emerald-500 text-brand-night shadow-[0_0_20px_rgba(16,185,129,0.3)]'}`}
-        >
-          {selectedDate && selectedTime ? 'Confirmar Agenda' : 'Selecciona un horario'}
-        </Button>
+      {/* Botonera sticky */}
+      <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={onBack} className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors">Atrás</button>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={!selectedDate || !selectedTime}
+            className={`flex-1 h-14 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-colors ${
+              canNext ? 'bg-primary text-ink hover:bg-primary-dark v2-press shadow-lg shadow-primary/25' : 'bg-sand text-faint cursor-not-allowed'
+            }`}
+          >
+            {canNext ? <>Confirmar agenda <ArrowRight size={16} /></> : 'Selecciona un horario'}
+          </button>
+        </div>
       </div>
     </div>
   );

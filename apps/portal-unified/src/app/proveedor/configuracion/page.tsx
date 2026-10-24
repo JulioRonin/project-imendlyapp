@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Camera, 
-  ShieldCheck, 
-  Globe, 
-  Share2, 
+import {
+  Camera,
+  ShieldCheck,
+  Globe,
+  Share2,
   CheckCircle2,
-  MapPin
+  MapPin,
+  ChevronRight,
+  User,
+  Briefcase,
+  FileText,
+  Eye
 } from 'lucide-react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
-import { Badge } from '@i-mendly/shared/components/Badge';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 
 const LOCATIONS = {
@@ -23,6 +24,37 @@ const LOCATIONS = {
   'Chihuahua': ['San Felipe', 'Las Haciendas', 'Cantera']
 };
 
+const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
+const FIELD_INPUT = 'w-full bg-transparent border-0 outline-none text-[14px] font-semibold text-ink placeholder:text-faint placeholder:font-medium text-right';
+
+/** Fila de ajuste: squircle + label + valor editable (misma tarjeta, separadas por border-line). */
+function SettingRow({
+  icon,
+  label,
+  children,
+  hint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+  hint?: string;
+}) {
+  return (
+    <div className="flex items-center gap-4 px-5 py-4 border-b border-line last:border-b-0 focus-within:bg-sand/60 transition-colors">
+      <span className="w-11 h-11 shrink-0 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center">
+        {icon}
+      </span>
+      <div className="min-w-0 shrink-0 w-32 sm:w-44">
+        <p className="text-[14px] font-semibold text-ink leading-tight">{label}</p>
+        {hint && <p className="text-[11.5px] font-medium text-faint mt-0.5">{hint}</p>}
+      </div>
+      <div className="flex-1 min-w-0 flex items-center justify-end gap-2">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function ConfigurationPage() {
   const [selectedCity, setSelectedCity] = useState<keyof typeof LOCATIONS | ''>('');
   const [selectedArea, setSelectedArea] = useState<string>('');
@@ -30,156 +62,157 @@ export default function ConfigurationPage() {
   const currentAreas = selectedCity ? LOCATIONS[selectedCity] : [];
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#F8F9FB]">
-      <header className="h-24 px-10 border-b border-slate-100 bg-white flex items-center justify-between sticky top-0 z-10 shrink-0">
-        <div>
-          <h1 className="text-2xl font-black text-brand-night tracking-tight uppercase">Configuración</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Perfil y preferencias de la cuenta</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-            <Button variant="outline" className="rounded-xl h-11 px-6 border-slate-200">
-                <span className="text-[10px] font-black uppercase tracking-widest">Previsualizar Perfil</span>
-            </Button>
-            <Button variant="primary" className="rounded-[1.25rem] h-12 px-8 shadow-lg shadow-primary/20">
-                <span className="text-[10px] font-black uppercase tracking-widest">Guardar Cambios</span>
-            </Button>
-        </div>
-      </header>
-
-      <main className="flex-1 p-10 overflow-y-auto space-y-10 custom-scrollbar">
-        <div className="grid lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2 space-y-8">
-                <section className="space-y-6">
-                    <h3 className="text-lg font-black text-brand-night tracking-tight uppercase">Datos Generales</h3>
-                    <Card className="p-10 rounded-[2.5rem] border-slate-50 space-y-8 bg-white">
-                        <div className="flex items-center gap-10">
-                            <div className="relative group">
-                                <Avatar size="xl" name="Juan Perez" className="w-32 h-32 rounded-[2.5rem] border-4 border-slate-50" />
-                                <button className="absolute -bottom-2 -right-2 w-10 h-10 bg-brand-night text-white rounded-xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                                    <Camera size={18} />
-                                </button>
-                            </div>
-                            <div className="flex-1 space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Nombre Público</label>
-                                        <Input defaultValue="Juan Pérez" className="bg-slate-50/50 border-transparent h-12 rounded-xl text-[11px] font-bold uppercase tracking-tight" />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Ocupación / Título</label>
-                                        <Input defaultValue="Especialista en Limpieza" className="bg-slate-50/50 border-transparent h-12 rounded-xl text-[11px] font-bold uppercase tracking-tight" />
-                                    </div>
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Biografía / Presentación</label>
-                                    <textarea 
-                                        className="w-full bg-slate-50/50 border-none rounded-xl p-4 text-[11px] font-bold uppercase tracking-tight min-h-[100px] outline-none focus:ring-2 focus:ring-primary/20 transition-all custom-scrollbar"
-                                        defaultValue="Mas de 10 años de experiencia brindando servicios de alta calidad para hogares exigentes."
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-                </section>
-
-                <section className="space-y-6">
-                    <h3 className="text-lg font-black text-brand-night tracking-tight uppercase">Redes & Ubicación</h3>
-                    <div className="grid grid-cols-2 gap-6">
-                        <Card className="p-8 rounded-[2rem] border-slate-50 bg-white space-y-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                                    <Globe size={18} className="text-slate-300 ml-2" />
-                                    <input 
-                                        type="text" 
-                                        defaultValue="www.mendly.com/juanp" 
-                                        className="bg-transparent border-none outline-none w-full text-[10px] font-bold text-slate-500 uppercase tracking-tight" 
-                                    />
-                                </div>
-                                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                                    <Share2 size={18} className="text-slate-300 ml-2" />
-                                    <input 
-                                        type="text" 
-                                        defaultValue="@juan_services" 
-                                        className="bg-transparent border-none outline-none w-full text-[10px] font-bold text-slate-500 uppercase tracking-tight" 
-                                    />
-                                </div>
-                            </div>
-                        </Card>
-                        <Card className="p-8 rounded-[2rem] border-slate-50 bg-white flex flex-col justify-center relative overflow-hidden group">
-                            <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:scale-150 transition-transform duration-1000" />
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 relative z-10">Zona de Trabajo Principal</p>
-                            
-                            <div className="space-y-4 relative z-10 w-full">
-                                <div className="space-y-1.5 flex flex-col">
-                                    <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Ciudad</label>
-                                    <div className="relative">
-                                        <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none" />
-                                        <select 
-                                            value={selectedCity} 
-                                            onChange={(e) => {
-                                                setSelectedCity(e.target.value as any);
-                                                setSelectedArea('');
-                                            }}
-                                            className="w-full h-10 bg-slate-50 border border-slate-100 rounded-xl pl-9 pr-4 text-[11px] font-bold uppercase tracking-tight outline-none focus:ring-2 focus:ring-primary/20 transition-all text-brand-night appearance-none cursor-pointer"
-                                        >
-                                            <option value="" disabled>Selecciona una Ciudad</option>
-                                            <option value="CDMX">CDMX</option>
-                                            <option value="Monterrey">Monterrey</option>
-                                            <option value="Guadalajara">Guadalajara</option>
-                                            <option value="Juarez">Ciudad Juárez</option>
-                                            <option value="Chihuahua">Chihuahua</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div className="space-y-1.5 flex flex-col">
-                                    <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Área Principal</label>
-                                    <select 
-                                        value={selectedArea} 
-                                        onChange={(e) => setSelectedArea(e.target.value)}
-                                        disabled={!selectedCity}
-                                        className="w-full h-10 bg-slate-50 border border-slate-100 rounded-xl px-4 text-[11px] font-bold uppercase tracking-tight outline-none focus:ring-2 focus:ring-primary/20 transition-all text-brand-night appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                                    >
-                                        <option value="" disabled>
-                                            {selectedCity ? 'Selecciona un área' : 'Primero elige una ciudad'}
-                                        </option>
-                                        {currentAreas.map(area => (
-                                            <option key={area} value={area}>{area}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </section>
+    <div className="flex-1 flex flex-col min-h-0 bg-linen">
+      <main className="flex-1 overflow-y-auto px-6 md:px-12 pb-20">
+        <div className="max-w-6xl mx-auto">
+          {/* ── Cabecera editorial ── */}
+          <header className="pt-10 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <p className={`v3-blur-in ${EYEBROW} text-primary-deep`}>Tu cuenta</p>
+              <h1 className="v3-blur-in text-[34px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink mt-2" style={{ animationDelay: '100ms' }}>
+                Configuración
+              </h1>
+              <p className="v3-blur-in mt-2 text-[14px] font-medium text-muted" style={{ animationDelay: '200ms' }}>
+                Perfil público y preferencias de la cuenta
+              </p>
             </div>
 
-            <div className="space-y-8">
-                <Card variant="navy" className="p-8 rounded-[2.5rem] overflow-hidden relative">
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                        <div className="w-20 h-20 bg-primary/30 rounded-3xl flex items-center justify-center mb-6 border border-primary/20">
-                            <ShieldCheck size={40} className="text-white" />
-                        </div>
-                        <h4 className="text-lg font-black mb-1 uppercase tracking-tight">Estado de Verificación</h4>
-                        <Badge variant="success" className="px-4 py-1 text-[9px] font-black uppercase tracking-[0.2em] mb-6 shadow-lg shadow-primary/20">Partner Premium</Badge>
-                        <p className="text-white/70 text-[10px] leading-relaxed px-4 font-medium">
-                            Tu perfil cumple con todos los estándares de seguridad de I Mendly.
-                        </p>
-                        <div className="w-full h-[1px] bg-white/10 my-8" />
-                        <div className="space-y-4 w-full">
-                            {['Identidad', 'Domicilio', 'Seguro RC'].map((v, i) => (
-                                <div key={i} className="flex justify-between items-center bg-white/10 p-4 rounded-2xl border border-white/5">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-white">{v}</span>
-                                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20">
-                                        <CheckCircle2 size={14} className="text-white" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </Card>
+            <div className="v3-blur-in flex items-center gap-3" style={{ animationDelay: '300ms' }}>
+              <button type="button" className="h-12 md:h-14 px-5 rounded-full bg-cream text-ink text-[13px] font-bold flex items-center gap-2 v2-shadow-soft v2-press">
+                <Eye size={16} /> Previsualizar
+              </button>
+              <button type="button" className="h-12 md:h-14 px-6 rounded-full bg-ink text-white text-[13px] font-bold v2-press">
+                Guardar cambios
+              </button>
             </div>
+          </header>
+
+          <div className="mt-9 grid lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              {/* ── Perfil ── */}
+              <section className="v2-rise v2-d1 bg-cream rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+                <div className="px-5 pt-6 pb-5 flex items-center gap-5">
+                  <div className="relative shrink-0">
+                    <Avatar size="xl" name="Juan Perez" className="w-24 h-24 rounded-[1.9rem] ring-4 ring-sand" />
+                    <button type="button" aria-label="Cambiar foto" className="absolute -bottom-1.5 -right-1.5 w-10 h-10 bg-ink text-white rounded-full flex items-center justify-center ring-4 ring-cream v2-press">
+                      <Camera size={16} />
+                    </button>
+                  </div>
+                  <div className="min-w-0">
+                    <p className={`${EYEBROW} text-muted`}>Datos generales</p>
+                    <h2 className="mt-1 text-[22px] font-semibold tracking-tight text-ink leading-tight">Así te ven los clientes</h2>
+                    <p className="mt-1 text-[13px] font-medium text-muted">Nombre, oficio y una presentación breve.</p>
+                  </div>
+                </div>
+
+                <SettingRow icon={<User size={18} />} label="Nombre público">
+                  <input defaultValue="Juan Pérez" className={FIELD_INPUT} />
+                </SettingRow>
+                <SettingRow icon={<Briefcase size={18} />} label="Ocupación">
+                  <input defaultValue="Especialista en Limpieza" className={FIELD_INPUT} />
+                </SettingRow>
+                <div className="px-5 py-5 flex items-start gap-4">
+                  <span className="w-11 h-11 shrink-0 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center">
+                    <FileText size={18} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-semibold text-ink leading-tight mb-3">Presentación</p>
+                    <textarea
+                      className="w-full bg-sand border-0 rounded-[1.25rem] px-5 py-4 text-[14px] font-medium text-ink min-h-[104px] outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                      defaultValue="Mas de 10 años de experiencia brindando servicios de alta calidad para hogares exigentes."
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* ── Redes ── */}
+              <section className="v2-rise v2-d2 bg-cream rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+                <div className="px-5 pt-6 pb-3">
+                  <p className={`${EYEBROW} text-muted`}>Redes</p>
+                  <h2 className="mt-1 text-[20px] font-semibold tracking-tight text-ink leading-tight">Dónde encontrarte</h2>
+                </div>
+                <SettingRow icon={<Globe size={18} />} label="Sitio web">
+                  <input type="text" defaultValue="www.mendly.com/juanp" className={FIELD_INPUT} />
+                </SettingRow>
+                <SettingRow icon={<Share2 size={18} />} label="Redes sociales">
+                  <input type="text" defaultValue="@juan_services" className={FIELD_INPUT} />
+                </SettingRow>
+              </section>
+
+              {/* ── Ubicación ── */}
+              <section className="v2-rise v2-d3 bg-cream rounded-[2.25rem] v2-shadow-soft overflow-hidden">
+                <div className="px-5 pt-6 pb-3">
+                  <p className={`${EYEBROW} text-muted`}>Zona de trabajo</p>
+                  <h2 className="mt-1 text-[20px] font-semibold tracking-tight text-ink leading-tight">Dónde atiendes</h2>
+                </div>
+                <SettingRow icon={<MapPin size={18} />} label="Ciudad">
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => {
+                      setSelectedCity(e.target.value as any);
+                      setSelectedArea('');
+                    }}
+                    className={`${FIELD_INPUT} appearance-none cursor-pointer`}
+                  >
+                    <option value="" disabled>Selecciona una ciudad</option>
+                    <option value="CDMX">CDMX</option>
+                    <option value="Monterrey">Monterrey</option>
+                    <option value="Guadalajara">Guadalajara</option>
+                    <option value="Juarez">Ciudad Juárez</option>
+                    <option value="Chihuahua">Chihuahua</option>
+                  </select>
+                  <ChevronRight size={16} className="shrink-0 text-faint" />
+                </SettingRow>
+                <SettingRow icon={<MapPin size={18} />} label="Área principal" hint={selectedCity ? undefined : 'Primero elige una ciudad'}>
+                  <select
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                    disabled={!selectedCity}
+                    className={`${FIELD_INPUT} appearance-none cursor-pointer disabled:text-faint disabled:cursor-not-allowed`}
+                  >
+                    <option value="" disabled>
+                      {selectedCity ? 'Selecciona un área' : '—'}
+                    </option>
+                    {currentAreas.map(area => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
+                  <ChevronRight size={16} className="shrink-0 text-faint" />
+                </SettingRow>
+              </section>
+            </div>
+
+            {/* ── Verificación ── */}
+            <aside className="space-y-5">
+              <div className="v2-rise v2-d3 relative overflow-hidden v3-night-grad rounded-[2.25rem] p-7 text-on-dark v2-shadow-lift">
+                <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-mint/20 blur-3xl pointer-events-none" />
+                <div className="relative">
+                  <span className="w-14 h-14 rounded-[1.2rem] bg-mint-light text-mint-deep flex items-center justify-center mb-5">
+                    <ShieldCheck size={26} />
+                  </span>
+                  <p className={`${EYEBROW} text-on-dark/60`}>Estado de verificación</p>
+                  <h3 className="mt-2 text-[22px] font-semibold tracking-tight leading-tight">Perfil verificado</h3>
+                  <p className="mt-2 text-[13px] font-medium text-on-dark/60 leading-relaxed">
+                    Tu perfil cumple con todos los estándares de seguridad de I mendly.
+                  </p>
+                  <span className="mt-4 inline-flex items-center h-8 px-3.5 rounded-full bg-mint-light text-mint-deep text-[12px] font-semibold">
+                    Partner Premium
+                  </span>
+
+                  <div className="mt-7 space-y-2">
+                    {['Identidad', 'Domicilio', 'Seguro RC'].map((v, i) => (
+                      <div key={i} className="flex justify-between items-center bg-white/[0.07] px-4 h-12 rounded-[1rem]">
+                        <span className="text-[13px] font-semibold">{v}</span>
+                        <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-mint">
+                          <CheckCircle2 size={14} /> Verificado
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
       </main>
     </div>

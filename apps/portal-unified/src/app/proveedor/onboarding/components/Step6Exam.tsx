@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Badge } from '@i-mendly/shared/components/Badge';
+import { ArrowRight, Award, Check, Timer, X } from 'lucide-react';
 import { useOnboarding } from './OnboardingContext';
 
+const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
+
 const MODS = [
-  { id: 'mod-01', label: 'Valores I mendly', color: '#FFAA78', bg: 'bg-emerald-500', text: 'text-emerald-500' },
-  { id: 'mod-02', label: 'Antes del servicio', color: '#0891B2', bg: 'bg-cyan-500', text: 'text-cyan-500' },
-  { id: 'mod-03', label: 'Durante y después', color: '#7C3AED', bg: 'bg-violet-600', text: 'text-violet-600' },
-  { id: 'mod-04', label: 'Situaciones difíciles', color: '#F59E0B', bg: 'bg-amber-500', text: 'text-amber-500' },
-  { id: 'mod-05', label: 'Uso de la app', color: '#EF4444', bg: 'bg-red-500', text: 'text-red-500' },
+  { id: 'mod-01', label: 'Valores I mendly', bg: 'bg-primary', text: 'text-muted' },
+  { id: 'mod-02', label: 'Antes del servicio', bg: 'bg-lavender', text: 'text-muted' },
+  { id: 'mod-03', label: 'Durante y después', bg: 'bg-mint', text: 'text-muted' },
+  { id: 'mod-04', label: 'Situaciones difíciles', bg: 'bg-rose', text: 'text-muted' },
+  { id: 'mod-05', label: 'Uso de la app', bg: 'bg-ink', text: 'text-muted' },
 ];
 
 const QS = [
@@ -237,117 +238,132 @@ export const Step6Exam: React.FC<{ onNext: () => void; onBack: () => void }> = (
   const passed = pct >= 80;
 
   return (
-    <div className="w-full">
+    <div className="flex-1 flex flex-col">
       {screen === 'cover' && (
-        <div className="p-10 bg-white/5 rounded-[2rem] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-700">
-           <Badge variant="default" className="text-[10px] uppercase font-black tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-6">Certificación Oficial</Badge>
-           <h2 className="text-4xl font-black mb-3 text-white tracking-tight">Examen de<br/><span className="text-emerald-500">Certificación</span></h2>
-           <p className="text-white/60 text-sm mb-8">Demuestra que dominas los valores, protocolos y estándares de calidad que hacen de I mendly la plataforma de confianza para servicios del hogar.</p>
-           
-           <div className="grid grid-cols-3 gap-3 mb-8">
-             <div className="bg-brand-night p-4 rounded-xl text-center border border-white/5">
-                <p className="text-2xl font-black text-white">{QS.length}</p>
-                <p className="text-[10px] text-white/40 uppercase font-black">Preguntas</p>
-             </div>
-             <div className="bg-brand-night p-4 rounded-xl text-center border border-white/5">
-                <p className="text-2xl font-black text-white">80%</p>
-                <p className="text-[10px] text-white/40 uppercase font-black">Aprobar</p>
-             </div>
-             <div className="bg-brand-night p-4 rounded-xl text-center border border-white/5">
-                <p className="text-2xl font-black text-white">40m</p>
-                <p className="text-[10px] text-white/40 uppercase font-black">Tiempo</p>
-             </div>
-           </div>
+        <>
+          <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-6 md:p-7">
+            <span className="w-14 h-14 rounded-[1.2rem] bg-primary-light text-primary-deep flex items-center justify-center mb-5">
+              <Award size={26} />
+            </span>
+            <p className={`${EYEBROW} text-primary-deep`}>Certificación oficial</p>
+            <h2 className="mt-2 text-[28px] font-semibold tracking-tight leading-tight text-ink">Demuestra que dominas el estándar I mendly</h2>
+            <p className="mt-3 text-[14px] font-medium text-muted">Valores, protocolos y estándares de calidad que hacen de I mendly la plataforma de confianza para servicios del hogar.</p>
 
-           <div className="flex gap-4">
-             <Button variant="ghost" className="flex-1 text-white/40 hover:text-white" onClick={onBack}>
-               Atrás
-             </Button>
-             <Button variant="primary" className="flex-[2] bg-emerald-600 hover:bg-emerald-500 border-none" onClick={handleStart}>
-               Comenzar el examen
-             </Button>
-           </div>
-        </div>
+            <div className="grid grid-cols-3 gap-2.5 mt-6">
+              <div className="bg-sand p-4 rounded-[1.25rem] text-center">
+                <p className="text-[26px] font-bold tabular-nums tracking-tight text-ink leading-none">{QS.length}</p>
+                <p className={`mt-2 ${EYEBROW} text-muted`}>Preguntas</p>
+              </div>
+              <div className="bg-sand p-4 rounded-[1.25rem] text-center">
+                <p className="text-[26px] font-bold tabular-nums tracking-tight text-ink leading-none">80%</p>
+                <p className={`mt-2 ${EYEBROW} text-muted`}>Aprobar</p>
+              </div>
+              <div className="bg-sand p-4 rounded-[1.25rem] text-center">
+                <p className="text-[26px] font-bold tabular-nums tracking-tight text-ink leading-none">40m</p>
+                <p className={`mt-2 ${EYEBROW} text-muted`}>Tiempo</p>
+              </div>
+            </div>
+          </section>
+
+          <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
+            <div className="flex items-center gap-3">
+              <button type="button" className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors" onClick={onBack}>
+                Atrás
+              </button>
+              <button type="button" className="flex-1 h-14 rounded-full bg-primary text-ink hover:bg-primary-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press shadow-lg shadow-primary/25 transition-colors" onClick={handleStart}>
+                Comenzar el examen <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {screen === 'exam' && (
-        <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-           <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-2">
-                 <div className={`w-3 h-3 rounded-full ${modInfo.bg}`}></div>
-                 <span className={`text-xs font-black uppercase tracking-widest ${modInfo.text}`}>{modInfo.label}</span>
-              </div>
-              <div className={`px-4 py-1.5 rounded-full border text-xs font-black font-mono tracking-wider ${secsLeft < 300 ? 'border-red-500/50 text-red-400 bg-red-500/10' : 'border-white/10 text-white/60 bg-brand-night'}`}>
-                 {Math.floor(secsLeft / 60)}:{(secsLeft % 60).toString().padStart(2, '0')}
-              </div>
-           </div>
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <span className={`w-2.5 h-2.5 rounded-full ${modInfo.bg}`} />
+              <span className={`${EYEBROW} ${modInfo.text}`}>{modInfo.label}</span>
+            </div>
+            <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12.5px] font-bold tabular-nums ${secsLeft < 300 ? 'bg-rose/20 text-error' : 'bg-cream text-ink v2-shadow-soft'}`}>
+              <Timer size={13} /> {Math.floor(secsLeft / 60)}:{(secsLeft % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
 
-           <div className="h-2 w-full bg-white/5 rounded-full mb-8 overflow-hidden">
-             <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${(cur / QS.length) * 100}%` }}></div>
-           </div>
+          <div className="h-1.5 w-full bg-sand rounded-full mb-5 overflow-hidden">
+            <div className="h-full bg-lavender rounded-full transition-all duration-300" style={{ width: `${(cur / QS.length) * 100}%` }} />
+          </div>
 
-           <div className="p-8 bg-white/5 rounded-[2rem] border border-white/10 mb-6">
-             <p className="text-sm text-white/40 font-black uppercase tracking-widest mb-4">Pregunta {cur + 1} de {QS.length}</p>
-             <h3 className="text-lg font-medium text-white mb-8 leading-relaxed">{currentQ.t}</h3>
-             
-             <div className="space-y-3">
-               {currentQ.o.map((o) => {
-                 const isSel = answers[currentQ.id] === o.l;
-                 let stClass = "bg-[#1F1F1F] border-white/5 hover:border-emerald-500/50 hover:bg-emerald-500/5 cursor-pointer text-white/80";
-                 if (hasAnswered) {
-                   stClass = "bg-[#1F1F1F] border-white/5 opacity-50 cursor-default text-white/60";
-                   if (isSel && o.ok) stClass = "bg-emerald-500/10 border-emerald-500 text-emerald-400";
-                   if (isSel && !o.ok) stClass = "bg-red-500/10 border-red-500 text-red-400";
-                   if (!isSel && o.ok) stClass = "bg-emerald-500/5 border-emerald-500/50 text-emerald-400";
-                 }
+          <section key={cur} className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-6">
+            <p className={`${EYEBROW} text-primary-deep tabular-nums`}>Pregunta {cur + 1} de {QS.length}</p>
+            <h3 className="mt-2 text-[17px] font-semibold text-ink leading-snug">{currentQ.t}</h3>
 
-                 return (
-                   <div key={o.l} onClick={() => pick(o.l)} className={`p-4 rounded-2xl border flex gap-4 transition-all ${stClass}`}>
-                     <div className={`w-6 h-6 shrink-0 rounded-full border text-[10px] font-black flex items-center justify-center
-                        ${hasAnswered ? (isSel ? (o.ok ? 'bg-emerald-500 border-emerald-500 text-brand-night' : 'bg-red-500 border-red-500 text-white') : (o.ok ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'border-white/10')) : 'border-white/20'}`}>
-                       {o.l}
-                     </div>
-                     <span className="text-sm font-medium pt-0.5">{o.t}</span>
-                   </div>
-                 );
-               })}
-             </div>
-           </div>
+            <div className="mt-6 space-y-2.5">
+              {currentQ.o.map((o) => {
+                const isSel = answers[currentQ.id] === o.l;
+                let stClass = "bg-sand text-ink cursor-pointer hover:bg-primary-light/60 v2-press";
+                let dotClass = "bg-cream text-muted";
+                if (hasAnswered) {
+                  stClass = "bg-sand text-faint cursor-default";
+                  dotClass = "bg-cream text-faint";
+                  if (isSel && o.ok) { stClass = "bg-mint-light text-mint-deep ring-2 ring-mint cursor-default"; dotClass = "bg-mint text-white"; }
+                  if (isSel && !o.ok) { stClass = "bg-rose/20 text-error ring-2 ring-rose cursor-default"; dotClass = "bg-rose text-white"; }
+                  if (!isSel && o.ok) { stClass = "bg-mint-light text-mint-deep cursor-default"; dotClass = "bg-cream text-mint-deep"; }
+                } else if (isSel) {
+                  stClass = "bg-lavender-light text-ink ring-2 ring-lavender";
+                  dotClass = "bg-ink text-white";
+                }
 
-           {hasAnswered && selectedObj && (
-             <div className={`p-5 rounded-2xl mb-6 text-sm font-medium ${selectedObj.ok ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-               <p className="font-black uppercase tracking-widest mb-1 text-[10px] opacity-80">{selectedObj.ok ? 'Correcto' : 'Incorrecto'}</p>
-               {selectedObj.r}
-             </div>
-           )}
+                return (
+                  <div key={o.l} onClick={() => pick(o.l)} className={`p-4 rounded-[1.25rem] flex gap-3.5 transition-colors duration-300 ${stClass}`}>
+                    <span className={`w-7 h-7 shrink-0 rounded-full text-[11px] font-bold flex items-center justify-center ${dotClass}`}>
+                      {hasAnswered && isSel ? (o.ok ? <Check size={13} strokeWidth={3} /> : <X size={13} strokeWidth={3} />) : o.l}
+                    </span>
+                    <span className="text-[13.5px] font-medium pt-0.5 leading-snug">{o.t}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-           <div className="flex gap-4">
-             <Button variant="ghost" className="flex-1 text-white/40 border border-white/5" onClick={() => { if(cur > 0) setCur(cur - 1); }} disabled={cur === 0}>
-               Anterior
-             </Button>
-             <Button variant="primary" className="flex-[2] bg-white text-brand-night" onClick={() => { if(cur === QS.length - 1) handleFinish(); else setCur(cur + 1); }}>
-               {cur === QS.length - 1 ? 'Finalizar Examen' : 'Siguiente'}
-             </Button>
-           </div>
-        </div>
+          {hasAnswered && selectedObj && (
+            <div className={`v2-rise mt-4 p-5 rounded-[1.5rem] text-[13.5px] font-medium leading-relaxed ${selectedObj.ok ? 'bg-mint-light text-mint-deep' : 'bg-rose/20 text-error'}`}>
+              <p className={`${EYEBROW} mb-1.5`}>{selectedObj.ok ? 'Correcto' : 'Incorrecto'}</p>
+              {selectedObj.r}
+            </div>
+          )}
+
+          <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
+            <div className="flex items-center gap-3">
+              <button type="button" className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors disabled:opacity-40" onClick={() => { if(cur > 0) setCur(cur - 1); }} disabled={cur === 0}>
+                Anterior
+              </button>
+              <button type="button" className="flex-1 h-14 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press tabular-nums" onClick={() => { if(cur === QS.length - 1) handleFinish(); else setCur(cur + 1); }}>
+                {cur === QS.length - 1 ? 'Finalizar examen' : <>Siguiente <ArrowRight size={16} /></>}
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {screen === 'results' && (
-        <div className="animate-in zoom-in-95 duration-700 text-center">
-           <div className={`w-32 h-32 mx-auto rounded-[2.5rem] flex items-center justify-center border-4 mb-8 shadow-2xl ${passed ? 'border-emerald-500 bg-emerald-500/10 shadow-emerald-500/20' : 'border-red-500 bg-red-500/10 shadow-red-500/20'}`}>
-              <div className="text-center">
-                 <p className={`text-4xl font-black ${passed ? 'text-emerald-400' : 'text-red-400'} tracking-tighter`}>{pct}%</p>
-                 <p className="text-[9px] uppercase font-black text-white/40 tracking-widest">Puntaje</p>
-              </div>
-           </div>
+        <>
+          <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-8 flex flex-col items-center text-center">
+            <div className={`w-32 h-32 rounded-[2.25rem] flex flex-col items-center justify-center mb-6 ${passed ? 'bg-mint-light text-mint-deep' : 'bg-rose/20 text-error'}`}>
+              <p className="text-[36px] font-bold tabular-nums tracking-tight leading-none">{pct}%</p>
+              <p className={`mt-1.5 ${EYEBROW} opacity-70`}>Puntaje</p>
+            </div>
 
-           <h3 className="text-3xl font-black text-white mb-2">{passed ? '¡Aprobado!' : 'No aprobado'}</h3>
-           <p className="text-white/50 text-sm font-medium mb-10">{passed ? `Obtuviste ${correctAnswers} de 25 respuestas correctas.` : 'Necesitas un 80% para aprobar.'}</p>
+            <h3 className="text-[28px] font-semibold tracking-tight text-ink">{passed ? 'Aprobado' : 'No aprobado'}</h3>
+            <p className="mt-2 text-[14px] font-medium text-muted tabular-nums">{passed ? `Obtuviste ${correctAnswers} de 25 respuestas correctas.` : 'Necesitas un 80% para aprobar.'}</p>
+          </section>
 
-           <Button variant="primary" className="w-full mb-4 shadow-xl shadow-primary/20" onClick={() => passed ? onNext() : handleStart()}>
-             {passed ? 'Continuar' : 'Reintentar Examen'}
-           </Button>
-        </div>
+          <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
+            <button type="button" className="w-full h-14 rounded-full bg-primary text-ink hover:bg-primary-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press shadow-lg shadow-primary/25 transition-colors" onClick={() => passed ? onNext() : handleStart()}>
+              {passed ? <>Continuar <ArrowRight size={16} /></> : 'Reintentar examen'}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Badge } from '@i-mendly/shared/components/Badge';
+import { ArrowRight, BadgeCheck, Loader2, User, Wrench, CalendarCheck, MessageSquareQuote, Clock } from 'lucide-react';
 import { useOnboarding } from './OnboardingContext';
+
+const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
 
 export const Step7Review: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onBack }) => {
   const { data, submitApplication } = useOnboarding();
@@ -23,80 +24,108 @@ export const Step7Review: React.FC<{ onNext: () => void; onBack: () => void }> =
 
   if (isSuccess) {
     return (
-      <div className="flex flex-col items-center text-center animate-in zoom-in-95 duration-700">
-        <div className="w-24 h-24 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-8 relative border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.15)]">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-          </svg>
-          <div className="absolute -bottom-1 -right-1 bg-emerald-500 p-2.5 rounded-full border-4 border-brand-night animate-pulse" />
-        </div>
+      <div className="flex-1 flex flex-col">
+        <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-8 flex flex-col items-center text-center">
+          <span className="w-20 h-20 rounded-[1.75rem] bg-mint-light text-mint-deep flex items-center justify-center mb-6">
+            <BadgeCheck size={34} />
+          </span>
 
-        <Badge variant="silver" className="mb-4 px-4 py-1.5 shadow-lg bg-brand-night text-white border-brand-night/50">ESTADO: EN REVISIÓN</Badge>
-        
-        <h2 className="text-4xl font-black mb-4 tracking-tighter">¡Solicitud Enviada!</h2>
-        <p className="text-white/60 text-lg mb-10 max-w-sm font-medium">
-          Estamos revisando tus documentos. Recibirás una notificación en menos de 24 horas.
-        </p>
+          <span className="inline-flex items-center h-8 px-3.5 rounded-full bg-primary-light text-primary-deep text-[12px] font-semibold mb-4">
+            Estado: en revisión
+          </span>
 
-        <div className="w-full space-y-3 mb-12">
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 text-left">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-2">Próximo paso</p>
-            <p className="text-sm font-bold text-white/80">Confirmación de Entrevista</p>
-            <p className="text-xs text-white/40 mt-1">Te enviaremos el enlace de Zoom por correo y WhatsApp.</p>
+          <h2 className="text-[30px] font-semibold tracking-tight leading-tight text-ink">Solicitud enviada</h2>
+          <p className="mt-3 text-[14px] font-medium text-muted max-w-sm">
+            Estamos revisando tus documentos. Recibirás una notificación en menos de 24 horas.
+          </p>
+
+          <div className="mt-7 w-full bg-lavender-light rounded-[1.5rem] p-5 text-left flex items-start gap-4">
+            <span className="w-11 h-11 shrink-0 rounded-[1rem] bg-cream text-ink flex items-center justify-center">
+              <Clock size={18} />
+            </span>
+            <div>
+              <p className={`${EYEBROW} text-ink/60`}>Próximo paso</p>
+              <p className="mt-1 text-[14px] font-semibold text-ink">Confirmación de entrevista</p>
+              <p className="mt-0.5 text-[12.5px] font-medium text-ink/70">Te enviaremos el enlace de Zoom por correo y WhatsApp.</p>
+            </div>
           </div>
-        </div>
 
-        <Button variant="secondary" className="w-full" onClick={() => window.location.href = '/'}>
-          Volver al inicio
-        </Button>
+          <button
+            type="button"
+            className="mt-7 w-full h-14 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press"
+            onClick={() => window.location.href = '/'}
+          >
+            Volver al inicio <ArrowRight size={16} />
+          </button>
+        </section>
       </div>
     );
   }
 
+  const rows = [
+    {
+      icon: <User size={18} />,
+      label: 'Datos personales',
+      value: data.full_name || 'Sin nombre',
+      hint: (data.email || data.phone) ? `${data.email || ''} · ${data.phone || ''}` : 'Sin datos de contacto',
+    },
+    {
+      icon: <Wrench size={18} />,
+      label: 'Especialidad',
+      value: data.main_specialty === 'otro' ? data.other_specialty_name : data.main_specialty,
+      hint: `${data.sub_services?.length} sub-servicios seleccionados`,
+      capitalize: true,
+    },
+    {
+      icon: <CalendarCheck size={18} />,
+      label: 'Entrevista agendada',
+      value: `${data.interview?.date === 'today' ? 'Hoy' : data.interview?.date} a las ${data.interview?.time}`,
+      hint: 'Videollamada de 15 min con el equipo de CX',
+    },
+    {
+      icon: <MessageSquareQuote size={18} />,
+      label: 'Recomendaciones',
+      value: data.documents?.testimonial1_name ? 'Incluidas' : 'No proporcionadas',
+      hint: data.documents?.testimonial1_name
+        ? `De ${data.documents.testimonial1_name}${data.documents.testimonial2_name ? ` y ${data.documents.testimonial2_name}` : ''}`
+        : undefined,
+    },
+  ];
+
   return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <h2 className="text-3xl font-black mb-2 tracking-tight">Resumen y Envío</h2>
-      <p className="text-white/50 mb-8 font-medium">Revisa que toda tu información sea correcta antes de enviar.</p>
+    <div className="flex-1 flex flex-col">
+      <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-6">
+        <p className="text-[14px] font-medium text-muted mb-4">Revisa que toda tu información sea correcta antes de enviar.</p>
 
-      <div className="space-y-4 mb-10">
-        <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Datos Personales</p>
-          <p className="text-white font-bold">{data.full_name || 'Sin nombre'}</p>
-          <p className="text-white/50 text-xs">{(data.email || data.phone) ? `${data.email || ''} • ${data.phone || ''}` : 'Sin datos de contacto'}</p>
+        <div className="-mx-2">
+          {rows.map((row, i) => (
+            <div key={row.label} className={`v2-rise v2-d${i + 1} flex items-start gap-4 px-2 py-4 border-b border-line last:border-b-0`}>
+              <span className="w-11 h-11 shrink-0 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center">
+                {row.icon}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className={`${EYEBROW} text-muted`}>{row.label}</p>
+                <p className={`mt-1 text-[15px] font-semibold text-ink leading-tight ${row.capitalize ? 'capitalize' : ''}`}>{row.value}</p>
+                {row.hint && <p className="mt-0.5 text-[12.5px] font-medium text-muted truncate">{row.hint}</p>}
+              </div>
+            </div>
+          ))}
         </div>
+      </section>
 
-        <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Especialidad</p>
-          <p className="text-white font-bold capitalize">{data.main_specialty === 'otro' ? data.other_specialty_name : data.main_specialty}</p>
-          <p className="text-white/50 text-xs">{data.sub_services?.length} sub-servicios seleccionados</p>
+      {/* Botonera sticky */}
+      <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={onBack} disabled={isSubmitting} className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors disabled:opacity-50">Atrás</button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="flex-1 h-14 rounded-full bg-primary text-ink hover:bg-primary-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press shadow-lg shadow-primary/25 transition-colors disabled:opacity-70"
+          >
+            {isSubmitting ? <><Loader2 size={16} className="animate-spin" /> Enviando…</> : <>Confirmar y enviar <ArrowRight size={16} /></>}
+          </button>
         </div>
-
-        <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Entrevista Agendada</p>
-          <p className="text-white font-bold">{data.interview?.date === 'today' ? 'Hoy' : data.interview?.date} a las {data.interview?.time}</p>
-        </div>
-
-        <div className="bg-white/5 p-5 rounded-[2rem] border border-white/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Recomendaciones</p>
-          <p className="text-white font-bold">
-            {data.documents?.testimonial1_name ? 'Incluidas' : 'No proporcionadas'}
-          </p>
-          {data.documents?.testimonial1_name && (
-            <p className="text-white/50 text-xs">De {data.documents.testimonial1_name}{data.documents.testimonial2_name ? ` y ${data.documents.testimonial2_name}` : ''}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex gap-4">
-        <Button variant="ghost" onClick={onBack} className="flex-1 text-white/40 hover:text-white border-white/10" disabled={isSubmitting}>Atrás</Button>
-        <Button 
-          variant="primary" 
-          onClick={handleSubmit} 
-          className="flex-[2] bg-emerald-600 hover:bg-emerald-500 border-none shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Enviando...' : 'Confirmar y Enviar'}
-        </Button>
       </div>
     </div>
   );
