@@ -11,6 +11,7 @@ import { supabase } from '../../../../lib/supabase';
 import { PROJECT_STATUS_LABELS, timingLabel, timeAgo, formatMXN, genDisplayId } from '../../../../lib/tablero';
 import { ClientNav } from '@/components/client/ClientNav';
 import { RatingPill } from '@/components/client/ui';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
   success: 'bg-mint-light text-mint-deep',
@@ -19,7 +20,7 @@ const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> =
   default: 'bg-sand text-muted',
 };
 
-export default function ProyectoDetallePage() {
+function ProyectoDetallePage() {
   const params = useParams();
   const router = useRouter();
   const [justPublished, setJustPublished] = useState(false);
@@ -399,5 +400,18 @@ export default function ProyectoDetallePage() {
 
       <ClientNav />
     </main>
+  );
+}
+
+// Requiere cuenta: el invitado ve una invitación a registrarse sin salir del flujo
+export default function ProyectoDetallePageGate() {
+  return (
+    <RequireSession
+      title="Este proyecto es privado"
+      text="Inicia sesión con la cuenta que lo publicó para ver sus ofertas."
+      image="/assets/carpentry.png"
+    >
+      <ProyectoDetallePage />
+    </RequireSession>
   );
 }

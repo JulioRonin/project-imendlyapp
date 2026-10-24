@@ -12,6 +12,7 @@ import { SegmentBar } from '@/components/client/ui';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 /** Mapea el status existente al avance del ciclo (4 segmentos). */
 const cycleDone = (status: string) => {
@@ -46,7 +47,7 @@ const statusPillClass = (status: string) => {
   return 'bg-mint-light text-mint-deep';
 };
 
-export default function OrdersDashboard() {
+function OrdersDashboard() {
   const router = useRouter();
   const [myOrders, setMyOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -110,7 +111,7 @@ export default function OrdersDashboard() {
   }, []);
 
   const handleLogout = () => {
-    router.push('/role-selection');
+    router.push('/cliente');
   };
 
   const handlePayOrder = (id: string) => {
@@ -269,5 +270,18 @@ export default function OrdersDashboard() {
 
       <ClientNav />
     </main>
+  );
+}
+
+// Requiere cuenta: el invitado ve una invitación a registrarse sin salir del flujo
+export default function OrdersDashboardGate() {
+  return (
+    <RequireSession
+      title="Tus órdenes, en un solo lugar"
+      text="Crea tu cuenta o inicia sesión para dar seguimiento a tus servicios, pagos y garantías."
+      image="/assets/plumbing.png"
+    >
+      <OrdersDashboard />
+    </RequireSession>
   );
 }

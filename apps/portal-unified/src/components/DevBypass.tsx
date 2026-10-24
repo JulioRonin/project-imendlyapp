@@ -12,11 +12,15 @@ import { DEV_BYPASS_ENABLED, DEMO_USERS, DEMO_PASSWORD, type DemoUser } from '@/
  * seed_demo.sql). Si no hay sesión posible, entra en modo demo local para
  * poder recorrer las pantallas.
  */
-export function DevBypassPanel() {
+export function DevBypassPanel({ roles }: { roles?: DemoUser['role'][] } = {}) {
   const router = useRouter();
   const login = usePlatformStore(state => state.login);
 
   if (!DEV_BYPASS_ENABLED) return null;
+
+  // Cada portal muestra solo su propio acceso: el admin nunca aparece en
+  // las pantallas de clientes o profesionales.
+  const users = roles ? DEMO_USERS.filter(u => roles.includes(u.role)) : DEMO_USERS;
 
   const enter = async (user: DemoUser) => {
     // 1. Intento de sesión real (usuarios de seed_demo.sql)
@@ -47,8 +51,8 @@ export function DevBypassPanel() {
           Acceso rápido · solo desarrollo
         </p>
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        {DEMO_USERS.map(user => (
+      <div className={`grid gap-3 ${users.length === 1 ? 'grid-cols-1' : users.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+        {users.map(user => (
           <button
             key={user.role}
             type="button"

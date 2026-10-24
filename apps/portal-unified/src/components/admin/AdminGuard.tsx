@@ -131,7 +131,7 @@ export function AdminGuard({ children }: { children: ReactNode }) {
                 </button>
               </form>
 
-              <DevBypassPanel />
+              <DevBypassPanel roles={['admin']} />
             </>
           )}
         </div>

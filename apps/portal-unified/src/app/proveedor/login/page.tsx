@@ -173,11 +173,11 @@ export default function ProfessionalLoginPage() {
             </span>
           </Link>
 
-          <DevBypassPanel />
+          <DevBypassPanel roles={['proveedor']} />
 
           <div className="v2-rise v2-d5 mt-8 flex justify-center">
-            <Link href="/role-selection" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
-              <ArrowLeft size={14} /> Volver a la selección de rol
+            <Link href="/cliente" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
+              <ArrowLeft size={14} /> Ir a I mendly para clientes
             </Link>
           </div>
         </div>

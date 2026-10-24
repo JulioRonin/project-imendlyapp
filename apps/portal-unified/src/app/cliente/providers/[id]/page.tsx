@@ -19,6 +19,7 @@ import Link from 'next/link';
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../../lib/supabase';
 import { RatingPill, Reveal } from '@/components/client/ui';
+import { AuthSheet } from '@/components/auth/AuthSheet';
 
 export default function ProviderProfile({ params }: { params: any }) {
   const router = useRouter();
@@ -216,11 +217,20 @@ export default function ProviderProfile({ params }: { params: any }) {
   const isFormValid = selectedServices.length > 0 && selectedDate !== null && selectedTime !== null &&
     (selectedServices.includes('Personalizado o Explica tu necesidad') ? customRequestText.trim().length > 0 : true);
 
-  const handleBooking = () => {
+  const [authOpen, setAuthOpen] = useState(false);
+
+  // Explorar es libre; solicitar exige cuenta (se pide aquí, en el momento).
+  const handleBooking = async () => {
     if (!isFormValid) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setAuthOpen(true); return; }
+    goToCheckout();
+  };
+
+  const goToCheckout = () => {
     const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
     const services = [...selectedServices, customRequestText ? `(Custom: ${customRequestText})` : ''].filter(Boolean).join(',');
-    router.push(`/cliente/checkout?providerId=${id}&services=${encodeURIComponent(services)}&total=${totalPrice}&date=${dateStr}&time=${encodeURIComponent(selectedTime)}`);
+    router.push(`/cliente/checkout?providerId=${id}&services=${encodeURIComponent(services)}&total=${totalPrice}&date=${dateStr}&time=${encodeURIComponent(selectedTime ?? "")}`);
   };
 
   if (isLoading) {
@@ -732,6 +742,12 @@ export default function ProviderProfile({ params }: { params: any }) {
           </button>
         </div>
       </div>
+      <AuthSheet
+        open={authOpen}
+        reason="Crea tu cuenta para solicitar este servicio"
+        onClose={() => setAuthOpen(false)}
+        onAuthed={() => { setAuthOpen(false); goToCheckout(); }}
+      />
     </main>
   );
 }

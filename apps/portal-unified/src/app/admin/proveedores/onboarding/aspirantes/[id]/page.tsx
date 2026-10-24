@@ -341,30 +341,106 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
               </SectionCard>
 
               <SectionCard eyebrow="Expediente" title="Documentación" className="v2-rise v2-d4">
-                <div className="divide-y divide-line">
-                  {candidate.documents ? Object.entries(candidate.documents).map(([key, val]: any) => {
-                    const received = Boolean(val);
-                    return (
-                      <button key={key} className="w-full flex items-center justify-between gap-3 py-3.5 text-left group v2-press">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`w-9 h-9 shrink-0 rounded-[0.8rem] flex items-center justify-center ${received ? 'bg-mint-light text-mint-deep' : 'bg-sand text-faint'}`}>
-                            <FileText size={15} />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-[13.5px] font-semibold text-ink capitalize truncate">{key.replace(/_/g, ' ')}</p>
-                            <p className={`text-[11.5px] font-semibold ${received ? 'text-mint-deep' : 'text-muted'}`}>{received ? 'Recibido' : 'Pendiente'}</p>
-                          </div>
-                        </div>
-                        <Download size={15} className="shrink-0 text-faint group-hover:text-ink transition-colors" />
-                      </button>
-                    );
-                  }) : <p className="text-[13px] font-medium text-faint text-center py-4">Sin documentos</p>}
-                </div>
+                <DocumentsPanel documents={candidate.documents} />
               </SectionCard>
             </aside>
           </div>
         </div>
       </div>
     </main>
+  );
+}
+
+// ── Expediente: archivos privados con enlace temporal ─────────
+const DOC_LABELS: Record<string, string> = {
+  profile_photo: 'Foto de perfil',
+  ine_front: 'INE · frente',
+  ine_back: 'INE · reverso',
+  selfie_ine: 'Selfie con INE',
+  antecedentes: 'Antecedentes no penales',
+  domicilio: 'Comprobante de domicilio',
+  portafolio: 'Portafolio',
+  certificaciones: 'Certificaciones',
+};
+
+function DocumentsPanel({ documents }: { documents: any }) {
+  const [opening, setOpening] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!documents) return <p className="text-[13px] font-medium text-faint text-center py-4">Sin documentos</p>;
+
+  const files: Record<string, string | string[]> = documents.files || {};
+  const hasFiles = Object.keys(files).length > 0;
+
+  // Enlace firmado de 5 minutos: el bucket es privado y nunca se exponen URLs permanentes
+  const open = async (path: string) => {
+    setError(null);
+    setOpening(path);
+    const { data, error } = await supabase.storage.from('onboarding-docs').createSignedUrl(path, 300);
+    setOpening(null);
+    if (error || !data?.signedUrl) { setError('No se pudo abrir el archivo. Revisa que tu cuenta sea admin.'); return; }
+    window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <div className="space-y-4">
+      {(documents.curp || documents.rfc) && (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3.5 rounded-[1.1rem] bg-sand">
+            <p className={EYEBROW}>CURP</p>
+            <p className="mt-1 text-[13px] font-semibold text-ink tabular-nums break-all">{documents.curp || '—'}</p>
+          </div>
+          <div className="p-3.5 rounded-[1.1rem] bg-sand">
+            <p className={EYEBROW}>RFC</p>
+            <p className="mt-1 text-[13px] font-semibold text-ink tabular-nums break-all">{documents.rfc || '—'}</p>
+          </div>
+        </div>
+      )}
+
+      {hasFiles ? (
+        <div className="divide-y divide-line">
+          {Object.entries(DOC_LABELS).map(([key, label]) => {
+            const value = files[key];
+            const paths = Array.isArray(value) ? value : value ? [value] : [];
+            return (
+              <div key={key} className="py-3.5">
+                <div className="flex items-center gap-3">
+                  <span className={`w-9 h-9 shrink-0 rounded-[0.8rem] flex items-center justify-center ${paths.length ? 'bg-mint-light text-mint-deep' : 'bg-sand text-faint'}`}>
+                    <FileText size={15} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13.5px] font-semibold text-ink truncate">{label}</p>
+                    <p className={`text-[11.5px] font-semibold ${paths.length ? 'text-mint-deep' : 'text-muted'}`}>
+                      {paths.length ? `${paths.length} archivo(s)` : 'No entregado'}
+                    </p>
+                  </div>
+                </div>
+                {paths.length > 0 && (
+                  <div className="mt-2.5 pl-12 flex flex-wrap gap-2">
+                    {paths.map((p, i) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => open(p)}
+                        disabled={opening === p}
+                        className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-sand text-[11.5px] font-semibold text-ink hover:bg-primary-light v2-press disabled:opacity-60"
+                      >
+                        <Download size={12} /> {opening === p ? 'Abriendo…' : paths.length > 1 ? `Ver ${i + 1}` : 'Ver'}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        // Solicitudes anteriores a la subida real de archivos: solo había nombres
+        <p className="p-4 rounded-[1.1rem] bg-sand text-[12.5px] font-medium text-muted">
+          Esta solicitud es anterior a la carga segura de documentos y no tiene archivos adjuntos. Pídelos al aspirante.
+        </p>
+      )}
+      {error && <p className="text-[12px] font-semibold text-error">{error}</p>}
+    </div>
   );
 }

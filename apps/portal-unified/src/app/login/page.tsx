@@ -9,6 +9,8 @@ import { usePlatformStore } from "@/store/usePlatformStore";
 
 import { supabase } from "@/lib/supabase";
 import { DevBypassPanel } from "@/components/DevBypass";
+import { LegalConsent } from "@/components/legal/LegalConsent";
+import { LEGAL_LINKS, legalMetadata } from "@/lib/legal";
 
 const INPUT_CLS =
   "w-full h-14 px-5 bg-sand rounded-[1.25rem] border-0 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-lavender/60";
@@ -22,6 +24,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [accepted, setAccepted] = useState(false);
   const login = usePlatformStore(state => state.login);
 
   const fetchUserWithRetry = async (user: any, retries = 5, delay = 500) => {
@@ -78,22 +82,24 @@ export default function LoginPage() {
 
         login(email, userData.role as any);
 
-        if (userData.role === 'provider') {
-          router.push("/proveedor");
-        } else if (userData.role === 'admin') {
-          router.push("/admin");
-        } else {
-          router.push("/cliente");
-        }
+        // El acceso de clientes nunca conduce al panel del equipo
+        router.push(userData.role === 'provider' ? "/proveedor" : "/cliente");
       } else {
         // REGISTER
+        if (!accepted) {
+          setError("Para crear tu cuenta debes aceptar los Términos y el Aviso de privacidad.");
+          return;
+        }
         const { data, error: authError } = await supabase.auth.signUp({
           email,
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/cliente`,
             data: {
               full_name: fullName,
               role: 'client',
+              // Evidencia del consentimiento (la registra el trigger de alta)
+              legal: legalMetadata(['terminos_clientes', 'aviso_privacidad']),
             }
           }
         });
@@ -107,7 +113,7 @@ export default function LoginPage() {
           router.push("/cliente");
         } else {
           // Confirm email if needed
-          alert("¡Registro exitoso! Por favor verifica tu correo electrónico para activar tu cuenta.");
+          setNotice(`Te enviamos un enlace a ${email}. Confírmalo para activar tu cuenta y después inicia sesión.`);
           setIsLogin(true);
         }
       }
@@ -220,9 +226,21 @@ export default function LoginPage() {
               />
             </div>
 
+            {!isLogin && (
+              <LegalConsent id="login-legal" checked={accepted} onChange={setAccepted}>
+                Soy mayor de 18 años y acepto los{' '}
+                <Link href={LEGAL_LINKS.terminos} target="_blank">Términos y condiciones</Link> y el{' '}
+                <Link href={LEGAL_LINKS.privacidad} target="_blank">Aviso de privacidad</Link> de I mendly.
+              </LegalConsent>
+            )}
+
+            {notice && (
+              <p className="p-4 rounded-[1.25rem] bg-mint-light text-mint-deep text-[13px] font-semibold text-center">{notice}</p>
+            )}
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (!isLogin && !accepted)}
               className="mt-2 w-full h-14 rounded-full bg-ink text-on-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-60"
             >
               {loading ? (
@@ -259,16 +277,21 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <DevBypassPanel />
+          <DevBypassPanel roles={['cliente']} />
 
           <p className="v2-rise v2-d4 mt-8 text-center text-[12px] font-medium text-faint leading-relaxed">
-            Al continuar, confirmas que aceptas nuestros{' '}
-            <span className="text-ink font-semibold cursor-pointer hover:underline underline-offset-4">Términos y condiciones</span>
+            Consulta los{' '}
+            <Link href={LEGAL_LINKS.terminos} className="text-ink font-semibold hover:underline underline-offset-4">Términos y condiciones</Link>
+            {' '}y el{' '}
+            <Link href={LEGAL_LINKS.privacidad} className="text-ink font-semibold hover:underline underline-offset-4">Aviso de privacidad</Link>.
           </p>
 
-          <div className="v2-rise v2-d5 mt-6 flex justify-center">
-            <Link href="/role-selection" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
-              <ArrowLeft size={14} /> Volver a la selección de rol
+          <div className="v2-rise v2-d5 mt-6 flex flex-col items-center gap-3">
+            <Link href="/cliente" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
+              <ArrowLeft size={14} /> Seguir explorando sin cuenta
+            </Link>
+            <Link href="/proveedor/login" className="text-[12.5px] font-semibold text-faint hover:text-ink transition-colors">
+              ¿Eres profesional? Entra a tu portal
             </Link>
           </div>
         </div>

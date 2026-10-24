@@ -11,11 +11,12 @@ import { ClientNav } from '@/components/client/ClientNav';
 import { Reveal } from '@/components/client/ui';
 
 import { supabase } from '@/lib/supabase';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 const inputCls =
   'w-full h-14 px-5 rounded-[1.25rem] bg-sand text-ink text-[14px] font-semibold placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow disabled:text-muted';
 
-export default function ClientProfilePage() {
+function ClientProfilePage() {
   const router = useRouter();
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [isAddingPayment, setIsAddingPayment] = useState(false);
@@ -42,7 +43,7 @@ export default function ClientProfilePage() {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push('/login');
+        router.push('/cliente');
         return;
       }
       setUserId(user.id);
@@ -88,7 +89,7 @@ export default function ClientProfilePage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push('/cliente');
   };
 
   const handleSaveInfo = async () => {
@@ -545,5 +546,18 @@ export default function ClientProfilePage() {
 
       <ClientNav />
     </main>
+  );
+}
+
+// Requiere cuenta: el invitado ve una invitación a registrarse sin salir del flujo
+export default function ClientProfilePageGate() {
+  return (
+    <RequireSession
+      title="Tu perfil I mendly"
+      text="Inicia sesión para administrar tus datos, direcciones y preferencias."
+      image="/assets/provider_dashboard_hero.png"
+    >
+      <ClientProfilePage />
+    </RequireSession>
   );
 }

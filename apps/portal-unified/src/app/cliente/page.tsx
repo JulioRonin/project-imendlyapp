@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   BadgeCheck,
   Star,
+  Briefcase,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,9 @@ import { supabase } from '@/lib/supabase';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { ClientNav } from '@/components/client/ClientNav';
 import { Reveal } from '@/components/client/ui';
+import { useSession } from '@/hooks/useSession';
+import { AuthSheet } from '@/components/auth/AuthSheet';
+import { LEGAL_LINKS } from '@/lib/legal';
 
 // Oficios con su fotografía editorial (banco de imágenes del proyecto)
 const TRADES = [
@@ -60,6 +64,8 @@ export default function ClientHome() {
   const [featured, setFeatured] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('Todos');
   const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const { user } = useSession();
+  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -97,9 +103,10 @@ export default function ClientHome() {
       if (data) setFeatured(data);
     };
 
+    if (!user) { setFirstName(null); setProfileIncomplete(false); }
     checkProfile();
     fetchFeatured();
-  }, []);
+  }, [user]);
 
   const handleSearch = (term?: string) => {
     const finalTerm = term || searchTerm;
@@ -108,9 +115,9 @@ export default function ClientHome() {
     }
   };
 
+  // Cerrar sesión deja al usuario explorando como invitado
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
   };
 
   const handleLocate = () => {
@@ -155,6 +162,11 @@ export default function ClientHome() {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* ── Barra superior ── */}
         <div className="v3-blur-in flex items-center justify-between pt-7">
+          {!user ? (
+            <button onClick={() => setAuthOpen(true)} className="h-10 px-5 rounded-full bg-[#111111] text-white text-[12.5px] font-bold v2-press">
+              Entrar
+            </button>
+          ) : (
           <div className="group relative flex items-center gap-3">
             <Avatar name={firstName || 'Cliente'} size="md" className="cursor-pointer ring-4 ring-white" />
             <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-[1.25rem] v2-shadow-float p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
@@ -166,6 +178,7 @@ export default function ClientHome() {
               </button>
             </div>
           </div>
+          )}
           <div className="flex items-center gap-2">
             <button onClick={handleLocate} className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/70 text-[12px] font-semibold text-[#111111] v2-press">
               {isLocating ? <Navigation size={13} className="animate-spin text-primary-deep" /> : <MapPin size={13} className="text-primary-deep" />}
@@ -371,7 +384,7 @@ export default function ClientHome() {
             <img src="/assets/provider_dashboard_hero.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-[#111111]/20" />
             <div className="absolute inset-4 md:inset-6 glass rounded-[1.9rem] p-6 md:p-8 flex items-center gap-5">
-              <span className="w-14 h-14 shrink-0 rounded-full bg-[#111111] text-primary-deep flex items-center justify-center">
+              <span className="w-14 h-14 shrink-0 rounded-full bg-[#111111] text-primary flex items-center justify-center">
                 <ShieldCheck size={26} />
               </span>
               <div>
@@ -381,8 +394,45 @@ export default function ClientHome() {
             </div>
           </div>
         </Reveal>
+
+        {/* ── Acceso al portal de profesionales ── */}
+        <Reveal className="mt-10">
+          <Link href="/proveedor/onboarding" className="group relative block overflow-hidden rounded-[2.5rem] v3-night-grad text-on-dark p-7 md:p-10 v2-press">
+            <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
+            <div className="relative flex flex-col md:flex-row md:items-center gap-6">
+              <span className="w-14 h-14 shrink-0 rounded-[1.15rem] bg-on-dark/10 text-primary flex items-center justify-center">
+                <Briefcase size={24} />
+              </span>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-lavender">¿Eres profesional?</p>
+                <h3 className="mt-1.5 text-[22px] md:text-[26px] font-semibold tracking-tight leading-tight">Ofrece tu oficio en I mendly</h3>
+                <p className="mt-1.5 text-[13.5px] font-medium text-on-dark/60 max-w-lg">Clientes reales en tu zona, anticipo protegido y cobro al día siguiente. Postúlate y certifícate.</p>
+              </div>
+              <span className="shrink-0 h-12 px-5 rounded-full bg-primary text-[#111111] text-[13px] font-bold flex items-center gap-2 transition-transform group-hover:translate-x-0.5">
+                Postularme <ArrowUpRight size={16} />
+              </span>
+            </div>
+          </Link>
+        </Reveal>
+
+        {/* ── Pie legal ── */}
+        <footer className="mt-12 pt-8 border-t border-line flex flex-col md:flex-row md:items-center justify-between gap-4 text-[12px] font-medium text-faint">
+          <p>© {new Date().getFullYear()} I mendly · Ciudad Juárez, Chihuahua</p>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href={LEGAL_LINKS.terminos} className="hover:text-ink transition-colors">Términos y condiciones</Link>
+            <Link href={LEGAL_LINKS.privacidad} className="hover:text-ink transition-colors">Aviso de privacidad</Link>
+            <Link href={LEGAL_LINKS.garantia} className="hover:text-ink transition-colors">Garantía</Link>
+            <Link href={LEGAL_LINKS.profesionales} className="hover:text-ink transition-colors">Términos para profesionales</Link>
+          </nav>
+        </footer>
       </div>
 
+      <AuthSheet
+        open={authOpen}
+        initialMode="login"
+        onClose={() => setAuthOpen(false)}
+        onAuthed={() => setAuthOpen(false)}
+      />
       <ClientNav />
     </main>
   );

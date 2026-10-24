@@ -19,6 +19,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { Logo } from '@i-mendly/shared/Logo';
+import { supabase } from '@/lib/supabase';
 
 const cn = (...classes: (any)[]) => classes.filter(Boolean).join(' ');
 
@@ -117,7 +118,7 @@ export function ProviderSidebar() {
           </div>
 
           <button
-            onClick={() => window.location.href = '/role-selection'}
+            onClick={async () => { await supabase.auth.signOut(); window.location.href = '/proveedor/login'; }}
             className="w-full h-12 flex items-center gap-3.5 px-4 rounded-[1.15rem] text-[13px] font-semibold text-error/80 hover:text-error hover:bg-error/5 transition-colors v2-press"
           >
             <LogOut size={18} className="shrink-0" />

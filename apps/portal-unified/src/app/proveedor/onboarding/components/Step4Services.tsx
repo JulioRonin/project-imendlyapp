@@ -1,8 +1,9 @@
 "use client";
 
 import React from 'react';
-import { ArrowRight, Check, MapPin } from 'lucide-react';
+import { Check, MapPin } from 'lucide-react';
 import { useOnboarding } from './OnboardingContext';
+import { WizardFooter } from './WizardParts';
 
 const LABEL_CLS = 'block text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-3';
 const INPUT_CLS = 'w-full h-14 px-5 bg-sand rounded-[1.25rem] border-0 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow';
@@ -124,7 +125,10 @@ export const Step4Services: React.FC<{ onNext: () => void; onBack: () => void }>
 
   const selectedSub = data.sub_services || [];
   const selectedZones = data.zones || [];
-  const availability = data.availability || { days: ['L', 'M', 'X', 'J', 'V'], startTime: '08:00', endTime: '18:00', useGeofence: false };
+  const availability = {
+    days: ['L', 'M', 'X', 'J', 'V'], startTime: '08:00', endTime: '18:00', useGeofence: false,
+    ...(data.availability || {}),
+  };
 
   const handleSubToggle = (sub: string) => {
     const newSubs = selectedSub.includes(sub) ? selectedSub.filter(x => x !== sub) : [...selectedSub, sub];
@@ -143,6 +147,20 @@ export const Step4Services: React.FC<{ onNext: () => void; onBack: () => void }>
   };
 
   const isOther = data.main_specialty === 'otro';
+
+  const missing =
+    !data.main_specialty ? 'Elige tu categoría principal' :
+    isOther && (data.other_specialty_name || '').trim().length < 3 ? 'Escribe el nombre de tu especialidad' :
+    isOther && (data.other_specialty_description || '').trim().length < 20 ? 'Describe tus servicios (mínimo 20 caracteres)' :
+    !isOther && selectedSub.length === 0 ? 'Marca al menos un servicio que ofreces' :
+    !availability.useGeofence && selectedZones.length === 0 ? 'Elige al menos una zona de cobertura' :
+    (availability.days || []).length === 0 ? 'Elige al menos un día laboral' : '';
+
+  // Guarda los valores por defecto del horario aunque no se toquen
+  const next = () => {
+    updateData({ availability });
+    onNext();
+  };
 
   return (
     <div className="flex-1 flex flex-col space-y-5">
@@ -312,19 +330,7 @@ export const Step4Services: React.FC<{ onNext: () => void; onBack: () => void }>
         </div>
       </section>
 
-      {/* Botonera sticky */}
-      <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
-        <div className="flex items-center gap-3">
-          <button type="button" onClick={onBack} className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors">Atrás</button>
-          <button
-            type="button"
-            onClick={onNext}
-            className="flex-1 h-14 rounded-full bg-primary text-ink hover:bg-primary-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press shadow-lg shadow-primary/25 transition-colors"
-          >
-            Continuar <ArrowRight size={16} />
-          </button>
-        </div>
-      </div>
+      <WizardFooter onBack={onBack} onNext={next} canNext={!missing} missing={missing} />
     </div>
   );
 };

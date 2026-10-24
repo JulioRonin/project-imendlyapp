@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { ProviderSidebar } from './components/Sidebar';
+import { ProviderGuard } from '@/components/provider/ProviderGuard';
 
 export const metadata: Metadata = {
-  title: 'Portal de Proveedores - I Mendly',
-  description: 'Panel de control para proveedores de servicios I Mendly',
+  title: 'Profesionales · I mendly',
+  description: 'Portal de profesionales certificados I mendly',
 };
 
 export default function ProviderLayout({
@@ -11,12 +12,16 @@ export default function ProviderLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Solo profesionales certificados entran al portal (ver ProviderGuard);
+  // el login y el onboarding quedan abiertos para poder postularse.
   return (
     <div className="flex min-h-screen bg-linen">
-      <ProviderSidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {children}
-      </div>
+      <ProviderGuard>
+        <ProviderSidebar />
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {children}
+        </div>
+      </ProviderGuard>
     </div>
   );
 }

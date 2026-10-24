@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../lib/supabase';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 type PaymentStep = 'selection' | 'details';
 type PaymentMethod = 'stripe' | 'conekta_spei' | 'conekta_oxxo';
@@ -434,7 +435,13 @@ function CheckoutPage() {
 export default function CheckoutPageWrapper() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-linen" />}>
-      <CheckoutPage />
+      <RequireSession
+        title="Casi listo para solicitar"
+        text="Crea tu cuenta para continuar: así tu anticipo y tu pago quedan protegidos por la Garantía I mendly."
+        showNav={false}
+      >
+        <CheckoutPage />
+      </RequireSession>
     </Suspense>
   );
 }
