@@ -20,7 +20,7 @@ const METHOD_OPTIONS: { id: PaymentMethod; icon: typeof CreditCard; title: strin
 ];
 
 const inputCls =
-  'w-full h-14 px-5 rounded-[1.25rem] bg-[#FFFFFF] text-[#111111] text-[14px] font-semibold placeholder:text-[#A39E97] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow';
+  'w-full h-14 px-5 rounded-[1.25rem] bg-sand text-ink text-[14px] font-semibold placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow';
 
 function CheckoutPage() {
   const router = useRouter();
@@ -156,18 +156,18 @@ function CheckoutPage() {
             onClick={() => setMethod(opt.id)}
             className={`v2-rise v2-d${i + 1} w-full p-5 rounded-[1.75rem] flex items-center gap-4 text-left v2-press transition-all ${
               active
-                ? 'bg-[#FFD0B4]/70 ring-2 ring-primary v2-shadow-lift'
-                : 'bg-white v2-shadow-soft'
+                ? 'bg-primary-light/70 ring-2 ring-primary v2-shadow-lift'
+                : 'bg-cream v2-shadow-soft'
             }`}
           >
             <span className={`w-12 h-12 shrink-0 rounded-[1.05rem] flex items-center justify-center transition-colors ${
-              active ? 'bg-primary text-ink' : 'bg-[#FFD0B4] text-primary-deep'
+              active ? 'bg-primary text-ink' : 'bg-primary-light text-primary-deep'
             }`}>
               <opt.icon size={22} />
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[14.5px] font-semibold text-[#111111] tracking-tight">{opt.title}</span>
-              <span className="block text-[12.5px] font-medium text-[#6F6B66]">{opt.caption}</span>
+              <span className="block text-[14.5px] font-semibold text-ink tracking-tight">{opt.title}</span>
+              <span className="block text-[12.5px] font-medium text-muted">{opt.caption}</span>
             </span>
             {active && (
               <span className="w-6 h-6 shrink-0 rounded-full bg-primary text-ink flex items-center justify-center">
@@ -184,30 +184,30 @@ function CheckoutPage() {
     switch (method) {
       case 'stripe':
         return (
-          <div className="v2-rise bg-white p-7 rounded-[1.75rem] v2-shadow-soft space-y-5">
+          <div className="v2-rise bg-cream p-7 rounded-[1.75rem] v2-shadow-soft space-y-5">
             <div className="flex items-center gap-3.5">
-              <span className="w-11 h-11 rounded-[1.05rem] bg-[#FFD0B4] text-primary-deep flex items-center justify-center">
+              <span className="w-11 h-11 rounded-[1.05rem] bg-primary-light text-primary-deep flex items-center justify-center">
                 <CreditCard size={20} />
               </span>
-              <h3 className="text-[16px] font-semibold tracking-tight text-[#111111]">Datos de tarjeta</h3>
+              <h3 className="text-[16px] font-semibold tracking-tight text-ink">Datos de tarjeta</h3>
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-2 ml-1">Número de tarjeta</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-2 ml-1">Número de tarjeta</p>
                 <input placeholder="0000 0000 0000 0000" className={inputCls} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-2 ml-1">Expiración</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-2 ml-1">Expiración</p>
                   <input placeholder="MM / YY" className={inputCls} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-2 ml-1">CVC</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-2 ml-1">CVC</p>
                   <input placeholder="123" className={inputCls} />
                 </div>
               </div>
             </div>
-            <p className="flex items-center gap-2 text-[12px] text-[#6F6B66] font-medium">
+            <p className="flex items-center gap-2 text-[12px] text-muted font-medium">
               <ShieldCheck size={14} className="text-primary-deep" />
               Encriptado con SSL de 256 bits
             </p>
@@ -215,52 +215,52 @@ function CheckoutPage() {
         );
       case 'conekta_spei':
         return (
-          <div className="v2-rise bg-white p-7 rounded-[1.75rem] v2-shadow-soft space-y-5">
-            <div className="bg-amber-50 p-5 rounded-[1.25rem] flex gap-3.5">
-              <Info size={18} className="text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-[13px] text-amber-700 font-medium leading-relaxed">
+          <div className="v2-rise bg-cream p-7 rounded-[1.75rem] v2-shadow-soft space-y-5">
+            <div className="bg-primary-light p-5 rounded-[1.25rem] flex gap-3.5">
+              <Info size={18} className="text-warning shrink-0 mt-0.5" />
+              <p className="text-[13px] text-warning font-medium leading-relaxed">
                 Realiza la transferencia exacta desde tu banca móvil. El servicio se confirmará automáticamente al recibir los fondos.
               </p>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FFFFFF]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-sand">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-1">Banco receptor</p>
-                  <p className="text-[14px] font-semibold text-[#111111]">STP (Sistema de Transf.)</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-1">Banco receptor</p>
+                  <p className="text-[14px] font-semibold text-ink">STP (Sistema de Transf.)</p>
                 </div>
-                <Copy size={16} className="text-[#A39E97] hover:text-primary-deep cursor-pointer transition-colors" />
+                <Copy size={16} className="text-faint hover:text-primary-deep cursor-pointer transition-colors" />
               </div>
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FFFFFF]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-sand">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-1">CLABE interbancaria</p>
-                  <p className="text-[14px] font-semibold text-[#111111] tabular-nums">6461 8011 2400 0000 01</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-1">CLABE interbancaria</p>
+                  <p className="text-[14px] font-semibold text-ink tabular-nums">6461 8011 2400 0000 01</p>
                 </div>
-                <Copy size={16} className="text-[#A39E97] hover:text-primary-deep cursor-pointer transition-colors" />
+                <Copy size={16} className="text-faint hover:text-primary-deep cursor-pointer transition-colors" />
               </div>
-              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-[#FFFFFF]">
+              <div className="flex justify-between items-center p-5 rounded-[1.25rem] bg-sand">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97] mb-1">Concepto</p>
-                  <p className="text-[14px] font-semibold text-[#111111]">PAGO IMENDLY {provider.name.split(' ')[0]}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint mb-1">Concepto</p>
+                  <p className="text-[14px] font-semibold text-ink">PAGO IMENDLY {provider.name.split(' ')[0]}</p>
                 </div>
-                <Copy size={16} className="text-[#A39E97] hover:text-primary-deep cursor-pointer transition-colors" />
+                <Copy size={16} className="text-faint hover:text-primary-deep cursor-pointer transition-colors" />
               </div>
             </div>
           </div>
         );
       case 'conekta_oxxo':
         return (
-          <div className="v2-rise bg-white p-7 rounded-[1.75rem] v2-shadow-soft space-y-7 text-center">
+          <div className="v2-rise bg-cream p-7 rounded-[1.75rem] v2-shadow-soft space-y-7 text-center">
             <div className="space-y-4">
-              <span className="w-20 h-20 rounded-[1.5rem] bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+              <span className="w-20 h-20 rounded-[1.5rem] bg-rose/15 text-error flex items-center justify-center mx-auto">
                 <ShoppingBag size={32} strokeWidth={1.8} />
               </span>
-              <h3 className="text-[18px] font-semibold tracking-tight text-[#111111]">Ficha de pago OXXO</h3>
+              <h3 className="text-[18px] font-semibold tracking-tight text-ink">Ficha de pago OXXO</h3>
             </div>
 
-            <div className="py-7 border-y border-black/[0.06] space-y-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">Referencia de pago</p>
-              <div className="bg-[#FFFFFF] p-5 rounded-[1.25rem]">
-                <p className="text-[22px] font-bold text-[#111111] tracking-[0.14em] tabular-nums">1234-5678-9012-34</p>
+            <div className="py-7 border-y border-line space-y-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint">Referencia de pago</p>
+              <div className="bg-sand p-5 rounded-[1.25rem]">
+                <p className="text-[22px] font-bold text-ink tracking-[0.14em] tabular-nums">1234-5678-9012-34</p>
               </div>
               {/* Simulated barcode */}
               <div className="flex gap-1 justify-center h-14 opacity-30 mt-5">
@@ -268,12 +268,12 @@ function CheckoutPage() {
                   <div key={i} className="bg-black h-full rounded-sm" style={{ width: `${w * 2}px` }} />
                 ))}
               </div>
-              <p className="text-[11px] font-medium text-[#A39E97]">Válido por 48 horas</p>
+              <p className="text-[11px] font-medium text-faint">Válido por 48 horas</p>
             </div>
 
             <div className="text-left space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111] mb-2">Instrucciones</p>
-              <ol className="text-[13px] text-[#6F6B66] font-medium space-y-2 list-decimal ml-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink mb-2">Instrucciones</p>
+              <ol className="text-[13px] text-muted font-medium space-y-2 list-decimal ml-4">
                 <li>Dicta la referencia al cajero o muestra esta pantalla.</li>
                 <li>Realiza el pago en efectivo (se cobra comisión externa en OXXO).</li>
                 <li>Conserva tu comprobante de pago.</li>
@@ -286,10 +286,10 @@ function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF8F4]">
+      <div className="min-h-screen flex items-center justify-center bg-linen">
         <div className="text-center animate-pulse">
           <Logo size={48} className="mx-auto mb-4" />
-          <p className="text-[13px] font-semibold text-[#6F6B66]">Cargando checkout…</p>
+          <p className="text-[13px] font-semibold text-muted">Cargando checkout…</p>
         </div>
       </div>
     );
@@ -297,15 +297,15 @@ function CheckoutPage() {
 
   if (!provider) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF8F4]">
+      <div className="min-h-screen flex items-center justify-center bg-linen">
         <div className="text-center px-8">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#111111] mb-3">Servicio no encontrado</h1>
-          <p className="text-[14px] font-medium text-[#6F6B66] mb-8 max-w-xs mx-auto">
+          <h1 className="text-[22px] font-semibold tracking-tight text-ink mb-3">Servicio no encontrado</h1>
+          <p className="text-[14px] font-medium text-muted mb-8 max-w-xs mx-auto">
             El enlace es inválido o el profesional ya no está disponible.
           </p>
           <button
             onClick={() => router.push('/cliente')}
-            className="h-14 px-8 rounded-full bg-primary text-ink text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+            className="h-14 px-8 rounded-full bg-primary text-ink text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors"
           >
             Ir al inicio
           </button>
@@ -315,14 +315,14 @@ function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAF8F4] pb-12">
+    <main className="min-h-screen bg-linen pb-12">
       {/* ── Header interno v2 ── */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#FAF8F4]/85 backdrop-blur-xl">
+      <header className="v3-blur-in sticky top-0 z-50 bg-linen/85 backdrop-blur-xl">
         <div className="max-w-md mx-auto px-6 py-5 flex items-center gap-4">
           <button
             onClick={() => step === 'details' ? setStep('selection') : router.back()}
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#111111] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-cream v2-shadow-soft flex items-center justify-center text-ink v2-press"
           >
             <ArrowLeft size={19} />
           </button>
@@ -330,7 +330,7 @@ function CheckoutPage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">
               {step === 'selection' ? 'Resumen de contratación' : 'Finalizar transacción'}
             </p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">
+            <h1 className="text-[22px] font-semibold tracking-tight text-ink leading-tight">
               {step === 'selection' ? 'Selección de pago' : 'Detalles de pago'}
             </h1>
           </div>
@@ -339,39 +339,39 @@ function CheckoutPage() {
 
       <div className="max-w-md mx-auto px-6 mt-2 space-y-6">
         {/* ── Resumen — tarjeta ink con total protagonista ── */}
-        <section className="v2-rise v2-d1 relative overflow-hidden rounded-[2.25rem] bg-[#111111] text-white p-7 v2-shadow-float">
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
+        <section className="v2-rise v2-d1 relative overflow-hidden rounded-[2.25rem] v3-night-grad text-on-dark p-7 v2-shadow-float">
+          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
 
           <div className="relative">
             <div className="flex items-center gap-3.5 mb-6">
-              <Avatar src={(provider as any).image} name={provider.name} size="md" className="ring-2 ring-white/15" />
+              <Avatar src={(provider as any).image} name={provider.name} size="md" className="ring-2 ring-on-dark/15" />
               <div className="min-w-0">
                 <h3 className="text-[15px] font-semibold tracking-tight truncate">{provider.name}</h3>
-                <p className="text-[12px] font-medium text-white/50">{provider.categories?.[0] || 'Servicio'}</p>
+                <p className="text-[12px] font-medium text-on-dark/50">{provider.categories?.[0] || 'Servicio'}</p>
               </div>
             </div>
 
             {/* Desglose */}
-            <div className="space-y-2.5 border-t border-white/10 pt-5 mb-6">
+            <div className="space-y-2.5 border-t border-on-dark/10 pt-5 mb-6">
               {selectedServices.length > 0 ? (
                 selectedServices.map((s, i) => {
                   const service = (provider.services || []).find((ps: any) => ps.name === s);
                   return (
                     <div key={i} className="flex justify-between items-center gap-4">
-                      <span className="text-[13px] font-medium text-white/50 truncate">{s}</span>
-                      <span className="text-[13.5px] font-semibold text-white tabular-nums">${service?.price || 0}</span>
+                      <span className="text-[13px] font-medium text-on-dark/50 truncate">{s}</span>
+                      <span className="text-[13.5px] font-semibold text-on-dark tabular-nums">${service?.price || 0}</span>
                     </div>
                   );
                 })
               ) : (
                 <div className="flex justify-between items-center gap-4">
-                  <span className="text-[13px] font-medium text-white/50">Reserva de servicio</span>
-                  <span className="text-[13.5px] font-semibold text-white tabular-nums">${provider.price}</span>
+                  <span className="text-[13px] font-medium text-on-dark/50">Reserva de servicio</span>
+                  <span className="text-[13.5px] font-semibold text-on-dark tabular-nums">${provider.price}</span>
                 </div>
               )}
             </div>
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Total a pagar</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary mb-2">Total a pagar</p>
             <p className="text-[44px] font-bold tracking-tight leading-none tabular-nums">${basePrice}</p>
           </div>
         </section>
@@ -380,13 +380,13 @@ function CheckoutPage() {
         {step === 'selection' ? renderSelection() : renderDetails()}
 
         {/* ── Protección Escrow ── */}
-        <div className="v2-rise v2-d4 rounded-[1.75rem] bg-[#FFD0B4] p-6 flex items-center gap-4">
-          <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-white text-primary-deep flex items-center justify-center v2-shadow-soft">
+        <div className="v2-rise v2-d4 rounded-[1.75rem] bg-primary-light p-6 flex items-center gap-4">
+          <span className="w-12 h-12 shrink-0 rounded-[1.05rem] bg-cream text-primary-deep flex items-center justify-center v2-shadow-soft">
             <ShieldCheck size={22} />
           </span>
           <div>
-            <p className="text-[13.5px] font-bold tracking-tight text-[#111111] mb-0.5">Pago protegido por I mendly</p>
-            <p className="text-[12.5px] font-medium text-[#6F6B66] leading-relaxed">
+            <p className="text-[13.5px] font-bold tracking-tight text-ink mb-0.5">Pago protegido por I mendly</p>
+            <p className="text-[12.5px] font-medium text-muted leading-relaxed">
               Tu dinero está seguro en Escrow hasta que confirmes la finalización de tu servicio.
             </p>
           </div>
@@ -395,18 +395,18 @@ function CheckoutPage() {
         {/* ── Método seleccionado (solo en detalles) ── */}
         {step === 'details' && (
           <div className="flex items-center gap-3 px-1">
-            <span className="w-9 h-9 rounded-[0.85rem] bg-white v2-shadow-soft flex items-center justify-center text-[#111111]">
+            <span className="w-9 h-9 rounded-[0.85rem] bg-cream v2-shadow-soft flex items-center justify-center text-ink">
               {method === 'stripe' ? <CreditCard size={15} /> : method === 'conekta_spei' ? <Landmark size={15} /> : <ShoppingBag size={15} />}
             </span>
-            <p className="text-[12.5px] font-semibold text-[#6F6B66]">
-              Método: <span className="text-[#111111]">{method === 'stripe' ? 'Stripe' : method === 'conekta_spei' ? 'Conekta SPEI' : 'Conekta OXXO'}</span>
+            <p className="text-[12.5px] font-semibold text-muted">
+              Método: <span className="text-ink">{method === 'stripe' ? 'Stripe' : method === 'conekta_spei' ? 'Conekta SPEI' : 'Conekta OXXO'}</span>
             </p>
           </div>
         )}
 
         {errorStatus && (
-          <div className="p-4 bg-red-50 rounded-[1.25rem]">
-            <p className="text-[12.5px] font-semibold text-red-600 text-center">{errorStatus}</p>
+          <div className="p-4 bg-rose/15 rounded-[1.25rem]">
+            <p className="text-[12.5px] font-semibold text-error text-center">{errorStatus}</p>
           </div>
         )}
 
@@ -415,15 +415,15 @@ function CheckoutPage() {
           <button
             onClick={handleProceed}
             disabled={isProcessing}
-            className="w-full h-14 rounded-full bg-primary text-ink text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full h-14 rounded-full bg-primary text-ink text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:pointer-events-none"
           >
             {isProcessing ? 'Procesando…' : step === 'selection' ? 'Continuar' : 'Confirmar pago seguro'}
           </button>
         </div>
 
-        <p className="text-center text-[11.5px] font-medium text-[#A39E97] leading-relaxed">
+        <p className="text-center text-[11.5px] font-medium text-faint leading-relaxed">
           Al pagar confirmas que estás de acuerdo con nuestras{' '}
-          <span className="text-[#111111] font-semibold underline">Políticas de privacidad</span>
+          <span className="text-ink font-semibold underline">Políticas de privacidad</span>
         </p>
       </div>
     </main>
@@ -433,7 +433,7 @@ function CheckoutPage() {
 // useSearchParams requiere un límite de Suspense para el prerender de producción
 export default function CheckoutPageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#FAF8F4]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-linen" />}>
       <CheckoutPage />
     </Suspense>
   );

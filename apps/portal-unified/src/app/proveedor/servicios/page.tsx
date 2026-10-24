@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  Settings, 
-  X
+import {
+  Plus,
+  Trash2,
+  X,
+  Camera,
+  Tag
 } from 'lucide-react';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Input } from '@i-mendly/shared/components/Input';
 
 interface Service {
   id: number;
@@ -24,10 +22,14 @@ const INITIAL_SERVICES: Service[] = [
   { id: 2, name: 'Limpieza Express', category: 'Interiores', price: '$450 / hr', image: 'https://images.unsplash.com/photo-1527515545081-5db817172677?auto=format&fit=crop&q=80&w=200' },
 ];
 
+const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
+const LABEL_CLS = `block ${EYEBROW} text-muted mb-2 ml-1`;
+const INPUT_CLS = 'w-full h-14 px-5 bg-sand rounded-[1.25rem] border-0 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-lavender/60 transition-shadow';
+
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>(INITIAL_SERVICES);
   const [isAdding, setIsAdding] = useState(false);
-  
+
   // New service form state
   const [newName, setNewName] = useState('');
   const [newCategory, setNewCategory] = useState('Interiores');
@@ -56,150 +58,160 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#F8F9FB]">
-      <header className="h-24 px-10 border-b border-slate-100 bg-white flex items-center justify-between sticky top-0 z-10 shrink-0">
-        <div>
-          <h1 className="text-2xl font-black text-brand-night tracking-tight uppercase">Catálogo de Servicios</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Define qué ofreces y cuánto cobras</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-            <Button 
-                variant="primary" 
-                onClick={() => setIsAdding(true)}
-                className="rounded-[1.25rem] h-12 px-8 flex items-center gap-2 shadow-lg shadow-primary/20"
-            >
-                <Plus size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Nuevo Servicio</span>
-            </Button>
-        </div>
-      </header>
-
-      <main className="flex-1 p-10 overflow-y-auto space-y-10 custom-scrollbar relative">
-        {/* ADD SERVICE MODAL */}
-        {isAdding && (
-            <div className="fixed inset-0 bg-brand-night/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md bg-white rounded-[2.5rem] p-8 relative overflow-hidden animate-in zoom-in-95 duration-200">
-                    <button 
-                        onClick={() => setIsAdding(false)}
-                        className="absolute top-6 right-6 w-8 h-8 bg-slate-50 text-slate-400 hover:text-brand-night hover:bg-slate-100 rounded-full flex items-center justify-center transition-colors"
-                    >
-                        <X size={16} />
-                    </button>
-                    
-                    <div className="mb-8">
-                        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20">
-                            <Plus size={24} className="text-primary-deep" />
-                        </div>
-                        <h3 className="text-xl font-black text-brand-night tracking-tight uppercase">Crear Servicio</h3>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Ingresa los detalles de tu nuevo catálogo</p>
-                    </div>
-
-                    <form onSubmit={handleAddService} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre del Servicio</label>
-                            <Input 
-                                placeholder="Ej. Instalación de Minisplit" 
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                className="bg-slate-50 border-slate-100 h-14 rounded-[1.25rem] text-[11px] font-bold uppercase tracking-tight" 
-                                required
-                            />
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Categoría</label>
-                                <select 
-                                    value={newCategory}
-                                    onChange={(e) => setNewCategory(e.target.value)}
-                                    className="w-full h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] px-4 text-[11px] font-bold uppercase tracking-tight outline-none focus:ring-2 focus:ring-primary/20 transition-all text-brand-night"
-                                >
-                                    <option value="Interiores">Interiores</option>
-                                    <option value="Exteriores">Exteriores</option>
-                                    <option value="Tecnología">Tecnología</option>
-                                    <option value="Mantenimiento">Mantenimiento</option>
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Tarifa (Precio base)</label>
-                                <Input 
-                                    placeholder="Ej. $500 / hr" 
-                                    value={newPrice}
-                                    onChange={(e) => setNewPrice(e.target.value)}
-                                    className="bg-slate-50 border-slate-100 h-14 rounded-[1.25rem] text-[11px] font-bold uppercase tracking-tight" 
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="pt-4 flex gap-3">
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                onClick={() => setIsAdding(false)} 
-                                className="flex-1 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest"
-                            >
-                                Cancelar
-                            </Button>
-                            <Button 
-                                type="submit" 
-                                variant="primary" 
-                                className="flex-1 h-12 rounded-xl shadow-lg shadow-primary/20 text-[10px] font-black uppercase tracking-widest"
-                            >
-                                Guardar
-                            </Button>
-                        </div>
-                    </form>
-                </Card>
+    <div className="flex-1 flex flex-col min-h-0 bg-linen">
+      <main className="flex-1 overflow-y-auto px-6 md:px-12 pb-20 relative">
+        <div className="max-w-6xl mx-auto">
+          {/* ── Cabecera editorial ── */}
+          <header className="pt-10 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <p className={`v3-blur-in ${EYEBROW} text-primary-deep`}>Tu oferta</p>
+              <h1 className="v3-blur-in text-[34px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink mt-2" style={{ animationDelay: '100ms' }}>
+                Catálogo de servicios
+              </h1>
+              <p className="v3-blur-in mt-2 text-[14px] font-medium text-muted" style={{ animationDelay: '200ms' }}>
+                Define qué ofreces y cuánto cobras
+              </p>
             </div>
-        )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {services.map((s) => (
-                <Card key={s.id} className="p-0 rounded-[2.5rem] overflow-hidden bg-white border-slate-50 group hover:border-primary/20 transition-all hover:shadow-2xl hover:shadow-primary/5">
-                    <div className="h-48 relative overflow-hidden">
-                        <img src={s.image} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={s.name} />
-                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
-                            <p className="text-[9px] font-black text-primary-deep uppercase tracking-[0.3em] mb-1">{s.category}</p>
-                            <h4 className="text-lg font-black text-white uppercase tracking-tight">{s.name}</h4>
-                        </div>
-                        <button 
-                            onClick={() => handleDelete(s.id)}
-                            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-md rounded-xl flex items-center justify-center text-im-error hover:bg-im-error hover:text-white transition-all shadow-lg"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
-                    <div className="p-8">
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tarifa Sugerida</p>
-                                <p className="text-2xl font-black text-brand-night italic">{s.price}</p>
-                            </div>
-                            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center">
-                                <Settings size={20} className="text-slate-300" />
-                            </div>
-                        </div>
-                        <Button variant="outline" className="w-full h-11 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border-slate-100 font-urbanist">
-                            Editar Detalles
-                        </Button>
-                    </div>
-                </Card>
+            <button
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className="v3-blur-in h-14 px-6 rounded-full bg-primary hover:bg-primary-dark text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press transition-colors"
+              style={{ animationDelay: '300ms' }}
+            >
+              <Plus size={17} />
+              Agregar servicio
+            </button>
+          </header>
+
+          {/* ── Tarjetas ── */}
+          <div className="mt-9 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {services.map((s, i) => (
+              <article key={s.id} className={`v2-rise v2-d${Math.min(i + 1, 8)} group bg-cream rounded-[2.25rem] p-3 v2-shadow-soft v2-float flex flex-col`}>
+                <div className="relative h-48 overflow-hidden rounded-[1.75rem]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={s.image} className="absolute inset-0 w-full h-full object-cover v3-photo" alt={s.name} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
+                  <span className="absolute top-3 left-3 glass rounded-full h-8 px-3 inline-flex items-center text-[11.5px] font-semibold text-ink">
+                    {s.category}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(s.id)}
+                    aria-label="Eliminar servicio"
+                    className="absolute top-3 right-3 w-9 h-9 glass rounded-full flex items-center justify-center text-error v2-press"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                  <h4 className="absolute bottom-4 left-5 right-5 text-[19px] font-semibold tracking-tight leading-tight text-white">{s.name}</h4>
+                </div>
+                <div className="p-4 pt-5 flex-1 flex flex-col">
+                  <p className={`${EYEBROW} text-muted`}>Tarifa base</p>
+                  <p className="mt-1.5 text-[26px] font-bold tabular-nums tracking-tight text-primary-deep leading-none">{s.price}</p>
+                  <button type="button" className="mt-5 w-full h-12 rounded-full bg-sand text-ink text-[13px] font-bold v2-press">
+                    Editar detalles
+                  </button>
+                </div>
+              </article>
             ))}
 
-            {/* Empty Add Card inline */}
-            <button 
-                onClick={() => setIsAdding(true)}
-                className="rounded-[2.5rem] border-4 border-dashed border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center p-12 text-slate-300 hover:border-primary/20 hover:bg-white hover:text-primary-deep transition-all group min-h-[400px]"
+            {/* Tarjeta para agregar — regla 5 */}
+            <button
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className={`v2-rise v2-d${Math.min(services.length + 1, 8)} bg-cream rounded-[2.25rem] p-8 flex flex-col items-center justify-center text-center v2-shadow-soft v2-press v2-float min-h-[320px]`}
             >
-                <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-primary/5 transition-colors">
-                    <Plus size={32} />
-                </div>
-                <span className="text-[11px] font-black uppercase tracking-[0.3em]">Cargar Nuevo Trabajo</span>
-                <p className="text-[9px] mt-3 font-bold opacity-60">Impacta con tus mejores fotos</p>
+              <span className="w-16 h-16 rounded-[1.4rem] bg-primary-light text-primary-deep flex items-center justify-center mb-5">
+                <Camera size={26} />
+              </span>
+              <span className="text-[17px] font-semibold tracking-tight text-ink">Agregar un servicio</span>
+              <span className="mt-1.5 text-[13px] font-medium text-muted max-w-[220px]">Impacta con tus mejores fotos y una tarifa clara.</span>
+              <span className="mt-6 h-11 px-5 rounded-full bg-ink text-white text-[12.5px] font-bold inline-flex items-center gap-2">
+                <Plus size={15} /> Nuevo
+              </span>
             </button>
+          </div>
         </div>
+
+        {/* ── Formulario de nuevo servicio ── */}
+        {isAdding && (
+          <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="v2-scale w-full max-w-md bg-cream rounded-[2.5rem] p-7 md:p-8 relative v2-shadow-float">
+              <button
+                type="button"
+                onClick={() => setIsAdding(false)}
+                aria-label="Cerrar"
+                className="absolute top-5 right-5 w-10 h-10 bg-sand text-ink rounded-full flex items-center justify-center v2-press"
+              >
+                <X size={16} />
+              </button>
+
+              <div className="mb-7">
+                <span className="w-12 h-12 rounded-[1.05rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
+                  <Tag size={20} />
+                </span>
+                <p className={`${EYEBROW} text-primary-deep`}>Nuevo servicio</p>
+                <h3 className="mt-1.5 text-[24px] font-semibold tracking-tight text-ink">Agrega un servicio a tu catálogo</h3>
+                <p className="mt-1.5 text-[13.5px] font-medium text-muted">Ponle un nombre claro y una tarifa base.</p>
+              </div>
+
+              <form onSubmit={handleAddService} className="space-y-5">
+                <div>
+                  <label className={LABEL_CLS}>Nombre del servicio</label>
+                  <input
+                    placeholder="Ej. Instalación de minisplit"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className={INPUT_CLS}
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={LABEL_CLS}>Categoría</label>
+                    <select
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      className={`${INPUT_CLS} appearance-none cursor-pointer`}
+                    >
+                      <option value="Interiores">Interiores</option>
+                      <option value="Exteriores">Exteriores</option>
+                      <option value="Tecnología">Tecnología</option>
+                      <option value="Mantenimiento">Mantenimiento</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={LABEL_CLS}>Tarifa base</label>
+                    <input
+                      placeholder="Ej. $500 / hr"
+                      value={newPrice}
+                      onChange={(e) => setNewPrice(e.target.value)}
+                      className={`${INPUT_CLS} tabular-nums`}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsAdding(false)}
+                    className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 h-14 rounded-full bg-primary hover:bg-primary-dark text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press transition-colors"
+                  >
+                    <Plus size={16} /> Agregar servicio
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

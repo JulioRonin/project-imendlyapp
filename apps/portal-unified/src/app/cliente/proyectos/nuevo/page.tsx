@@ -16,8 +16,8 @@ import { SegmentBar } from '@/components/client/ui';
 
 const STEPS = ['Tu proyecto', 'Zona y presupuesto', 'Revisar y publicar'];
 
-const LABEL_CLS = 'text-[10px] font-bold uppercase tracking-[0.18em] text-[#6F6B66] mb-3 block';
-const INPUT_CLS = 'w-full h-14 px-5 rounded-[1.25rem] bg-[#FFFFFF] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[15px] font-semibold text-[#111111] placeholder:text-[#A39E97] placeholder:font-medium transition-shadow';
+const LABEL_CLS = 'text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-3 block';
+const INPUT_CLS = 'w-full h-14 px-5 rounded-[1.25rem] bg-sand border-none outline-none focus:ring-2 focus:ring-primary/30 text-[15px] font-semibold text-ink placeholder:text-faint placeholder:font-medium transition-shadow';
 
 export default function NuevoProyectoPage() {
   const router = useRouter();
@@ -95,15 +95,15 @@ export default function NuevoProyectoPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAF8F4]">
+    <main className="min-h-screen bg-linen">
       <div className="max-w-md mx-auto px-6 flex flex-col min-h-screen">
         {/* Header interno v2 */}
-        <header className="v2-rise sticky top-0 z-50 bg-[#FAF8F4]/85 backdrop-blur-xl -mx-6 px-6 py-5">
+        <header className="v3-blur-in sticky top-0 z-50 bg-linen/85 backdrop-blur-xl -mx-6 px-6 py-5">
           <div className="flex items-center gap-4">
             <Link
               href="/cliente/proyectos"
               aria-label="Volver"
-              className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#111111] v2-press"
+              className="w-12 h-12 shrink-0 rounded-full bg-cream v2-shadow-soft flex items-center justify-center text-ink v2-press"
             >
               <ArrowLeft size={19} />
             </Link>
@@ -111,7 +111,7 @@ export default function NuevoProyectoPage() {
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">
                 Paso {step + 1} de 3
               </p>
-              <h1 className="text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">
+              <h1 className="text-[22px] font-semibold tracking-tight text-ink leading-tight">
                 {STEPS[step]}
               </h1>
             </div>
@@ -122,7 +122,7 @@ export default function NuevoProyectoPage() {
         <div key={step} className="v2-scale flex-1 mt-2 space-y-5">
           {/* PASO 1: proyecto */}
           {step === 0 && (
-            <section className="bg-white rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
+            <section className="bg-cream rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
               <div>
                 <label className={LABEL_CLS}>¿Qué tipo de trabajo necesitas?</label>
                 <div className="grid grid-cols-2 gap-2.5">
@@ -133,8 +133,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setCategory(cat)}
                       className={`h-12 px-4 rounded-full text-[13px] font-semibold v2-press transition-colors duration-300 ${
                         category === cat
-                          ? 'bg-[#111111] text-white v2-shadow-lift'
-                          : 'bg-[#FFFFFF] text-[#6F6B66] hover:text-[#111111]'
+                          ? 'bg-ink text-on-dark v2-shadow-lift'
+                          : 'bg-sand text-muted hover:text-ink'
                       }`}
                     >
                       {cat}
@@ -161,20 +161,20 @@ export default function NuevoProyectoPage() {
                   onChange={e => setDescription(e.target.value)}
                   placeholder="Medidas, materiales que imaginas, estado actual, y todo lo que ayude a cotizar sin visitar. Mínimo 30 caracteres."
                   rows={5}
-                  className="w-full px-5 py-4 rounded-[1.25rem] bg-[#FFFFFF] border-none outline-none focus:ring-2 focus:ring-primary/30 text-[14px] font-medium text-[#111111] placeholder:text-[#A39E97] resize-none transition-shadow"
+                  className="w-full px-5 py-4 rounded-[1.25rem] bg-sand border-none outline-none focus:ring-2 focus:ring-primary/30 text-[14px] font-medium text-ink placeholder:text-faint resize-none transition-shadow"
                   maxLength={1200}
                 />
-                <p className={`mt-2 text-[12px] font-semibold tabular-nums ${description.trim().length < 30 ? 'text-[#A39E97]' : 'text-primary-deep'}`}>
+                <p className={`mt-2 text-[12px] font-semibold tabular-nums ${description.trim().length < 30 ? 'text-faint' : 'text-primary-deep'}`}>
                   {description.trim().length} / 30 mín.
                 </p>
               </div>
 
               {contactIssue && (
-                <div className="p-5 rounded-[1.25rem] bg-red-50 flex items-start gap-3.5">
-                  <span className="w-9 h-9 shrink-0 rounded-[0.85rem] bg-white flex items-center justify-center text-red-500">
+                <div className="p-5 rounded-[1.25rem] bg-rose/15 flex items-start gap-3.5">
+                  <span className="w-9 h-9 shrink-0 rounded-[0.85rem] bg-cream flex items-center justify-center text-error">
                     <X size={15} />
                   </span>
-                  <p className="text-[12.5px] font-medium text-red-600">
+                  <p className="text-[12.5px] font-medium text-error">
                     Detectamos {contactIssue} en el texto. Para tu seguridad, el contacto se comparte
                     dentro de la plataforma al aceptar una oferta — así tu proyecto queda protegido
                     por la Garantía I mendly.
@@ -186,21 +186,21 @@ export default function NuevoProyectoPage() {
                 <label className={LABEL_CLS}>Fotos (opcional, máx. 5)</label>
                 <div className="flex flex-wrap gap-3">
                   {photos.map((f, i) => (
-                    <div key={i} className="relative w-20 h-20 rounded-[1.25rem] overflow-hidden bg-[#FFFFFF]">
+                    <div key={i} className="relative w-20 h-20 rounded-[1.25rem] overflow-hidden bg-sand">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={URL.createObjectURL(f)} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => setPhotos(p => p.filter((_, j) => j !== i))}
                         aria-label="Quitar foto"
-                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center v2-press"
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-ink/60 text-on-dark flex items-center justify-center v2-press"
                       >
                         <Trash2 size={11} />
                       </button>
                     </div>
                   ))}
                   {photos.length < 5 && (
-                    <label className="w-20 h-20 rounded-[1.25rem] bg-[#FFFFFF] flex flex-col items-center justify-center gap-1 text-[#A39E97] cursor-pointer hover:text-primary-deep hover:bg-[#FFD0B4] transition-colors v2-press">
+                    <label className="w-20 h-20 rounded-[1.25rem] bg-sand flex flex-col items-center justify-center gap-1 text-faint cursor-pointer hover:text-primary-deep hover:bg-primary-light transition-colors v2-press">
                       <Camera size={20} />
                       <span className="text-[10px] font-semibold">Agregar</span>
                       <input type="file" accept="image/*" multiple className="hidden" onChange={e => handlePhotos(e.target.files)} />
@@ -213,7 +213,7 @@ export default function NuevoProyectoPage() {
 
           {/* PASO 2: zona y presupuesto */}
           {step === 1 && (
-            <section className="bg-white rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
+            <section className="bg-cream rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
               <div>
                 <label className={LABEL_CLS}>Zona</label>
                 <div className="flex flex-wrap gap-2">
@@ -224,8 +224,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setZone(z)}
                       className={`h-11 px-5 rounded-full text-[13px] font-semibold v2-press transition-colors duration-300 ${
                         zone === z
-                          ? 'bg-[#111111] text-white v2-shadow-lift'
-                          : 'bg-[#FFFFFF] text-[#6F6B66] hover:text-[#111111]'
+                          ? 'bg-ink text-on-dark v2-shadow-lift'
+                          : 'bg-sand text-muted hover:text-ink'
                       }`}
                     >
                       {z}
@@ -254,7 +254,7 @@ export default function NuevoProyectoPage() {
                     inputMode="numeric"
                     className={`${INPUT_CLS} tabular-nums`}
                   />
-                  <span className="text-[#A39E97] font-semibold">—</span>
+                  <span className="text-faint font-semibold">—</span>
                   <input
                     value={budgetMax}
                     onChange={e => setBudgetMax(e.target.value.replace(/\D/g, ''))}
@@ -263,7 +263,7 @@ export default function NuevoProyectoPage() {
                     className={`${INPUT_CLS} tabular-nums`}
                   />
                 </div>
-                <p className="text-[12px] font-medium text-[#A39E97] mt-2.5">
+                <p className="text-[12px] font-medium text-faint mt-2.5">
                   Un rango orienta mejores ofertas. Si no lo sabes, déjalo vacío y pide visita de cotización.
                 </p>
               </div>
@@ -278,8 +278,8 @@ export default function NuevoProyectoPage() {
                       onClick={() => setTiming(t.value)}
                       className={`h-12 px-4 rounded-full text-[12.5px] font-semibold v2-press transition-colors duration-300 ${
                         timing === t.value
-                          ? 'bg-[#111111] text-white v2-shadow-lift'
-                          : 'bg-[#FFFFFF] text-[#6F6B66] hover:text-[#111111]'
+                          ? 'bg-ink text-on-dark v2-shadow-lift'
+                          : 'bg-sand text-muted hover:text-ink'
                       }`}
                     >
                       {t.label}
@@ -293,13 +293,13 @@ export default function NuevoProyectoPage() {
           {/* PASO 3: revisión */}
           {step === 2 && (
             <>
-              <section className="bg-white rounded-[2.25rem] v2-shadow-soft p-6 space-y-4">
+              <section className="bg-cream rounded-[2.25rem] v2-shadow-soft p-6 space-y-4">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">{category}</span>
-                  <span className="text-[12px] font-semibold text-[#A39E97]">{timingLabel(timing)}</span>
+                  <span className="text-[12px] font-semibold text-faint">{timingLabel(timing)}</span>
                 </div>
-                <h2 className="text-[19px] font-semibold tracking-tight text-[#111111] leading-snug">{title}</h2>
-                <p className="text-[14px] font-medium text-[#6F6B66] whitespace-pre-wrap">{description}</p>
+                <h2 className="text-[19px] font-semibold tracking-tight text-ink leading-snug">{title}</h2>
+                <p className="text-[14px] font-medium text-muted whitespace-pre-wrap">{description}</p>
 
                 {photos.length > 0 && (
                   <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
@@ -310,26 +310,26 @@ export default function NuevoProyectoPage() {
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-black/[0.05]">
-                  <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[#6F6B66]">
-                    <MapPin size={13} className="text-[#A39E97]" />
+                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-line">
+                  <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-muted">
+                    <MapPin size={13} className="text-faint" />
                     {zone}{neighborhood ? ` · ${neighborhood}` : ''}
                   </span>
                   {(budgetMin || budgetMax) && (
-                    <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-[#FFD0B4] text-primary-deep text-[12.5px] font-bold tabular-nums">
+                    <span className="ml-auto inline-flex items-center h-8 px-3.5 rounded-full bg-primary-light text-primary-deep text-[12.5px] font-bold tabular-nums">
                       {budgetMin ? formatMXN(Number(budgetMin)) : ''}{budgetMin && budgetMax ? ' – ' : ''}{budgetMax ? formatMXN(Number(budgetMax)) : ''}
                     </span>
                   )}
                 </div>
               </section>
 
-              <section className="rounded-[1.75rem] bg-[#FFD0B4] p-6 flex items-start gap-4">
-                <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-primary-deep flex items-center justify-center v2-shadow-soft">
+              <section className="rounded-[1.75rem] bg-primary-light p-6 flex items-start gap-4">
+                <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-cream text-primary-deep flex items-center justify-center v2-shadow-soft">
                   <ShieldCheck size={22} />
                 </span>
                 <div>
-                  <p className="text-[14px] font-semibold text-[#111111] mb-1">Así te protegemos</p>
-                  <p className="text-[12.5px] font-medium text-[#6F6B66]">
+                  <p className="text-[14px] font-semibold text-ink mb-1">Así te protegemos</p>
+                  <p className="text-[12.5px] font-medium text-muted">
                     Tu proyecto pasa una revisión rápida antes de publicarse. Solo proveedores
                     verificados de tu zona podrán ofertar (máximo 5 ofertas). Tu dirección y
                     teléfono se comparten únicamente cuando tú aceptas una oferta.
@@ -338,7 +338,7 @@ export default function NuevoProyectoPage() {
               </section>
 
               {error && (
-                <div className="p-5 rounded-[1.25rem] bg-red-50 text-[12.5px] font-semibold text-red-600">
+                <div className="p-5 rounded-[1.25rem] bg-rose/15 text-[12.5px] font-semibold text-error">
                   {error}
                 </div>
               )}
@@ -347,13 +347,13 @@ export default function NuevoProyectoPage() {
         </div>
 
         {/* Botonera inferior sticky */}
-        <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-[#FAF8F4] via-[#FAF8F4]/95 to-transparent">
+        <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
           <div className="flex items-center gap-3">
             {step > 0 && (
               <button
                 type="button"
                 onClick={() => setStep(s => s - 1)}
-                className="h-14 px-6 rounded-full text-[13px] font-semibold text-[#6F6B66] hover:text-[#111111] v2-press transition-colors"
+                className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors"
               >
                 Atrás
               </button>
@@ -365,8 +365,8 @@ export default function NuevoProyectoPage() {
                 onClick={() => canNext && setStep(s => s + 1)}
                 className={`flex-1 h-14 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-colors ${
                   canNext
-                    ? 'bg-primary text-ink shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark'
-                    : 'bg-black/[0.06] text-[#A39E97] cursor-not-allowed'
+                    ? 'bg-primary text-ink v2-press hover:bg-primary-dark'
+                    : 'bg-sand text-faint cursor-not-allowed'
                 }`}
               >
                 Continuar <ArrowRight size={16} />
@@ -376,7 +376,7 @@ export default function NuevoProyectoPage() {
                 type="button"
                 disabled={saving}
                 onClick={publish}
-                className="flex-1 h-14 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors disabled:opacity-70"
+                className="flex-1 h-14 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press hover:bg-primary-dark transition-colors disabled:opacity-70"
               >
                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                 {saving ? 'Publicando…' : 'Publicar proyecto'}

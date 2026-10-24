@@ -1,11 +1,17 @@
 "use client";
 
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Avatar } from '@i-mendly/shared/components/Avatar';
+import { Check, X, FileCheck2, CalendarCheck, ArrowUpRight } from 'lucide-react';
 import { AdminSidebar } from '../../../components/admin/AdminSidebar';
+
+/** Iniciales sobre arcilla profunda. */
+function Initials({ name, className = '' }: { name: string; className?: string }) {
+  const initials = name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'IM';
+  return (
+    <span className={`shrink-0 rounded-[1.25rem] bg-clay-deep text-white flex items-center justify-center font-semibold ${className}`}>
+      {initials}
+    </span>
+  );
+}
 
 export default function AdminOnboardingPage() {
   const pending = [
@@ -15,50 +21,64 @@ export default function AdminOnboardingPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-silver font-urbanist flex">
+    <main className="min-h-screen bg-linen flex">
       <AdminSidebar />
-      <div className="flex-1 max-w-7xl mx-auto px-8 py-12">
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <h2 className="text-4xl font-black text-brand-night tracking-tighter mb-2">Validación de Profesionales</h2>
-            <p className="text-brand-night/40 font-bold uppercase text-xs tracking-widest">Cola de aprobación (Fase 2)</p>
+      <div className="flex-1 min-w-0">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-14">
+          {/* ── Cabecera editorial ── */}
+          <header className="v3-blur-in flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Cola de aprobación · Fase 2</p>
+              <h1 className="text-[36px] md:text-[44px] font-semibold tracking-tight leading-[1.02] text-ink">Validación de profesionales</h1>
+              <p className="mt-2 text-[14px] font-medium text-muted max-w-lg">Revisa documentos y entrevistas antes de activar a cada profesional en el catálogo.</p>
+            </div>
+            <div className="bg-cream rounded-[1.5rem] px-6 py-4 v2-shadow-soft">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">Pendientes</p>
+              <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">{pending.length}</p>
+            </div>
+          </header>
+
+          {/* ── Tarjetas de aspirantes ── */}
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {pending.map((p, i) => (
+              <article key={p.id} className={`v2-rise v2-d${Math.min(i + 1, 8)} bg-cream rounded-[1.75rem] p-6 v2-shadow-soft v2-float flex flex-col gap-5`}>
+                <div className="flex items-center gap-4">
+                  <Initials name={p.name} className="w-[60px] h-[60px] text-[18px]" />
+                  <div className="min-w-0">
+                    <h3 className="text-[18px] font-semibold tracking-tight text-ink truncate">{p.name}</h3>
+                    <p className="text-[13px] font-medium text-muted">{p.category}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-sand rounded-[1.25rem] p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-2">Documentos</p>
+                    <p className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-mint-deep"><FileCheck2 size={14} /> Listos</p>
+                  </div>
+                  <div className="bg-sand rounded-[1.25rem] p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-2">Entrevista</p>
+                    <p className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary-deep"><CalendarCheck size={14} /> Agendada</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-medium text-faint">{p.date}</span>
+                  <button className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-primary-deep group">
+                    Ver expediente <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </button>
+                </div>
+
+                <div className="mt-auto flex gap-2">
+                  <button className="h-12 px-5 rounded-full bg-sand text-error text-[13px] font-bold flex items-center justify-center gap-2 v2-press">
+                    <X size={15} /> Rechazar
+                  </button>
+                  <button className="flex-1 h-12 rounded-full bg-mint text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press">
+                    <Check size={15} /> Aprobar
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
-          <Badge variant="silver" className="px-5 py-2">3 Peticiones Pendientes</Badge>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {pending.map(p => (
-            <Card key={p.id} className="group hover:-translate-y-1 transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
-                <Avatar name={p.name} size="md" />
-                <div>
-                  <h3 className="text-lg font-black text-brand-night tracking-tight">{p.name}</h3>
-                  <p className="text-[10px] font-black text-primary-deep uppercase tracking-widest">{p.category}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 mb-6 text-center">
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest mb-1">Documentos</p>
-                  <p className="text-sm font-bold text-emerald-600">✓ Listos</p>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <p className="text-[10px] font-black text-brand-night/30 uppercase tracking-widest mb-1">Interview</p>
-                  <p className="text-sm font-bold text-amber-500 italic">Agendada</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-[10px] font-bold text-brand-night/30 uppercase tracking-widest">{p.date}</span>
-                <button className="text-[10px] font-black text-primary-deep uppercase tracking-widest hover:underline">Ver Expediente</button>
-              </div>
-
-              <div className="flex gap-3">
-                <Button variant="outline" className="flex-1 text-xs border-slate-200">Rechazar</Button>
-                <Button variant="primary" className="flex-1 text-xs shadow-lg shadow-primary/20">Aprobar</Button>
-              </div>
-            </Card>
-          ))}
         </div>
       </div>
     </main>

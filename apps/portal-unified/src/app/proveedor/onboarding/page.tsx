@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Logo } from '@i-mendly/shared/Logo';
-import { Button } from '@i-mendly/shared/components/Button';
-import { Card } from '@i-mendly/shared/components/Card';
+import { ArrowLeft } from 'lucide-react';
+import { SegmentBar } from '@/components/client/ui';
 import { OnboardingProvider } from './components/OnboardingContext';
 import { Step0Welcome } from './components/Step0Welcome';
 import { Step1Personal } from './components/Step1Personal';
@@ -13,6 +12,17 @@ import { Step4Services } from './components/Step4Services';
 import { Step5Interview } from './components/Step5Interview';
 import { Step6Exam } from './components/Step6Exam';
 import { Step7Review } from './components/Step7Review';
+
+const STEP_TITLES = [
+  '',
+  'Datos personales',
+  'Verificación de identidad',
+  'Documentos y antecedentes',
+  'Servicios y especialidad',
+  'Entrevista de calidad',
+  'Examen de certificación',
+  'Resumen y envío',
+];
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
@@ -33,32 +43,39 @@ export default function OnboardingPage() {
 
   return (
     <OnboardingProvider>
-      <main className="min-h-screen bg-brand-night text-white overflow-x-hidden relative">
-        {/* Decorative Blob */}
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-coral opacity-[0.07] blur-[120px] rounded-full pointer-events-none" />
-        
-        <div className="max-w-xl mx-auto px-6 py-12 relative z-10">
-          <div className="flex justify-center mb-12">
-            <Logo size={60} variant="darkBg" />
-          </div>
-          
-          {step > 0 && step < 7 && (
-            <div className="mb-10">
-              <div className="flex justify-between items-end mb-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-white/40">Paso {step} de 7</span>
-                <span className="text-2xl font-black text-secondary-light">{Math.round((step / 7) * 100)}%</span>
+      <main className="min-h-screen bg-linen overflow-x-hidden">
+        {step === 0 ? (
+          steps[0]
+        ) : (
+          <div className="max-w-md mx-auto px-6 flex flex-col min-h-screen">
+            {/* Cabecera del wizard */}
+            <header className="v3-blur-in sticky top-0 z-50 bg-linen/85 backdrop-blur-xl -mx-6 px-6 py-5">
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  aria-label="Volver"
+                  className="w-12 h-12 shrink-0 rounded-full bg-cream v2-shadow-soft flex items-center justify-center text-ink v2-press"
+                >
+                  <ArrowLeft size={19} />
+                </button>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">
+                    Paso {step} de 7
+                  </p>
+                  <h1 className="text-[22px] font-semibold tracking-tight text-ink leading-tight truncate">
+                    {STEP_TITLES[step]}
+                  </h1>
+                </div>
               </div>
-              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary transition-all duration-500 ease-out" 
-                  style={{ width: `${(step / 7) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
+              <SegmentBar total={7} done={step} className="mt-4" />
+            </header>
 
-          {steps[step]}
-        </div>
+            <div key={step} className="flex-1 flex flex-col mt-2">
+              {steps[step]}
+            </div>
+          </div>
+        )}
       </main>
     </OnboardingProvider>
   );
