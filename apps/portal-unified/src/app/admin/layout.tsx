@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AdminGuard } from "@/components/admin/AdminGuard";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const metadata: Metadata = {
+  title: "Operación · I mendly",
+  description: "Panel del equipo I mendly",
+};
 
 export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="min-h-full flex flex-col">{children}</div>;
+  // Toda ruta bajo /admin exige sesión con rol 'admin' (ver AdminGuard)
+  return (
+    <AdminGuard>
+      <div className="min-h-full flex flex-col">{children}</div>
+    </AdminGuard>
+  );
 }

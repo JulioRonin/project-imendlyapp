@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from 'react';
 import { Logo } from '@i-mendly/shared/Logo';
 import { Card } from '@i-mendly/shared/components/Card';
 import { Badge } from '@i-mendly/shared/components/Badge';
 import { Button } from '@i-mendly/shared/components/Button';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
-import { Input } from '@i-mendly/shared/components/Input';
 
 import { MOCK_STATS } from '@i-mendly/shared/constants/mocks';
 import Link from 'next/link';
@@ -20,94 +18,11 @@ import {
   ArrowUpRight,
   Zap,
   DollarSign,
-  LogOut,
-  Shield
+  LogOut
 } from 'lucide-react';
 import { AdminSidebar } from '../../components/admin/AdminSidebar';
 
 export default function AdminDashboard() {
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [key, setKey] = useState("");
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState(false);
-
-  const handleVerify = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (key.toLowerCase() === 'sushi' && pin === '3619') {
-      setIsAuthorized(true);
-      setError(false);
-    } else {
-      setError(true);
-      setTimeout(() => setError(false), 2000);
-    }
-  };
-
-  if (!isAuthorized) {
-    return (
-      <main className="min-h-screen bg-brand-night flex items-center justify-center p-6 font-urbanist overflow-hidden relative">
-        {/* Animated Background Elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary opacity-20 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary opacity-10 blur-[100px] rounded-full" />
-        
-        <div className="relative z-10 w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <div className="flex justify-center mb-12 transform hover:scale-105 transition-transform duration-500">
-            <Logo size={100} orientation="vertical" variant="dark" />
-          </div>
-
-          <Card variant="glass" className="p-10 md:p-12 rounded-[3.5rem] border-white/10 shadow-[0_48px_128px_-32px_rgba(0,0,0,0.5)] bg-white/5 backdrop-blur-3xl overflow-hidden relative group">
-            {/* Visual indicators */}
-            <div className="absolute top-0 right-0 p-8 opacity-5">
-              <Shield size={64} className="text-white" />
-            </div>
-
-            <div className="text-center mb-10">
-              <h1 className="text-3xl font-black text-white tracking-tight mb-2 uppercase">Admin Entry</h1>
-              <p className="text-primary-deep text-[10px] font-black uppercase tracking-[0.5em] opacity-80">Security Protocol Required</p>
-            </div>
-
-            <form onSubmit={handleVerify} className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Key Name</label>
-                  <Input 
-                    placeholder="ENTER KEY" 
-                    value={key}
-                    onChange={e => setKey(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 h-14 rounded-2xl text-xs font-bold uppercase tracking-widest focus:bg-white/10 focus:border-primary/50 transition-all text-center" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Access PIN</label>
-                  <Input 
-                    type="password" 
-                    placeholder="••••" 
-                    maxLength={4}
-                    value={pin}
-                    onChange={e => setPin(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 h-14 rounded-2xl text-lg font-black uppercase tracking-[1em] focus:bg-white/10 focus:border-primary/50 transition-all text-center pl-4" 
-                  />
-                </div>
-              </div>
-
-              {error && (
-                <div className="py-3 px-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-black uppercase tracking-widest text-center animate-in shake duration-300">
-                  Access Denied • Invalid Credentials
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                className={`w-full h-16 text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all ${error ? 'bg-red-500 text-white' : 'bg-primary text-ink hover:bg-primary/80 shadow-[0_20px_48px_rgba(124,58,237,0.3)]'}`}
-              >
-                {error ? 'Invalid' : 'Authorize Access'}
-              </Button>
-            </form>
-          </Card>
-        </div>
-      </main>
-    )
-  }
-
   const stats = [
     { label: 'GMV del Mes', value: '$842,500', icon: <DollarSign size={20} />, growth: '+12.5%', trend: 'up' },
     { label: 'Revenue Mensual', value: '$101,100', icon: <BarChart3 size={20} />, growth: '+8.2%', trend: 'up' },
