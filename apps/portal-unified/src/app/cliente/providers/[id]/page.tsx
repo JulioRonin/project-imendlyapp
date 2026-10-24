@@ -12,8 +12,8 @@ import {
   ChevronRight,
   CheckCircle2,
   Pencil,
-  BadgeCheck,
   UserX,
+  ArrowUpRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -225,20 +225,18 @@ export default function ProviderProfile({ params }: { params: any }) {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#FAF8F4]">
-        <div className="max-w-3xl mx-auto">
-          <div className="h-[420px] md:rounded-[2.75rem] md:mt-5 v2-shimmer" />
-          <div className="relative z-10 -mt-10 bg-white rounded-t-[2.75rem] md:rounded-[2.75rem] px-6 md:px-10 pt-9 pb-16 space-y-4">
-            <div className="h-6 w-1/2 rounded-full v2-shimmer" />
-            <div className="h-4 w-1/3 rounded-full v2-shimmer" />
-            <div className="grid grid-cols-3 gap-3 pt-4">
-              <div className="h-20 rounded-[1.25rem] v2-shimmer" />
-              <div className="h-20 rounded-[1.25rem] v2-shimmer" />
-              <div className="h-20 rounded-[1.25rem] v2-shimmer" />
-            </div>
-            <div className="h-24 rounded-[1.75rem] v2-shimmer" />
-            <div className="h-24 rounded-[1.75rem] v2-shimmer" />
+      <main className="min-h-screen bg-linen">
+        <div className="h-[72vh] min-h-[480px] v2-shimmer" />
+        <div className="relative z-10 -mt-10 bg-linen rounded-t-[2.75rem] px-6 md:px-10 pt-9 pb-16 space-y-4 max-w-3xl mx-auto">
+          <div className="h-6 w-1/2 rounded-full v2-shimmer" />
+          <div className="h-4 w-1/3 rounded-full v2-shimmer" />
+          <div className="grid grid-cols-3 gap-3 pt-4">
+            <div className="h-20 rounded-[1.25rem] v2-shimmer" />
+            <div className="h-20 rounded-[1.25rem] v2-shimmer" />
+            <div className="h-20 rounded-[1.25rem] v2-shimmer" />
           </div>
+          <div className="h-20 rounded-[1.75rem] v2-shimmer" />
+          <div className="h-20 rounded-[1.75rem] v2-shimmer" />
         </div>
       </main>
     );
@@ -246,20 +244,20 @@ export default function ProviderProfile({ params }: { params: any }) {
 
   if (!provider) {
     return (
-      <main className="min-h-screen bg-[#FAF8F4] flex items-center justify-center px-6">
+      <main className="min-h-screen bg-linen flex items-center justify-center px-6">
         <div className="v2-rise text-center">
-          <div className="w-24 h-24 rounded-[1.75rem] bg-[#FFD0B4] text-primary-deep flex items-center justify-center mx-auto mb-7">
+          <div className="w-24 h-24 rounded-[1.75rem] bg-primary-light text-primary-deep flex items-center justify-center mx-auto mb-7">
             <UserX size={38} strokeWidth={1.8} />
           </div>
-          <h1 className="text-[21px] font-semibold tracking-tight text-[#111111] mb-2">
+          <h1 className="text-[21px] font-semibold tracking-tight text-ink mb-2">
             Proveedor no encontrado
           </h1>
-          <p className="text-[14px] font-medium text-[#6F6B66] max-w-xs mx-auto">
+          <p className="text-[14px] font-medium text-muted max-w-xs mx-auto">
             Puede que este perfil ya no esté disponible.
           </p>
           <Link
             href="/cliente/search"
-            className="inline-flex items-center justify-center h-14 px-8 mt-8 rounded-full bg-primary text-ink text-[13px] font-bold shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+            className="inline-flex items-center justify-center h-14 px-8 mt-8 rounded-full bg-ink text-on-dark text-[13px] font-bold v2-press"
           >
             Volver a la búsqueda
           </Link>
@@ -268,84 +266,88 @@ export default function ProviderProfile({ params }: { params: any }) {
     );
   }
 
-  return (
-    <main className="min-h-screen bg-[#FAF8F4] pb-40">
-      <div className="max-w-3xl mx-auto">
-        {/* ── Hero image-forward ── */}
-        <header className="v2-rise relative h-[420px] md:h-[460px] md:mt-5 md:rounded-[2.75rem] overflow-hidden bg-[#111111]">
-          {provider.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={provider.image}
-              alt={provider.name}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#2A2E29] to-[#111111] flex items-center justify-center">
-              <span className="text-white/85 text-8xl font-bold">
-                {provider.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
-              </span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+  const initials = provider.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('');
 
-          {/* Flecha atrás flotante */}
+  return (
+    <main className="min-h-screen bg-linen pb-40 overflow-x-hidden">
+      {/* ── Hero fotográfico a pantalla ── */}
+      <header className="v3-blur-in group relative h-[72vh] min-h-[480px] overflow-hidden bg-ink">
+        {provider.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={provider.image}
+            alt={provider.name}
+            className="absolute inset-0 w-full h-full object-cover v3-photo"
+          />
+        ) : (
+          <div className="absolute inset-0 v3-night-grad flex items-center justify-center">
+            <span className="text-on-dark/85 text-8xl font-semibold tracking-tight">{initials}</span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
+
+        <div className="relative max-w-3xl mx-auto px-6 pt-6 flex items-center justify-between z-10">
+          {/* Flecha atrás en círculo de vidrio */}
           <button
             onClick={() => window.history.back()}
             aria-label="Regresar"
-            className="absolute top-5 left-5 md:top-6 md:left-6 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md v2-shadow-soft flex items-center justify-center text-[#111111] v2-press z-10"
+            className="w-11 h-11 rounded-full glass flex items-center justify-center text-ink v2-press"
           >
             <ArrowLeft size={19} />
           </button>
 
-          {/* Rating + Certificado flotantes */}
-          <div className="absolute top-5 right-5 md:top-6 md:right-6 flex items-center gap-2 z-10">
+          {/* Rating + Certificado */}
+          <div className="flex items-center gap-2">
             {provider.verified && (
-              <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white rounded-full pl-2.5 pr-3.5 h-9 text-[12px] font-semibold">
-                <BadgeCheck size={14} /> Certificado
+              <span className="v3-pop inline-flex items-center gap-1.5 glass text-ink rounded-full pl-2.5 pr-3.5 h-9 text-[12px] font-semibold" style={{ animationDelay: '500ms' }}>
+                <ShieldCheck size={14} className="text-mint-deep" /> Certificado
               </span>
             )}
             <RatingPill value={Number(provider.rating) || 0} />
           </div>
+        </div>
 
-          {/* Nombre sobre la imagen */}
-          <div className="absolute inset-x-0 bottom-0 px-6 md:px-10 pb-16">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 mb-1.5">
+        {/* Nombre sobre la foto */}
+        <div className="absolute inset-x-0 bottom-0 pb-20">
+          <div className="max-w-3xl mx-auto px-6 md:px-10">
+            <p className="v3-blur-in text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-2" style={{ animationDelay: '200ms' }}>
               {(provider.categories || []).slice(0, 2).join(' · ') || 'Profesional'}
             </p>
-            <h1 className="text-white text-[30px] md:text-4xl font-bold tracking-tight leading-[1.1]">
+            <h1 className="v3-blur-in text-on-dark text-[36px] md:text-[52px] font-semibold tracking-tight leading-[1.02]" style={{ animationDelay: '300ms' }}>
               {provider.name}
             </h1>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* ── Contenido empalmado ── */}
-        <div className="relative z-10 -mt-10 bg-white rounded-t-[2.75rem] md:rounded-[2.75rem] px-6 md:px-10 pt-8 pb-10">
-          {/* Chips de stats */}
+      {/* ── Hoja empalmada ── */}
+      <div className="relative z-10 -mt-10 bg-linen rounded-t-[2.75rem]">
+        <div className="max-w-3xl mx-auto px-6 md:px-10 pt-8 pb-10">
+          {/* Stats */}
           <div className="v2-rise v2-d1 grid grid-cols-3 gap-3">
-            <div className="rounded-[1.25rem] bg-[#FFFFFF] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="flex items-center gap-1 text-[17px] font-bold text-[#111111] tabular-nums">
+            <div className="rounded-[1.25rem] bg-cream v2-shadow-soft py-4 flex flex-col items-center gap-1">
+              <span className="flex items-center gap-1 text-[17px] font-bold text-ink tabular-nums">
                 <Star size={14} className="text-amber-400 fill-amber-400" />
                 {Number(provider.rating || 0).toFixed(1)}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">Rating</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-faint">Rating</span>
             </div>
-            <div className="rounded-[1.25rem] bg-[#FFFFFF] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="text-[17px] font-bold text-[#111111] tabular-nums">
+            <div className="rounded-[1.25rem] bg-cream v2-shadow-soft py-4 flex flex-col items-center gap-1">
+              <span className="text-[17px] font-bold text-ink tabular-nums">
                 {provider.reviews?.length || 0}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">Reseñas</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-faint">Reseñas</span>
             </div>
-            <div className="rounded-[1.25rem] bg-[#FFFFFF] border border-black/[0.04] py-4 flex flex-col items-center gap-1">
-              <span className="text-[17px] font-bold text-[#111111] tabular-nums">
+            <div className="rounded-[1.25rem] bg-cream v2-shadow-soft py-4 flex flex-col items-center gap-1">
+              <span className="text-[17px] font-bold text-ink tabular-nums">
                 {provider.experience || 0}
               </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">Años exp.</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-faint">Años exp.</span>
             </div>
           </div>
 
           {/* Cobertura */}
-          <div className="v2-rise v2-d2 flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] font-medium text-[#6F6B66]">
+          <div className="v2-rise v2-d2 flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] font-medium text-muted">
             <span className="flex items-center gap-1.5 min-w-0">
               <MapPin size={14} className="shrink-0 text-primary-deep" />
               <span className="truncate">
@@ -361,10 +363,10 @@ export default function ProviderProfile({ params }: { params: any }) {
           {/* Acerca */}
           {provider.about && (
             <section className="v2-rise v2-d3 mt-9">
-              <h2 className="text-xl font-semibold tracking-tight text-[#111111] mb-3">
+              <h2 className="text-[22px] font-semibold tracking-tight text-ink mb-3">
                 Acerca del profesional
               </h2>
-              <p className="text-[14.5px] font-medium text-[#6F6B66] leading-relaxed">
+              <p className="text-[14.5px] font-medium text-muted leading-relaxed">
                 {provider.about}
               </p>
             </section>
@@ -373,8 +375,8 @@ export default function ProviderProfile({ params }: { params: any }) {
           {/* ── Servicios ── */}
           <section className="v2-rise v2-d4 mt-10">
             <div className="flex items-end justify-between mb-5">
-              <h2 className="text-xl font-semibold tracking-tight text-[#111111]">Servicios</h2>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">
+              <h2 className="text-[22px] font-semibold tracking-tight text-ink">Servicios</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-faint">
                 Elige varios
               </p>
             </div>
@@ -389,42 +391,40 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 return (
                   <div key={cat} className="space-y-3">
-                    <h3 className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">
+                    <h3 className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-faint">
                       {cat}
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-3">
                       {catServices.map((s: any, i: number) => {
                         const isSelected = selectedServices.includes(s.name);
                         return (
                           <button
                             key={i}
                             onClick={() => toggleService(s.name)}
-                            className={`p-5 rounded-[1.75rem] text-left transition-colors duration-300 v2-press ${
-                              isSelected
-                                ? 'bg-[#FFD0B4] border border-primary/25'
-                                : 'bg-white border border-black/[0.05] v2-shadow-soft hover:border-black/10'
+                            className={`w-full p-5 rounded-[1.75rem] text-left transition-colors duration-300 v2-press ${
+                              isSelected ? 'bg-primary-light' : 'bg-cream v2-shadow-soft'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex items-center gap-3.5 min-w-0">
                                 <span className={`w-10 h-10 shrink-0 rounded-[0.85rem] flex items-center justify-center transition-colors ${
-                                  isSelected ? 'bg-primary text-ink' : 'bg-[#FAF8F4] text-[#A39E97]'
+                                  isSelected ? 'bg-ink text-on-dark' : 'bg-sand text-faint'
                                 }`}>
                                   <CheckCircle2 size={19} />
                                 </span>
                                 <div className="min-w-0">
-                                  <p className="text-[14.5px] font-semibold text-[#111111] leading-snug">
+                                  <p className="text-[14.5px] font-semibold text-ink leading-snug">
                                     {s.name}
                                   </p>
-                                  <p className="text-[12px] font-medium text-[#A39E97]">
+                                  <p className="text-[12px] font-medium text-faint">
                                     Por {s.unit || 'servicio'}
                                   </p>
                                 </div>
                               </div>
-                              <p className="shrink-0 text-[16px] font-bold text-primary-deep tabular-nums text-right">
+                              <p className="shrink-0 text-[17px] font-bold text-primary-deep tabular-nums text-right">
                                 ${s.price}
                                 {s.isRange && (
-                                  <span className="block text-[11.5px] font-semibold text-[#A39E97]">
+                                  <span className="block text-[11.5px] font-semibold text-faint">
                                     a ${s.maxPrice}
                                   </span>
                                 )}
@@ -443,24 +443,24 @@ export default function ProviderProfile({ params }: { params: any }) {
                 onClick={() => toggleService('Personalizado o Explica tu necesidad')}
                 className={`w-full p-5 rounded-[1.75rem] text-left transition-colors duration-300 v2-press ${
                   selectedServices.includes('Personalizado o Explica tu necesidad')
-                    ? 'bg-[#FFD0B4] border border-primary/25'
-                    : 'bg-white border border-black/[0.05] v2-shadow-soft hover:border-black/10'
+                    ? 'bg-primary-light'
+                    : 'bg-cream v2-shadow-soft'
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <span className={`w-10 h-10 shrink-0 rounded-[0.85rem] flex items-center justify-center transition-colors ${
                       selectedServices.includes('Personalizado o Explica tu necesidad')
-                        ? 'bg-primary text-ink'
-                        : 'bg-[#FAF8F4] text-[#A39E97]'
+                        ? 'bg-ink text-on-dark'
+                        : 'bg-sand text-faint'
                     }`}>
                       <Pencil size={17} />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[14.5px] font-semibold text-[#111111] leading-snug">
+                      <p className="text-[14.5px] font-semibold text-ink leading-snug">
                         Personalizado o Explica tu necesidad
                       </p>
-                      <p className="text-[12px] font-medium text-[#A39E97]">
+                      <p className="text-[12px] font-medium text-faint">
                         Explícanos a detalle
                       </p>
                     </div>
@@ -476,9 +476,9 @@ export default function ProviderProfile({ params }: { params: any }) {
                   value={customRequestText}
                   onChange={(e) => setCustomRequestText(e.target.value)}
                   placeholder="Describe exactamente qué necesitas. ¿Medidas, materiales, detalles específicos?"
-                  className="w-full bg-[#FFFFFF] rounded-[1.25rem] p-5 text-[14.5px] font-semibold text-[#111111] placeholder:text-[#A39E97] placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow h-36 resize-none"
+                  className="w-full bg-sand rounded-[1.25rem] p-5 text-[14.5px] font-semibold text-ink placeholder:text-faint placeholder:font-medium outline-none focus:ring-2 focus:ring-primary/30 transition-shadow h-36 resize-none"
                 />
-                <p className="text-[12px] font-medium text-[#6F6B66] mt-2 px-2">
+                <p className="text-[12px] font-medium text-muted mt-2 px-2">
                   Este monto requerirá cotización final por parte del proveedor tras su revisión.
                 </p>
               </div>
@@ -487,14 +487,14 @@ export default function ProviderProfile({ params }: { params: any }) {
 
           {/* ── Agenda ── */}
           <section className="v2-rise v2-d5 mt-10">
-            <h2 className="text-xl font-semibold tracking-tight text-[#111111] mb-5">Agenda</h2>
+            <h2 className="text-[22px] font-semibold tracking-tight text-ink mb-5">Agenda</h2>
 
             <button
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
               className={`w-full h-14 px-6 rounded-full flex items-center justify-center gap-2.5 text-[13px] font-semibold transition-colors v2-press ${
                 isCalendarOpen
-                  ? 'bg-[#FFD0B4] text-primary-deep border border-primary/25'
-                  : 'bg-white text-[#111111] border border-black/[0.05] v2-shadow-soft'
+                  ? 'bg-primary-light text-primary-deep'
+                  : 'bg-cream text-ink v2-shadow-soft'
               }`}
             >
               <CalendarIcon size={16} />
@@ -504,30 +504,30 @@ export default function ProviderProfile({ params }: { params: any }) {
             </button>
 
             {!isFormValid && (
-              <p className="text-[12px] font-medium text-[#B45309] text-center mt-3">
+              <p className="text-[12px] font-medium text-warning text-center mt-3">
                 Selecciona un servicio y horario para continuar
               </p>
             )}
 
             {/* Calendario colapsable */}
             <div className={`transition-all duration-700 ease-in-out ${isCalendarOpen ? 'max-h-[800px] opacity-100 mt-6' : 'max-h-0 opacity-0 overflow-hidden'}`}>
-              <div className="rounded-[1.75rem] bg-[#FFFFFF] border border-black/[0.04] p-5">
+              <div className="rounded-[1.75rem] bg-cream v2-shadow-soft p-5">
                 <div className="flex justify-between items-center mb-5">
-                  <h4 className="text-[14px] font-semibold text-[#111111] capitalize">
+                  <h4 className="text-[14px] font-semibold text-ink capitalize">
                     {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
                   </h4>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
                       aria-label="Mes anterior"
-                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#6F6B66] hover:text-[#111111] transition-colors v2-press"
+                      className="w-9 h-9 rounded-full bg-sand flex items-center justify-center text-muted hover:text-ink transition-colors v2-press"
                     >
                       <ChevronRight className="rotate-180" size={14} />
                     </button>
                     <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
                       aria-label="Mes siguiente"
-                      className="w-9 h-9 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#6F6B66] hover:text-[#111111] transition-colors v2-press"
+                      className="w-9 h-9 rounded-full bg-sand flex items-center justify-center text-muted hover:text-ink transition-colors v2-press"
                     >
                       <ChevronRight size={14} />
                     </button>
@@ -536,7 +536,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 <div className="grid grid-cols-7 gap-1.5 mb-6">
                   {['D','L','M','M','J','V','S'].map((d, i) => (
-                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">{d}</div>
+                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.18em] text-faint">{d}</div>
                   ))}
                   {/* Calendar Days */}
                   {(() => {
@@ -566,8 +566,8 @@ export default function ProviderProfile({ params }: { params: any }) {
                           disabled={!isWorkingDay || isPast}
                           onClick={() => setSelectedDate(dateObj)}
                           className={`h-10 rounded-full text-[12px] font-semibold tabular-nums transition-colors v2-press ${
-                            isSelectedDay ? 'bg-primary text-ink shadow-lg shadow-primary/25' :
-                            (isWorkingDay && !isPast) ? 'bg-white text-[#111111] v2-shadow-soft hover:bg-[#FFD0B4]' : 'bg-transparent text-[#A39E97]/60 cursor-not-allowed'
+                            isSelectedDay ? 'bg-ink text-on-dark' :
+                            (isWorkingDay && !isPast) ? 'bg-sand text-ink hover:bg-primary-light' : 'bg-transparent text-faint/60 cursor-not-allowed'
                           }`}
                         >
                           {day}
@@ -580,7 +580,7 @@ export default function ProviderProfile({ params }: { params: any }) {
 
                 {selectedDate && (
                   <div className="v2-scale space-y-3">
-                    <p className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">
+                    <p className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-faint">
                       Horarios disponibles
                     </p>
                     <div className="grid grid-cols-2 gap-2.5">
@@ -590,14 +590,14 @@ export default function ProviderProfile({ params }: { params: any }) {
                           onClick={() => setSelectedTime(t)}
                           className={`h-12 rounded-full text-[12.5px] font-semibold tabular-nums transition-colors v2-press ${
                             selectedTime === t
-                              ? 'bg-[#111111] text-white v2-shadow-lift'
-                              : 'bg-white text-[#6F6B66] border border-black/[0.05] hover:text-[#111111]'
+                              ? 'bg-ink text-on-dark v2-shadow-lift'
+                              : 'bg-sand text-muted hover:text-ink'
                           }`}
                         >
                           {t}
                         </button>
                       )) : (
-                        <p className="col-span-2 text-[13px] font-medium text-[#A39E97] py-4 text-center">
+                        <p className="col-span-2 text-[13px] font-medium text-faint py-4 text-center">
                           No hay horarios disponibles este día.
                         </p>
                       )}
@@ -608,28 +608,28 @@ export default function ProviderProfile({ params }: { params: any }) {
             </div>
           </section>
 
-          {/* ── Portafolio ── */}
+          {/* ── Portafolio: mosaico ── */}
           {(provider as any).portfolio && (provider as any).portfolio.length > 0 && (
             <Reveal className="mt-10">
               <section>
-                <h2 className="text-xl font-semibold tracking-tight text-[#111111] mb-5">Portafolio</h2>
-                <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-6 px-6 md:-mx-10 md:px-10 pb-2">
+                <h2 className="text-[22px] font-semibold tracking-tight text-ink mb-5">Portafolio</h2>
+                <div className="columns-2 gap-3.5">
                   {(provider as any).portfolio.map((item: any, i: number) => (
                     <figure
                       key={i}
-                      className="group snap-start shrink-0 w-[72%] sm:w-[300px] relative aspect-[4/3] rounded-[1.75rem] overflow-hidden bg-[#111111] v2-shadow-lift v2-float"
+                      className={`group relative w-full mb-3.5 break-inside-avoid rounded-[1.9rem] overflow-hidden bg-ink ${i % 3 === 0 ? 'h-64' : i % 3 === 1 ? 'h-44' : 'h-52'}`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                        className="absolute inset-0 w-full h-full object-cover v3-photo"
                       />
                       {item.title && (
                         <>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                          <figcaption className="absolute inset-x-0 bottom-0 p-5">
-                            <p className="text-white text-[15px] font-semibold tracking-tight leading-snug">
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/5 to-transparent" />
+                          <figcaption className="absolute inset-x-4 bottom-4">
+                            <p className="text-on-dark text-[15px] font-semibold tracking-tight leading-snug">
                               {item.title}
                             </p>
                           </figcaption>
@@ -646,18 +646,18 @@ export default function ProviderProfile({ params }: { params: any }) {
           {provider.reviews && provider.reviews.length > 0 && (
             <Reveal className="mt-10">
               <section>
-                <h2 className="text-xl font-semibold tracking-tight text-[#111111] mb-5">Reseñas</h2>
+                <h2 className="text-[22px] font-semibold tracking-tight text-ink mb-5">Reseñas</h2>
                 <div className="space-y-3.5">
                   {provider.reviews.map((review: any, i: number) => (
-                    <article key={i} className="rounded-[1.75rem] bg-[#FFFFFF] border border-black/[0.04] p-5">
+                    <article key={i} className="rounded-[1.75rem] bg-cream v2-shadow-soft p-5">
                       <div className="flex items-center justify-between gap-4 mb-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <span className="w-10 h-10 shrink-0 rounded-full bg-[#FFD0B4] text-primary-deep flex items-center justify-center text-[14px] font-bold">
+                          <span className="w-10 h-10 shrink-0 rounded-full bg-primary-light text-primary-deep flex items-center justify-center text-[14px] font-bold">
                             {review.user.charAt(0)}
                           </span>
                           <div className="min-w-0">
-                            <h4 className="text-[13.5px] font-semibold text-[#111111] truncate">{review.user}</h4>
-                            <p className="text-[11.5px] font-medium text-[#A39E97]">{review.date}</p>
+                            <h4 className="text-[13.5px] font-semibold text-ink truncate">{review.user}</h4>
+                            <p className="text-[11.5px] font-medium text-faint">{review.date}</p>
                           </div>
                         </div>
                         <div className="flex gap-0.5 shrink-0 text-amber-400">
@@ -666,7 +666,7 @@ export default function ProviderProfile({ params }: { params: any }) {
                           ))}
                         </div>
                       </div>
-                      <p className="text-[13.5px] font-medium text-[#6F6B66] leading-relaxed">
+                      <p className="text-[13.5px] font-medium text-muted leading-relaxed">
                         “{review.comment}”
                       </p>
                       {review.photo && (
@@ -684,15 +684,15 @@ export default function ProviderProfile({ params }: { params: any }) {
 
           {/* ── Confianza ── */}
           <Reveal className="mt-10">
-            <div className="rounded-[1.75rem] bg-[#FFD0B4] p-6 space-y-4">
-              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#111111]">
-                <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-white text-primary-deep flex items-center justify-center v2-shadow-soft">
+            <div className="rounded-[1.75rem] bg-primary-light p-6 space-y-4">
+              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-ink">
+                <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-ink text-primary flex items-center justify-center">
                   <ShieldCheck size={18} />
                 </span>
                 Pago seguro con anticipo protegido
               </div>
-              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-[#111111]">
-                <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-white text-primary-deep flex items-center justify-center v2-shadow-soft">
+              <div className="flex items-center gap-3.5 text-[13.5px] font-semibold text-ink">
+                <span className="w-10 h-10 shrink-0 rounded-[0.85rem] bg-ink text-primary flex items-center justify-center">
                   <MessageSquare size={18} />
                 </span>
                 Soporte certificado 24/7
@@ -702,16 +702,16 @@ export default function ProviderProfile({ params }: { params: any }) {
         </div>
       </div>
 
-      {/* ── CTA fijo inferior ── */}
-      <div className="fixed bottom-0 inset-x-0 z-[70] bg-white/85 backdrop-blur-xl border-t border-black/[0.05]">
-        <div className="max-w-3xl mx-auto px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
+      {/* ── CTA sticky inferior de vidrio ── */}
+      <div className="fixed bottom-5 inset-x-0 z-[70] px-5 pb-[env(safe-area-inset-bottom)] pointer-events-none">
+        <div className="pointer-events-auto max-w-3xl mx-auto glass rounded-[1.9rem] p-3 pl-6 flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A39E97]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-faint">
               Total estimado
             </p>
-            <p className="text-[24px] font-bold tracking-tight text-[#111111] tabular-nums leading-tight">
+            <p className="text-[24px] font-bold tracking-tight text-ink tabular-nums leading-tight">
               ${totalPrice}
-              <span className="text-[12px] font-semibold text-[#A39E97] ml-1">MXN</span>
+              <span className="text-[12px] font-semibold text-faint ml-1">MXN</span>
             </p>
             {selectedServices.length > 0 && (
               <p className="text-[11.5px] font-medium text-primary-deep">
@@ -722,13 +722,13 @@ export default function ProviderProfile({ params }: { params: any }) {
           <button
             onClick={handleBooking}
             disabled={!isFormValid}
-            className={`shrink-0 h-14 px-8 rounded-full text-[13px] font-bold text-white transition-colors v2-press ${
+            className={`shrink-0 h-14 px-7 rounded-full text-[13px] font-bold flex items-center gap-2 transition-colors v2-press ${
               isFormValid
-                ? 'bg-primary hover:bg-primary-dark shadow-lg shadow-primary/25'
-                : 'bg-[#A39E97] cursor-not-allowed'
+                ? 'bg-ink text-on-dark'
+                : 'bg-faint/40 text-muted cursor-not-allowed'
             }`}
           >
-            Solicitar servicio
+            Solicitar servicio <ArrowUpRight size={17} />
           </button>
         </div>
       </div>

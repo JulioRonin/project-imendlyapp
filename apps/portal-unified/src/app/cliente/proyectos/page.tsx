@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, ChevronRight, Hammer,
+  ArrowLeft, ArrowUpRight, ChevronRight, Hammer,
   MapPin, Plus, Users
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
@@ -12,10 +12,10 @@ import { PROJECT_STATUS_LABELS, timeAgo, formatMXN } from '../../../lib/tablero'
 import { ClientNav } from '@/components/client/ClientNav';
 
 const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
-  success: 'bg-[#FFD0B4] text-primary-deep',
-  warning: 'bg-amber-50 text-amber-700',
-  error: 'bg-red-50 text-red-600',
-  default: 'bg-black/[0.05] text-[#6F6B66]',
+  success: 'bg-mint-light text-mint-deep',
+  warning: 'bg-primary-light text-warning',
+  error: 'bg-rose/15 text-error',
+  default: 'bg-sand text-muted',
 };
 
 export default function MisProyectosPage() {
@@ -47,14 +47,14 @@ export default function MisProyectosPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#FAF8F4] pb-36">
-      {/* Header interno v2 */}
-      <header className="v2-rise sticky top-0 z-50 bg-[#FAF8F4]/85 backdrop-blur-xl">
+    <main className="min-h-screen bg-linen pb-36 overflow-x-hidden">
+      {/* Cabecera editorial */}
+      <header className="v3-blur-in sticky top-0 z-50 bg-linen/85 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center gap-4">
           <Link
             href="/cliente"
             aria-label="Volver"
-            className="w-12 h-12 shrink-0 rounded-full bg-white v2-shadow-soft flex items-center justify-center text-[#111111] v2-press"
+            className="w-12 h-12 shrink-0 rounded-full bg-cream v2-shadow-soft flex items-center justify-center text-ink v2-press"
           >
             <ArrowLeft size={19} />
           </Link>
@@ -62,13 +62,13 @@ export default function MisProyectosPage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">
               Tablero de proyectos
             </p>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">
+            <h1 className="text-[24px] font-semibold tracking-tight text-ink leading-tight">
               Mis proyectos
             </h1>
           </div>
           <Link
             href="/cliente/proyectos/nuevo"
-            className="shrink-0 h-12 px-5 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center gap-2 shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
+            className="shrink-0 h-12 px-5 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center gap-2 v2-press hover:bg-primary-dark transition-colors"
           >
             <Plus size={16} strokeWidth={2.5} /> Publicar
           </Link>
@@ -85,25 +85,30 @@ export default function MisProyectosPage() {
           </>
         )}
 
-        {/* Estado vacío */}
+        {/* Estado vacío: foto con tarjeta de vidrio */}
         {!isLoading && projects.length === 0 && (
-          <div className="v2-rise v2-d1 bg-white rounded-[2.25rem] v2-shadow-soft px-8 py-14 flex flex-col items-center text-center">
-            <span className="w-20 h-20 rounded-[1.4rem] bg-[#FFD0B4] text-primary-deep flex items-center justify-center mb-6">
-              <Hammer size={32} />
-            </span>
-            <h3 className="text-[19px] font-semibold tracking-tight text-[#111111] mb-2">
-              ¿Necesitas un trabajo en casa?
-            </h3>
-            <p className="text-[14px] font-medium text-[#6F6B66] max-w-sm mb-8">
-              Publica tu proyecto — una pérgola, una cocina, una reparación — y recibe
-              hasta 5 ofertas de proveedores verificados de tu zona.
-            </p>
-            <Link
-              href="/cliente/proyectos/nuevo"
-              className="h-14 px-9 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center shadow-lg shadow-primary/25 v2-press hover:bg-primary-dark transition-colors"
-            >
-              Publicar mi primer proyecto
-            </Link>
+          <div className="v2-rise v2-d1 relative h-[460px] rounded-[2.5rem] overflow-hidden bg-ink">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/carpentry.png" alt="Taller de carpintería" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
+            <div className="absolute inset-x-4 bottom-4 md:inset-x-6 md:bottom-6 glass rounded-[1.9rem] p-6 md:p-7 flex flex-col items-start">
+              <span className="w-12 h-12 rounded-[1.05rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
+                <Hammer size={22} />
+              </span>
+              <h3 className="text-[22px] font-semibold tracking-tight text-ink leading-tight mb-2">
+                ¿Necesitas un trabajo en casa?
+              </h3>
+              <p className="text-[13.5px] font-medium text-muted max-w-sm mb-6">
+                Publica tu proyecto — una pérgola, una cocina, una reparación — y recibe
+                hasta 5 ofertas de proveedores verificados de tu zona.
+              </p>
+              <Link
+                href="/cliente/proyectos/nuevo"
+                className="h-14 px-7 rounded-full bg-ink text-on-dark text-[13px] font-bold flex items-center justify-center gap-2 v2-press"
+              >
+                Publicar mi primer proyecto <ArrowUpRight size={17} />
+              </Link>
+            </div>
           </div>
         )}
 
@@ -117,7 +122,7 @@ export default function MisProyectosPage() {
               onClick={() => router.push(`/cliente/proyectos/${p.id}`)}
               className={`v2-rise v2-d${Math.min(i + 1, 8)} cursor-pointer group`}
             >
-              <article className="bg-white rounded-[1.75rem] v2-shadow-soft p-6 v2-press v2-float transition-shadow">
+              <article className="bg-cream rounded-[1.75rem] v2-shadow-soft p-6 v2-press v2-float transition-shadow">
                 <div className="flex items-center justify-between gap-3 mb-2.5">
                   <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">
                     {p.display_id}
@@ -127,22 +132,22 @@ export default function MisProyectosPage() {
                   </span>
                 </div>
 
-                <h3 className="text-[17px] font-semibold tracking-tight text-[#111111] leading-snug mb-3">
+                <h3 className="text-[17px] font-semibold tracking-tight text-ink leading-snug mb-3">
                   {p.title}
                 </h3>
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-[#FAF8F4] text-[12px] font-semibold text-[#6F6B66]">
+                  <span className="inline-flex items-center h-7 px-3 rounded-full bg-sand text-[12px] font-semibold text-muted">
                     {p.category}
                   </span>
-                  <span className="flex items-center gap-1 text-[12px] font-medium text-[#A39E97]">
+                  <span className="flex items-center gap-1 text-[12px] font-medium text-faint">
                     <MapPin size={12} /> {p.zone}
                   </span>
-                  <span className="text-[12px] font-medium text-[#A39E97]">{timeAgo(p.created_at)}</span>
+                  <span className="text-[12px] font-medium text-faint">{timeAgo(p.created_at)}</span>
                 </div>
 
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-black/[0.05]">
-                  <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12px] font-bold ${hasOffers ? 'bg-[#FFD0B4] text-primary-deep' : 'bg-[#FAF8F4] text-[#A39E97]'}`}>
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-line">
+                  <span className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12px] font-bold ${hasOffers ? 'bg-lavender-light text-clay-deep' : 'bg-sand text-faint'}`}>
                     <Users size={13} />
                     {p.offers_count}/{p.max_offers} ofertas
                   </span>
@@ -153,7 +158,7 @@ export default function MisProyectosPage() {
                   )}
                   <ChevronRight
                     size={18}
-                    className={`${(p.budget_min || p.budget_max) ? '' : 'ml-auto '}text-[#A39E97] transition-all group-hover:text-primary-deep group-hover:translate-x-0.5`}
+                    className={`${(p.budget_min || p.budget_max) ? '' : 'ml-auto '}text-faint transition-all group-hover:text-primary-deep group-hover:translate-x-0.5`}
                   />
                 </div>
               </article>
