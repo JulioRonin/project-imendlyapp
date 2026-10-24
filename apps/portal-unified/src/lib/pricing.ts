@@ -6,27 +6,28 @@
 // Si cambias el plan, sube PRICING_VERSION: cada orden guarda la versión con
 // la que se cotizó y conserva su precio aunque el plan cambie después.
 //
-// ESTADO: propuesta pendiente de aprobación. El plan anterior (10/8/6% con
-// tope de $1,500 y sin tarifa al cliente) pierde dinero en trabajos chicos,
-// en el nivel Élite y en proyectos grandes pagados con tarjeta, porque la
-// plataforma absorbía ~4.2% + $3.48 de Stripe por cobro.
+// ESTADO: plan del piloto, acordado el 24 de octubre de 2026. Se cobra poco
+// al cliente (3%) y la comisión al profesional lleva el peso. Con costos
+// fijos de $40,000 al mes, el equilibrio queda cerca de 81 trabajos al mes
+// (calculadora "Plan de comisiones I mendly"). El plan anterior (10/8/6% sin
+// tarifa al cliente) necesitaba unos 280 trabajos al mes para lo mismo.
 // ═════════════════════════════════════════════════════════════
 
-export const PRICING_VERSION = '2026-10-propuesta.2';
+export const PRICING_VERSION = '2026-10-piloto';
 
 export type ProviderTier = 'verificado' | 'certificado' | 'elite';
 
 export const PLAN = {
   /** Comisión al profesional por nivel, sin IVA (el IVA se suma y se le factura). */
-  commission: { verificado: 0.12, certificado: 0.10, elite: 0.08 } as Record<ProviderTier, number>,
+  commission: { verificado: 0.14, certificado: 0.12, elite: 0.10 } as Record<ProviderTier, number>,
   /** Tope de comisión por orden, en MXN (sin IVA). */
   commissionCap: 4000,
   /** IVA que se suma a la comisión. */
   commissionVat: 0.16,
 
   /** Tarifa de servicio al cliente (cubre procesamiento de pago y garantía). */
-  clientFee: 0.05,
-  clientFeeMin: 29,
+  clientFee: 0.03,
+  clientFeeMin: 19,
   clientFeeMax: 1500,
 
   /** Anticipo máximo que puede pedir un profesional en una oferta. */
