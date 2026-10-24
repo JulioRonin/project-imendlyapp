@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { Avatar } from "@i-mendly/shared/components/Avatar";
 import { usePlatformStore } from "@/store/usePlatformStore";
 import { SectionHead } from "@/components/client/ui";
+import { supabase } from '@/lib/supabase';
 
 const STATS = [
   { label: "Ingresos del mes", value: "$12,450", hint: "MXN cobrados", icon: TrendingUp },
@@ -51,8 +52,9 @@ export default function ProviderDashboard() {
   // Filter for orders meant for this provider
   const myOrders = allOrders.filter(o => o.providerEmail === currentUser?.email);
 
-  const handleLogout = () => {
-    router.push('/role-selection');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/proveedor/login');
   };
 
   const handleAccept = (id: string) => updateOrderStatus(id, 'ACCEPTED');

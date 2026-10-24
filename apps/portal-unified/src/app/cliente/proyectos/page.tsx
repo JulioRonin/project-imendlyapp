@@ -10,6 +10,7 @@ import {
 import { supabase } from '../../../lib/supabase';
 import { PROJECT_STATUS_LABELS, timeAgo, formatMXN } from '../../../lib/tablero';
 import { ClientNav } from '@/components/client/ClientNav';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> = {
   success: 'bg-mint-light text-mint-deep',
@@ -18,7 +19,7 @@ const STATUS_PILL: Record<'default' | 'success' | 'warning' | 'error', string> =
   default: 'bg-sand text-muted',
 };
 
-export default function MisProyectosPage() {
+function MisProyectosPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,5 +170,18 @@ export default function MisProyectosPage() {
 
       <ClientNav />
     </main>
+  );
+}
+
+// Requiere cuenta: el invitado ve una invitación a registrarse sin salir del flujo
+export default function MisProyectosPageGate() {
+  return (
+    <RequireSession
+      title="Tus proyectos"
+      text="Publica lo que necesitas y recibe hasta 5 ofertas de profesionales verificados. Inicia sesión para ver tus proyectos."
+      image="/assets/carpentry.png"
+    >
+      <MisProyectosPage />
+    </RequireSession>
   );
 }

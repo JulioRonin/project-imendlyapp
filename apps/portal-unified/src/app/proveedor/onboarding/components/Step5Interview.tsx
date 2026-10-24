@@ -1,55 +1,80 @@
-import { ArrowRight, Check, Video } from 'lucide-react';
+"use client";
+
+import React, { useMemo } from 'react';
+import { Check, Video } from 'lucide-react';
 import { useOnboarding } from './OnboardingContext';
+import { WizardFooter } from './WizardParts';
 
 const LABEL_CLS = 'block text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-3';
 
+const SLOTS = ['09:00', '10:00', '11:30', '13:00', '15:00', '16:30', '18:00'];
+
+const DAY_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const MONTH_SHORT = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const isoDate = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const to12h = (t: string) => {
+  const [h, m] = t.split(':').map(Number);
+  return `${pad(((h + 11) % 12) + 1)}:${pad(m)} ${h < 12 ? 'AM' : 'PM'}`;
+};
+
+/** Próximos 4 días hábiles (lun–vie) a partir de mañana. */
+function nextBusinessDays(count = 4) {
+  const out: { iso: string; name: string; date: string }[] = [];
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  while (out.length < count) {
+    d.setDate(d.getDate() + 1);
+    const wd = d.getDay();
+    if (wd === 0 || wd === 6) continue;
+    out.push({
+      iso: isoDate(d),
+      name: out.length === 0 && (d.getTime() - Date.now()) < 36 * 3600 * 1000 ? 'Mañana' : DAY_SHORT[wd],
+      date: `${d.getDate()} ${MONTH_SHORT[d.getMonth()]}`,
+    });
+  }
+  return out;
+}
+
 export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext, onBack }) => {
   const { data, updateData } = useOnboarding();
-  const selectedDate = data.interview?.date || null;
-  const selectedTime = data.interview?.time || null;
+  const days = useMemo(() => nextBusinessDays(), []);
 
-  const upcomingDays = [
-    { id: 'today', name: 'Hoy', date: 'Jue 26' },
-    { id: 'tmrw', name: 'Mañana', date: 'Vie 27' },
-    { id: 'mon', name: 'Lunes', date: 'Lun 30' },
-    { id: 'tue', name: 'Martes', date: 'Mar 31' },
-  ];
+  // Una fecha guardada que ya pasó (borrador viejo) no cuenta
+  const selectedDate = days.some(d => d.iso === data.interview?.date) ? data.interview?.date : undefined;
+  const selectedTime = selectedDate ? data.interview?.time : undefined;
 
-  const timesMap: Record<string, string[]> = {
-    today: ['04:00 PM', '04:30 PM', '05:45 PM'],
-    tmrw: ['10:00 AM', '11:30 AM', '01:00 PM', '03:30 PM'],
-    mon: ['09:00 AM', '09:45 AM', '11:00 AM', '02:00 PM', '04:15 PM'],
-    tue: ['10:00 AM', '12:30 PM', '02:45 PM', '05:00 PM'],
+  const select = (iso: string, time?: string) => {
+    const day = days.find(d => d.iso === iso);
+    updateData({
+      interview: {
+        date: iso,
+        time,
+        label: day && time ? `${day.name} ${day.date} · ${to12h(time)}` : undefined,
+      },
+    });
   };
 
-  const handleDateSelect = (id: string) => {
-    if (selectedDate !== id) {
-      updateData({ interview: { date: id, time: undefined } });
-    }
-  };
-
-  const handleTimeSelect = (time: string) => {
-    updateData({ interview: { ...data.interview, time } });
-  };
-
-  const canNext = !!(selectedDate && selectedTime);
+  const missing = !selectedDate ? 'Elige un día para tu entrevista' : !selectedTime ? 'Elige un horario' : '';
 
   return (
     <div className="flex-1 flex flex-col space-y-5">
       <section className="v2-scale bg-cream rounded-[2.25rem] v2-shadow-soft p-6 space-y-7">
-        <p className="text-[14px] font-medium text-muted">Agenda una breve videollamada de 15 min con nuestro equipo de CX.</p>
+        <p className="text-[14px] font-medium text-muted">
+          Agenda una videollamada de 15 minutos con nuestro equipo. Horario de Ciudad Juárez.
+        </p>
 
         <div>
           <label className={LABEL_CLS}>Selecciona un día</label>
-          {/* Date Selector Carousel */}
           <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-6 px-6 no-scrollbar">
-            {upcomingDays.map(day => {
-              const active = selectedDate === day.id;
+            {days.map(day => {
+              const active = selectedDate === day.iso;
               return (
                 <button
-                  key={day.id}
+                  key={day.iso}
                   type="button"
-                  onClick={() => handleDateSelect(day.id)}
+                  onClick={() => active || select(day.iso)}
                   className={`shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-[1.5rem] v2-press transition-colors duration-300 ${
                     active ? 'bg-ink text-white v2-shadow-lift' : 'bg-sand text-ink hover:bg-primary-light'
                   }`}
@@ -62,23 +87,22 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
           </div>
         </div>
 
-        {/* Time Selector Grid */}
         {selectedDate && (
           <div className="v2-rise">
             <label className={LABEL_CLS}>Selecciona el horario</label>
             <div className="grid grid-cols-2 gap-2.5">
-              {timesMap[selectedDate]?.map(time => {
+              {SLOTS.map(time => {
                 const active = selectedTime === time;
                 return (
                   <button
                     key={time}
                     type="button"
-                    onClick={() => handleTimeSelect(time)}
+                    onClick={() => select(selectedDate, time)}
                     className={`h-12 px-4 rounded-full text-[13px] font-semibold tabular-nums v2-press transition-colors duration-300 flex items-center justify-center gap-2 ${
                       active ? 'bg-ink text-white v2-shadow-lift' : 'bg-sand text-muted hover:text-ink'
                     }`}
                   >
-                    {active && <Check size={14} />} {time}
+                    {active && <Check size={14} />} {to12h(time)}
                   </button>
                 );
               })}
@@ -95,9 +119,9 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
           <p className="text-[14px] font-semibold text-ink mb-2">¿Qué revisaremos?</p>
           <ul className="space-y-2">
             {[
-              'Protocolo de servicio al cliente I mendly',
-              'Confirmación de herramientas y equipo',
-              'Dudas sobre pagos y el modelo escrow',
+              'Protocolo de servicio al cliente de I mendly',
+              'Herramientas y equipo con los que trabajas',
+              'Cómo funciona el cobro: anticipo al aceptar y liquidación al día siguiente de terminar',
             ].map(item => (
               <li key={item} className="flex items-start gap-2.5 text-[13px] font-medium text-ink/80">
                 <Check size={14} className="shrink-0 mt-0.5 text-ink" /> {item}
@@ -107,22 +131,7 @@ export const Step5Interview: React.FC<{ onNext: () => void; onBack: () => void }
         </div>
       </section>
 
-      {/* Botonera sticky */}
-      <div className="sticky bottom-0 mt-auto -mx-6 px-6 pt-4 pb-6 bg-gradient-to-t from-linen via-linen/95 to-transparent">
-        <div className="flex items-center gap-3">
-          <button type="button" onClick={onBack} className="h-14 px-6 rounded-full text-[13px] font-semibold text-muted hover:text-ink v2-press transition-colors">Atrás</button>
-          <button
-            type="button"
-            onClick={onNext}
-            disabled={!selectedDate || !selectedTime}
-            className={`flex-1 h-14 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-colors ${
-              canNext ? 'bg-primary text-ink hover:bg-primary-dark v2-press shadow-lg shadow-primary/25' : 'bg-sand text-faint cursor-not-allowed'
-            }`}
-          >
-            {canNext ? <>Confirmar agenda <ArrowRight size={16} /></> : 'Selecciona un horario'}
-          </button>
-        </div>
-      </div>
+      <WizardFooter onBack={onBack} onNext={onNext} canNext={!missing} missing={missing} label="Confirmar agenda" />
     </div>
   );
 };

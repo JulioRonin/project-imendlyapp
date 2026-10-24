@@ -14,6 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { supabase } from '@/lib/supabase';
 
 /** Toggle de preferencia: ink cuando está activo. */
 function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
@@ -38,7 +39,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     // In a real app, clear sessions/tokens here
-    router.push('/role-selection');
+    supabase.auth.signOut().then(() => router.push('/admin'));
   };
 
   return (

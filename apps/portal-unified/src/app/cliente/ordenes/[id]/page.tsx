@@ -8,6 +8,7 @@ import { useState, useEffect , Suspense} from 'react';
 import { supabase } from '../../../../lib/supabase';
 import { ClientNav } from '@/components/client/ClientNav';
 import { Reveal } from '@/components/client/ui';
+import { RequireSession } from '@/components/auth/RequireSession';
 
 const CANCEL_REASONS = [
   "Encontré otro profesional",
@@ -382,7 +383,13 @@ function OrderDetailsPage() {
 export default function OrderDetailsPageWrapper() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-linen" />}>
-      <OrderDetailsPage />
+      <RequireSession
+        title="Detalle de tu orden"
+        text="Inicia sesión para ver el seguimiento de tu servicio."
+        showNav={true}
+      >
+        <OrderDetailsPage />
+      </RequireSession>
     </Suspense>
   );
 }

@@ -21,11 +21,12 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export default function FinancialReportPage() {
   const router = useRouter();
   const handlePrint = () => window.print();
-  const handleLogout = () => router.push('/role-selection');
+  const handleLogout = () => supabase.auth.signOut().then(() => router.push('/admin'));
 
   return (
     <main className="min-h-screen bg-linen px-6 py-10 md:px-12 md:py-14 print:p-0">

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Logo } from '@i-mendly/shared/Logo';
+import { supabase } from '@/lib/supabase';
 import {
   BarChart3,
   AlertCircle,
@@ -20,8 +21,11 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    router.push('/role-selection');
+  // Cerrar sesión regresa a la pantalla de acceso del propio panel,
+  // nunca a las entradas públicas de clientes o profesionales.
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/admin');
   };
 
   const navItems = [

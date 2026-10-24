@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -13,6 +13,7 @@ import {
   findContactInfo, genDisplayId, formatMXN, timingLabel
 } from '../../../../lib/tablero';
 import { SegmentBar } from '@/components/client/ui';
+import { AuthSheet } from '@/components/auth/AuthSheet';
 
 const STEPS = ['Tu proyecto', 'Zona y presupuesto', 'Revisar y publicar'];
 
@@ -35,6 +36,35 @@ export default function NuevoProyectoPage() {
   const [budgetMax, setBudgetMax] = useState('');
   const [timing, setTiming] = useState('flexible');
 
+  const [authOpen, setAuthOpen] = useState(false);
+
+  // Borrador local: si el invitado debe confirmar su correo antes de
+  // publicar, al volver encuentra su proyecto tal como lo dejó.
+  const DRAFT_KEY = 'im-draft-proyecto';
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      setCategory(d.category ?? ''); setTitle(d.title ?? ''); setDescription(d.description ?? '');
+      setZone(d.zone ?? ''); setNeighborhood(d.neighborhood ?? '');
+      setBudgetMin(d.budgetMin ?? ''); setBudgetMax(d.budgetMax ?? ''); setTiming(d.timing ?? 'flexible');
+      if (typeof d.step === 'number') setStep(d.step);
+    } catch { /* sin almacenamiento disponible */ }
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ category, title, description, zone, neighborhood, budgetMin, budgetMax, timing, step }));
+    } catch { /* sin almacenamiento disponible */ }
+  }, [category, title, description, zone, neighborhood, budgetMin, budgetMax, timing, step]);
+
+  // Publicar exige cuenta: al invitado se le pide aquí, no antes.
+  const handlePublishClick = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setAuthOpen(true); return; }
+    publish();
+  };
+
   const contactIssue = findContactInfo(`${title} ${description}`);
 
   const canNext =
@@ -52,7 +82,8 @@ export default function NuevoProyectoPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push('/login');
+        setSaving(false);
+        setAuthOpen(true);
         return;
       }
 
@@ -86,6 +117,7 @@ export default function NuevoProyectoPage() {
         .single();
 
       if (insErr) throw insErr;
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
       router.push(`/cliente/proyectos/${project.id}?published=1`);
     } catch (err: any) {
       console.error('Error publishing project:', err);
@@ -375,7 +407,7 @@ export default function NuevoProyectoPage() {
               <button
                 type="button"
                 disabled={saving}
-                onClick={publish}
+                onClick={handlePublishClick}
                 className="flex-1 h-14 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press hover:bg-primary-dark transition-colors disabled:opacity-70"
               >
                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
@@ -385,6 +417,12 @@ export default function NuevoProyectoPage() {
           </div>
         </div>
       </div>
+      <AuthSheet
+        open={authOpen}
+        reason="Crea tu cuenta para publicar tu proyecto"
+        onClose={() => setAuthOpen(false)}
+        onAuthed={() => { setAuthOpen(false); publish(); }}
+      />
     </main>
   );
 }

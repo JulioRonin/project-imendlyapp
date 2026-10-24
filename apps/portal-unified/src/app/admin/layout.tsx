@@ -5,6 +5,8 @@ import { AdminGuard } from "@/components/admin/AdminGuard";
 export const metadata: Metadata = {
   title: "Operación · I mendly",
   description: "Panel del equipo I mendly",
+  // El panel no debe aparecer en buscadores ni enlazarse desde lo público
+  robots: { index: false, follow: false, nocache: true },
 };
 
 export default function AdminLayout({
