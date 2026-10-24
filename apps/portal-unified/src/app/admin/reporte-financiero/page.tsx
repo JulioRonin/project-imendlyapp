@@ -1,28 +1,24 @@
 "use client";
 
 import { Logo } from '@i-mendly/shared/Logo';
-import { Card } from '@i-mendly/shared/components/Card';
-import { Badge } from '@i-mendly/shared/components/Badge';
-import { Button } from '@i-mendly/shared/components/Button';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Printer, 
-  Download, 
-  TrendingUp, 
-  Target, 
-  BarChart, 
+import {
+  ArrowLeft,
+  Printer,
+  Download,
+  TrendingUp,
+  Target,
   ShieldCheck,
   Briefcase,
   PieChart as PieIcon,
   Flag,
   CheckCircle2,
-  TrendingDown,
   Info,
   Zap,
   Users,
   AlertCircle,
-  LogOut
+  LogOut,
+  ArrowUpRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -32,245 +28,259 @@ export default function FinancialReportPage() {
   const handleLogout = () => router.push('/role-selection');
 
   return (
-    <main className="min-h-screen bg-white font-urbanist p-8 md:p-16 print:p-0">
+    <main className="min-h-screen bg-linen px-6 py-10 md:px-12 md:py-14 print:p-0">
       {/* Navigation - Hidden on Print */}
-      <header className="max-w-5xl mx-auto mb-16 flex justify-between items-center print:hidden">
-        <Link href="/admin/finanzas" className="flex items-center gap-2 text-gray-soft text-sm hover:text-black-rich transition-colors">
-          <ArrowLeft size={16} /> Volver a Finanzas
+      <header className="v3-blur-in max-w-5xl mx-auto mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
+        <Link href="/admin/finanzas" className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-muted hover:text-ink transition-colors group">
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Volver a finanzas
         </Link>
-        <div className="flex gap-4">
-           <Button variant="outline" onClick={handleLogout} className="gap-2 rounded-pill px-6 text-im-error border-im-error/20 hover:bg-im-error/5">
-              <LogOut size={18} /> Cerrar Sesión
-           </Button>
-           <div className="w-[1px] h-8 bg-black/5 mx-2" />
-           <Button variant="secondary" onClick={handlePrint} className="gap-2 rounded-pill px-6">
-              <Printer size={18} /> Imprimir Reporte
-           </Button>
-           <Button variant="primary" onClick={handlePrint} className="gap-2 rounded-pill px-6 bg-black-rich hover:bg-black text-white">
-              <Download size={18} /> Descargar PDF
-           </Button>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleLogout} className="h-12 px-5 rounded-full bg-cream text-error text-[13px] font-bold flex items-center gap-2 v2-shadow-soft v2-press">
+            <LogOut size={16} /> Cerrar sesión
+          </button>
+          <button onClick={handlePrint} className="h-12 px-5 rounded-full bg-cream text-ink text-[13px] font-bold flex items-center gap-2 v2-shadow-soft v2-press">
+            <Printer size={16} /> Imprimir reporte
+          </button>
+          <button onClick={handlePrint} className="h-12 px-6 rounded-full bg-ink text-white text-[13px] font-bold flex items-center gap-2 v2-press">
+            <Download size={16} /> Descargar PDF
+          </button>
         </div>
       </header>
 
       {/* Report Document Container */}
-      <div className="max-w-5xl mx-auto bg-white print:max-w-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden mb-20 border-[0.5px] border-black/5">
+      <div className="v3-blur-in max-w-5xl mx-auto bg-cream rounded-[2.5rem] overflow-hidden mb-20 v2-shadow-float print:max-w-none print:shadow-none print:rounded-none" style={{ animationDelay: '120ms' }}>
         {/* Header Section */}
-        <section className="bg-black-rich p-16 text-white relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -mr-32 -mt-32" />
-           <div className="relative z-10 flex justify-between items-start">
-              <div>
-                 <Logo size={40} variant="dark" />
-                 <div className="mt-12">
-                    <Badge variant="silver" className="bg-primary/20 text-primary-deep border-none mb-4 tracking-widest px-4 py-1.5 font-[600]">MARZO 2026</Badge>
-                    <h1 className="text-6xl font-[600] tracking-tighter leading-none mb-4 text-white">Reporte de <br />Socios & Q1</h1>
-                    <p className="text-xl text-white/40 max-w-md">Análisis de rendimiento financiero alineado con los objetivos del Master Plan v2.0.</p>
-                 </div>
+        <section className="relative overflow-hidden v3-night-grad text-on-dark p-10 md:p-16">
+          <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8">
+            <div>
+              <Logo size={40} variant="dark" />
+              <div className="mt-12">
+                <span className="inline-flex items-center h-8 px-3.5 rounded-full bg-lavender text-ink text-[11px] font-bold mb-5">Marzo 2026</span>
+                <h1 className="text-[44px] md:text-[64px] font-semibold tracking-tight leading-[0.98]">Reporte de <br />socios y Q1</h1>
+                <p className="mt-4 text-[17px] font-medium text-on-dark/60 max-w-md">Análisis de rendimiento financiero alineado con los objetivos del Master Plan v2.0.</p>
               </div>
-              <div className="text-right flex flex-col items-end">
-                 <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-12">
-                    <TrendingUp size={32} className="text-primary-deep" />
-                 </div>
-                 <p className="text-[10px] uppercase font-[600] tracking-[0.3em] opacity-40">Financial Statement</p>
-              </div>
-           </div>
+            </div>
+            <div className="flex flex-col items-start md:items-end">
+              <span className="w-16 h-16 rounded-[1.25rem] bg-white/10 text-primary flex items-center justify-center mb-10">
+                <TrendingUp size={28} />
+              </span>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-on-dark/50">Estado financiero</p>
+            </div>
+          </div>
         </section>
 
         {/* GMV vs Master Plan Target */}
-        <section className="p-16 space-y-16">
-           <div>
-              <div className="flex items-center gap-3 mb-10">
-                 <Target className="text-primary-deep" size={24} />
-                 <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">1. GMV vs. Objetivos Master Plan</h2>
+        <section className="p-8 md:p-16 space-y-16">
+          <div>
+            <div className="flex items-center gap-4 mb-10">
+              <span className="w-11 h-11 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center"><Target size={20} /></span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">01</p>
+                <h2 className="text-[24px] font-semibold tracking-tight text-ink">GMV vs. objetivos del Master Plan</h2>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                 <div className="space-y-12">
-                    <div>
-                       <div className="flex justify-between items-end mb-4">
-                          <p className="text-sm font-[600] text-gray-500 uppercase tracking-tighter">Progreso Q1 2026</p>
-                          <p className="text-3xl font-[600] text-black-rich">92% <span className="text-sm text-gray-400 font-[300]">del objetivo</span></p>
-                       </div>
-                       <div className="h-4 bg-silver-light/40 rounded-pill overflow-hidden relative">
-                          <div className="absolute inset-0 bg-primary/20 animate-pulse" />
-                          <div className="h-full bg-primary rounded-pill relative z-10" style={{ width: '92%' }} />
-                       </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
+              <div className="space-y-10">
+                <div>
+                  <div className="flex justify-between items-end mb-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">Progreso Q1 2026</p>
+                    <p className="text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">92% <span className="text-[13px] font-medium text-muted">del objetivo</span></p>
+                  </div>
+                  <div className="h-3 bg-sand rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full" style={{ width: '92%' }} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 rounded-[1.5rem] bg-sand">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-2">Target marzo</p>
+                    <p className="text-[30px] font-bold tabular-nums tracking-tight text-ink leading-none">$750k</p>
+                  </div>
+                  <div className="p-6 rounded-[1.5rem] bg-primary-light">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep mb-2">Real logrado</p>
+                    <p className="text-[30px] font-bold tabular-nums tracking-tight text-primary-deep leading-none">$842k</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden v3-night-grad text-on-dark p-9 rounded-[2rem] v2-shadow-lift">
+                <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-lavender/20 blur-3xl" />
+                <div className="relative">
+                  <span className="w-11 h-11 rounded-[1rem] bg-white/10 text-primary flex items-center justify-center mb-6"><Flag size={20} /></span>
+                  <h3 className="text-[20px] font-semibold tracking-tight">Interpretación estratégica</h3>
+                  <p className="mt-3 text-[14px] font-medium leading-relaxed text-on-dark/60">
+                    Hemos superado el target mensual en un <strong className="font-bold text-on-dark tabular-nums">12.5%</strong>. Este excedente se atribuye a la adopción temprana del modelo I mendly en zonas residenciales premium,
+                    donde el ticket promedio superó las proyecciones en un 8%.
+                  </p>
+                  <span className="mt-6 inline-flex items-center h-8 px-3 rounded-full bg-white/10 text-on-dark text-[12px] font-bold tabular-nums">Meta Q1: $2.4M</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Financial KPI Dashboard for Partners */}
+          <div className="pt-14 border-t border-line">
+            <div className="flex items-center gap-4 mb-10">
+              <span className="w-11 h-11 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center"><Briefcase size={20} /></span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">02</p>
+                <h2 className="text-[24px] font-semibold tracking-tight text-ink">Indicadores clave de rentabilidad</h2>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Margen de distribución', val: '12.0%', info: 'Comisiones netas post-procesamiento.', icon: <CheckCircle2 size={16} /> },
+                { label: 'Estructura de costes (CAC)', val: '$42.50', info: 'Se mantiene bajo el umbral de $45 estipulado.', icon: <CheckCircle2 size={16} /> },
+                { label: 'LTV de proveedor', val: '$18.4k', info: 'Ventas generadas por proveedor activo.', icon: <CheckCircle2 size={16} /> },
+                { label: 'Ticket promedio', val: '$1,245', info: 'Aumento del 8% debido a servicios premium.', icon: <TrendingUp size={16} /> },
+              ].map((kpi, i) => (
+                <div key={i} className="p-6 rounded-[1.75rem] bg-sand flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start gap-3 mb-4">
+                      <span className="w-9 h-9 shrink-0 rounded-[0.8rem] bg-cream text-primary-deep flex items-center justify-center">{kpi.icon}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted text-right">{kpi.label}</span>
                     </div>
+                    <p className="text-[30px] font-bold tabular-nums tracking-tight text-ink leading-none">{kpi.val}</p>
+                  </div>
+                  <p className="text-[12px] font-medium text-muted mt-5 leading-relaxed flex items-start gap-1.5">
+                    <Info size={12} className="mt-0.5 shrink-0 text-faint" /> {kpi.info}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
 
-                    <div className="grid grid-cols-2 gap-8">
-                       <div className="p-8 border border-black/5 rounded-2xl bg-silver-light/10">
-                          <p className="text-[10px] uppercase font-[600] text-gray-400 mb-2">Target Marzo</p>
-                          <p className="text-3xl font-[600]">$750k</p>
-                       </div>
-                       <div className="p-8 border border-black/5 rounded-2xl bg-primary/5">
-                          <p className="text-[10px] uppercase font-[600] text-primary-deep mb-2">Real Logrado</p>
-                          <p className="text-3xl font-[600] text-primary-deep">$842k</p>
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="bg-black-rich p-10 rounded-3xl text-white relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Flag className="mb-6 text-primary-deep" size={32} />
-                    <h3 className="text-lg font-[600] mb-4">Interpretación Estratégica</h3>
-                    <p className="text-sm leading-relaxed text-white/60 mb-8 font-[300]">
-                       Hemos superado el target mensual en un **12.5%**. Este excedente se atribuye a la adopción temprana del modelo I MENDLY en zonas residenciales premium, 
-                       donde el ticket promedio superó las proyecciones en un 8%.
-                    </p>
-                    <Badge variant="silver" className="bg-white/5 border-white/10 text-white">Meta Q1: $2.4M</Badge>
-                 </div>
+          {/* Margin Breakdown Deep Dive */}
+          <div className="pt-14 border-t border-line">
+            <div className="flex items-center gap-4 mb-10">
+              <span className="w-11 h-11 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center"><PieIcon size={20} /></span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">03</p>
+                <h2 className="text-[24px] font-semibold tracking-tight text-ink">Desglose de márgenes y revenue</h2>
               </div>
-           </div>
-
-           {/* Financial KPI Dashboard for Partners */}
-           <div className="pt-16 border-t border-black/5">
-              <div className="flex items-center gap-3 mb-12">
-                 <Briefcase className="text-primary-deep" size={24} />
-                 <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">2. Indicadores Clave de Rentabilidad</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                 {[
-                   { label: 'Margen de Distribución', val: '12.0%', info: 'Comisiones netas post-procesamiento.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
-                   { label: 'Estructura de Costes (CAC)', val: '$42.50', info: 'Se mantiene bajo el umbral de $45 estipulado.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
-                   { label: 'LTV de Proveedor', val: '$18.4k', info: 'Ventas generadas por proveedor activo.', icon: <CheckCircle2 className="text-primary-deep" size={16} /> },
-                   { label: 'Ticket Promedio', val: '$1,245', info: 'Aumento del 8% debido a servicios premium.', icon: <TrendingUp className="text-primary-deep" size={16} /> },
-                 ].map((kpi, i) => (
-                   <Card key={i} variant="default" className="p-8 border-[0.5px] border-black/5 flex flex-col justify-between hover:border-primary/20 transition-colors shadow-none">
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="p-7 md:p-9 bg-sand rounded-[2rem]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted mb-6">Distribución de ingresos (marzo)</p>
+                <div className="divide-y divide-line">
+                  {[
+                    { label: 'GMV total (ventas brutas)', val: '$842,500', pct: '100%' },
+                    { label: 'Comisiones totales (15% avg)', val: '$126,375', pct: '15%' },
+                    { label: 'Costo operativo y procesamiento', val: '$25,275', pct: '3%' },
+                    { label: 'Revenue neto I mendly', val: '$101,100', pct: '12%', highlight: true },
+                  ].map((item, i) => (
+                    <div key={i} className={`flex justify-between items-end py-4 ${item.highlight ? 'pt-6' : ''}`}>
                       <div>
-                         <div className="flex justify-between items-start mb-4">
-                            {kpi.icon}
-                            <span className="text-[10px] font-[600] text-gray-soft uppercase">{kpi.label}</span>
-                         </div>
-                         <p className="text-2xl font-[600] text-black-rich">{kpi.val}</p>
+                        <p className={`text-[14px] ${item.highlight ? 'font-bold text-ink' : 'font-medium text-muted'}`}>{item.label}</p>
+                        <p className="text-[12px] font-medium text-faint tabular-nums">{item.pct} del volumen total</p>
                       </div>
-                      <p className="text-[9px] text-gray-soft mt-6 leading-relaxed flex items-start gap-1">
-                         <Info size={10} className="mt-0.5 shrink-0" /> {kpi.info}
-                      </p>
-                   </Card>
-                 ))}
-              </div>
-           </div>
-
-           {/* New Section: Margin Breakdown Deep Dive */}
-           <div className="pt-16 border-t border-black/5">
-              <div className="flex items-center gap-3 mb-10">
-                 <PieIcon className="text-primary-deep" size={24} />
-                 <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">3. Desglose de Márgenes y Revenue</h2>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                 <div className="p-10 bg-silver-light/10 rounded-3xl border border-black/5 relative overflow-hidden">
-                    <div className="relative z-10">
-                       <h4 className="text-sm font-[600] text-black-rich mb-8 uppercase tracking-widest">Distribución de Ingresos (Marzo)</h4>
-                       <div className="space-y-6">
-                          {[
-                            { label: 'GMV Total (Ventas Brutas)', val: '$842,500', pct: '100%' },
-                            { label: 'Comisiones Totales (15% Avg)', val: '$126,375', pct: '15%' },
-                            { label: 'Costo Operativo & Procesamiento', val: '$25,275', pct: '3%' },
-                            { label: 'Revenue Neto I MENDLY', val: '$101,100', pct: '12%', highlight: true },
-                          ].map((item, i) => (
-                            <div key={i} className={`flex justify-between items-end pb-4 border-b border-black/5 ${item.highlight ? 'pt-4' : ''}`}>
-                               <div>
-                                  <p className={`text-xs ${item.highlight ? 'font-[700] text-black-rich' : 'font-[500] text-gray-soft'}`}>{item.label}</p>
-                                  <p className="text-[10px] text-gray-400">{item.pct} del volumen total</p>
-                               </div>
-                               <p className={`text-lg ${item.highlight ? 'font-[700] text-primary-deep' : 'font-[600] text-black-rich'}`}>{item.val}</p>
-                            </div>
-                          ))}
-                       </div>
+                      <p className={`font-bold tabular-nums tracking-tight ${item.highlight ? 'text-[26px] text-primary-deep' : 'text-[18px] text-ink'}`}>{item.val}</p>
                     </div>
-                 </div>
-                 <div className="flex flex-col justify-center">
-                    <h4 className="text-lg font-[600] text-black-rich mb-6">Análisis de Retención de Margen</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-8 font-[300]">
-                       La optimización del <strong className="text-black-rich">Revenue Neto ($101k)</strong> se debe a que el 65% de las transacciones se realizaron bajo categorías de alta comisión (Plomería y Cerrajería). 
-                       La estructura de costos se mantiene contenida en un 3%, permitiendo una escalabilidad lineal sin incrementar el burn-rate operativo significativamente.
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <h4 className="text-[20px] font-semibold tracking-tight text-ink mb-4">Análisis de retención de margen</h4>
+                <p className="text-[14px] font-medium text-muted leading-relaxed mb-7">
+                  La optimización del <strong className="text-ink font-bold">revenue neto ($101k)</strong> se debe a que el 65% de las transacciones se realizaron bajo categorías de alta comisión (Plomería y Cerrajería).
+                  La estructura de costos se mantiene contenida en un 3%, permitiendo una escalabilidad lineal sin incrementar el burn-rate operativo significativamente.
+                </p>
+                <div className="flex items-center gap-4 p-5 bg-mint-light rounded-[1.5rem]">
+                  <ShieldCheck className="text-mint-deep shrink-0" size={22} />
+                  <p className="text-[13px] font-medium text-mint-deep">El ticket promedio de <strong className="font-bold tabular-nums">$1,245</strong> valida nuestra estrategia de mercado premium.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Strategic Recommendations */}
+          <div className="pt-14 border-t border-line">
+            <div className="flex items-center gap-4 mb-10">
+              <span className="w-11 h-11 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center"><Zap size={20} /></span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">04</p>
+                <h2 className="text-[24px] font-semibold tracking-tight text-ink">Recomendaciones estratégicas</h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="p-7 bg-sand rounded-[1.75rem]">
+                  <h5 className="text-[15px] font-semibold text-ink mb-3 flex items-center gap-2">
+                    <Users size={17} className="text-primary-deep" /> Expansión de proveedores
+                  </h5>
+                  <p className="text-[13px] font-medium leading-relaxed text-muted">
+                    Déficit proyectado del 15% en categorías de Electricidad para el Q2. Se recomienda acelerar el onboarding en la zona <strong className="font-bold text-ink">Valle del Sol</strong> para cubrir la demanda vespertina.
+                  </p>
+                </div>
+                <div className="p-7 bg-sand rounded-[1.75rem]">
+                  <h5 className="text-[15px] font-semibold text-ink mb-3 flex items-center gap-2">
+                    <AlertCircle size={17} className="text-error" /> Gestión de disputas
+                  </h5>
+                  <p className="text-[13px] font-medium leading-relaxed text-muted">
+                    El 0.5% de escrow en disputa se concentra en Limpieza Profunda. Sugerimos implementar una checklist digital obligatoria previa al cierre del servicio para reducir fricciones.
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="p-7 bg-sand rounded-[1.75rem]">
+                  <h5 className="text-[15px] font-semibold text-ink mb-3 flex items-center gap-2">
+                    <TrendingUp size={17} className="text-primary-deep" /> Presencia en zona
+                  </h5>
+                  <p className="text-[13px] font-medium leading-relaxed text-muted">
+                    Baja penetración en <strong className="font-bold text-ink">Pradera Dorada</strong> contrastada con alto volumen de búsquedas. Oportunidad para campaña de marketing dirigida a residenciales de esa área.
+                  </p>
+                </div>
+                <div className="relative overflow-hidden p-7 bg-ink text-on-dark rounded-[1.75rem] v2-shadow-lift">
+                  <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-primary/25 blur-3xl" />
+                  <div className="relative">
+                    <h5 className="text-[15px] font-semibold mb-3 flex items-center gap-2">
+                      <CheckCircle2 size={17} className="text-primary" /> Próximo paso crítico
+                    </h5>
+                    <p className="text-[13px] font-medium leading-relaxed text-on-dark/60 mb-6">
+                      Reactivar el módulo de Incentivos a Proveedores para mantener la retención sobre el 80% durante la temporada alta de verano.
                     </p>
-                    <div className="flex items-center gap-4 p-6 bg-primary/5 rounded-2xl border border-primary/10">
-                       <ShieldCheck className="text-primary-deep shrink-0" size={24} />
-                       <p className="text-xs text-primary-deep font-[500]">El ticket promedio de **$1,245** valida nuestra estrategia de mercado premium.</p>
-                    </div>
-                 </div>
+                    <button className="w-full h-12 rounded-full bg-white text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press">
+                      Revisar plan de incentivos <ArrowUpRight size={15} />
+                    </button>
+                  </div>
+                </div>
               </div>
-           </div>
+            </div>
+          </div>
 
-           {/* New Section: Strategic Recommendations */}
-           <div className="pt-16 border-t border-black/5">
-              <div className="flex items-center gap-3 mb-10">
-                 <Zap className="text-primary-deep" size={24} />
-                 <h2 className="text-xl font-[600] uppercase tracking-widest text-black-rich">4. Recomendaciones Estratégicas</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div className="space-y-6">
-                    <div className="p-8 border border-black/5 rounded-2xl group hover:bg-black-rich transition-all duration-500">
-                       <h5 className="text-sm font-[600] text-black-rich group-hover:text-white mb-4 flex items-center gap-2">
-                          <Users size={18} className="text-primary-deep" /> Expansión de Proveedores
-                       </h5>
-                       <p className="text-xs leading-relaxed text-gray-500 group-hover:text-white/60 font-[300]">
-                          Déficit proyectado del 15% en categorías de Electricidad para el Q2. Se recomienda acelerar el onboarding en la zona **Valle del Sol** para cubrir la demanda vespertina.
-                       </p>
-                    </div>
-                    <div className="p-8 border border-black/5 rounded-2xl group hover:bg-black-rich transition-all duration-500">
-                       <h5 className="text-sm font-[600] text-black-rich group-hover:text-white mb-4 flex items-center gap-2">
-                          <AlertCircle size={18} className="text-im-warning" /> Gestión de Disputas
-                       </h5>
-                       <p className="text-xs leading-relaxed text-gray-500 group-hover:text-white/60 font-[300]">
-                          El 0.5% de Escrow en disputa se concentra en 'Limpieza Profunda'. Sugerimos implementar una checklist digital obligatoria previa al cierre del servicio para reducir fricciones.
-                       </p>
-                    </div>
-                 </div>
-                 <div className="space-y-6">
-                    <div className="p-8 border border-black/5 rounded-2xl group hover:bg-black-rich transition-all duration-500">
-                       <h5 className="text-sm font-[600] text-black-rich group-hover:text-white mb-4 flex items-center gap-2">
-                          <TrendingUp size={18} className="text-primary-deep" /> Presencia en Zona
-                       </h5>
-                       <p className="text-xs leading-relaxed text-gray-500 group-hover:text-white/60 font-[300]">
-                          Baja penetración en **Pradera Dorada** contrastada con alto volumen de búsquedas. Oportunidad para campaña de marketing dirigida a residenciales de esa área.
-                       </p>
-                    </div>
-                    <div className="p-8 bg-black-rich rounded-3xl text-white relative overflow-hidden shadow-xl">
-                       <div className="relative z-10">
-                          <h5 className="text-sm font-[600] mb-4 flex items-center gap-2">
-                             <CheckCircle2 size={18} className="text-primary-deep" /> Próximo Paso Crítico
-                          </h5>
-                          <p className="text-xs leading-relaxed opacity-60 mb-6 font-[300]">
-                             Reactivar el módulo de 'Incentivos a Proveedores' para mantener la retención sobre el 80% durante la temporada alta de verano.
-                          </p>
-                          <Button variant="ghost" className="w-full border-white/10 text-white hover:bg-primary text-[10px] uppercase font-bold tracking-widest rounded-pill">
-                             Revisar Plan de Incentivos
-                          </Button>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-
-           {/* Executive Analysis Summary */}
-           <div className="pt-16 border-t border-black/5 grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div className="md:col-span-2">
-                 <h3 className="text-lg font-[600] text-black-rich mb-6">Nota Financiera para la Junta de Socios</h3>
-                 <p className="text-sm leading-relaxed text-gray-600 font-[300]">
-                    "La solidez financiera del cierre de Marzo nos coloca en una posición de ventaja competitiva para la expansión a Chihuahua capital en Mayo 2026. 
-                    Se recomienda reinvertir el excedente del 12.5% en la optimización del agente IA de soporte para reducir aún más el CAC y mejorar el NPS global. 
-                    La estructura de margen es estable y permite escalar la operación sin sacrificar rentabilidad neta."
-                 </p>
-              </div>
-              <div className="p-8 bg-black-rich rounded-2xl flex flex-col justify-center items-center text-center">
-                 <p className="text-[9px] uppercase font-[600] text-white/40 mb-4 tracking-widest">Estado Operativo</p>
-                 <div className="w-4 h-4 rounded-full bg-primary animate-ping mb-4" />
-                 <p className="text-lg font-[600] text-white tracking-tight">Q1 Saludable</p>
-              </div>
-           </div>
+          {/* Executive Analysis Summary */}
+          <div className="pt-14 border-t border-line grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <h3 className="text-[20px] font-semibold tracking-tight text-ink mb-4">Nota financiera para la junta de socios</h3>
+              <p className="text-[14px] font-medium leading-relaxed text-muted">
+                “La solidez financiera del cierre de Marzo nos coloca en una posición de ventaja competitiva para la expansión a Chihuahua capital en Mayo 2026.
+                Se recomienda reinvertir el excedente del 12.5% en la optimización del agente IA de soporte para reducir aún más el CAC y mejorar el NPS global.
+                La estructura de margen es estable y permite escalar la operación sin sacrificar rentabilidad neta.”
+              </p>
+            </div>
+            <div className="p-7 bg-mint-light rounded-[1.75rem] flex flex-col justify-center items-center text-center">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-mint-deep mb-4">Estado operativo</p>
+              <span className="relative w-4 h-4 mb-4">
+                <span className="absolute inset-0 rounded-full bg-mint animate-ping" />
+                <span className="absolute inset-0 rounded-full bg-mint" />
+              </span>
+              <p className="text-[18px] font-semibold tracking-tight text-ink">Q1 saludable</p>
+            </div>
+          </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-silver-light/20 p-12 border-t border-black/5 flex justify-between items-end">
-           <div>
-              <p className="text-[10px] font-[700] uppercase tracking-[0.3em] text-black-rich mb-2">I MENDLY FINANCIAL INTELLIGENCE</p>
-              <p className="text-[10px] text-gray-soft font-[300]">Generado automáticamente para el equipo directivo · v2.0</p>
-           </div>
-           <div className="opacity-20">
-              <Logo size={24} />
-           </div>
+        <footer className="bg-sand px-8 md:px-16 py-10 flex justify-between items-end">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink mb-1">I mendly Financial Intelligence</p>
+            <p className="text-[12px] font-medium text-muted">Generado automáticamente para el equipo directivo · v2.0</p>
+          </div>
+          <div className="opacity-40">
+            <Logo size={24} />
+          </div>
         </footer>
       </div>
 
@@ -279,7 +289,7 @@ export default function FinancialReportPage() {
           body { background: white; margin: 0; }
           .print-hidden { display: none !important; }
           main { padding: 0 !important; }
-          .shadow-2xl { box-shadow: none !important; }
+          .v2-shadow-float { box-shadow: none !important; }
         }
       `}</style>
     </main>
