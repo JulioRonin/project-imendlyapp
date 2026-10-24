@@ -88,7 +88,15 @@ export default function TerminosProfesionalesPage() {
             valida tu identidad y tu CLABE; I mendly no ve ni guarda tus datos bancarios.
           </li>
           <li>
-            Si pediste anticipo, al <strong>iniciar el trabajo</strong> te adelantamos esa parte del precio para materiales.
+            Si pediste anticipo, al <strong>iniciar el trabajo</strong> te adelantamos esa parte del precio para materiales, con un
+            tope por nivel:{' '}
+            {(Object.keys(TIER_LABEL) as ProviderTier[]).map((t, i) => `${i ? ', ' : ''}${TIER_LABEL[t]} ${formatMxn(PLAN.advanceCap[t])}`).join('')}.
+            Lo que exceda el tope se te paga junto con el resto.
+          </li>
+          <li>
+            En ofertas con rango o visitas de valoración, envías el precio final desde la app después de visitar. Si supera el
+            máximo del rango, debes justificarlo. El trabajo inicia cuando el cliente lo aprueba. Acordar un precio por fuera de
+            la app se considera desvío de clientes.
           </li>
           <li>
             El resto, menos la comisión de tu nivel con su IVA, se te envía <strong>{PLAN.holdHours} horas después de que el

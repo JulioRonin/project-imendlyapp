@@ -316,7 +316,7 @@ export default function TableroProveedorPage() {
                           return (
                             <p className="px-1 text-[12.5px] font-medium text-muted tabular-nums">
                               Recibes <span className="font-semibold text-ink">{formatMxn(take.net)}</span> · comisión {TIER_LABEL[tier]} con IVA {formatMxn(take.commission)}
-                              {amountMax ? ' · se cobra el monto inicial del rango' : ''}
+                              {amountMax ? ' por el monto inicial. Con rango, envías el precio final después de visitar; si pasas del máximo, tendrás que justificarlo' : ''}
                             </p>
                           );
                         })()}

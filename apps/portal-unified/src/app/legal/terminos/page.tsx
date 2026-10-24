@@ -62,7 +62,11 @@ export default function TerminosClientesPage() {
             Al aceptar, compartimos con el profesional los datos necesarios para hacer el trabajo: tu nombre, la dirección del
             servicio y un medio de contacto. Solo el profesional que aceptaste los recibe.
           </li>
-          <li>Si el trabajo requiere visita previa, la cotización final puede cambiar; tú decides si la aceptas.</li>
+          <li>
+            Si la oferta es un rango de precio o una visita de valoración, el profesional te envía el precio final después de
+            visitar. <strong>No pagas nada hasta aprobarlo.</strong> Si supera el máximo del rango, debe explicarte por qué. Puedes
+            aprobarlo, pedir otro precio o cancelar sin costo.
+          </li>
         </ol>
       </Section>
 

@@ -2,6 +2,7 @@ import { handle, readJson, requireCaller, HttpError } from '@/lib/server/http';
 import { supabaseAdmin } from '@/lib/server/supabaseAdmin';
 import { displayId } from '@/lib/server/ids';
 import { PLAN, quote, isTier } from '@/lib/pricing';
+import { pricingColumns } from '@/lib/server/quotes';
 
 /**
  * El cliente acepta una oferta del tablero. Se crea la orden con el precio
@@ -14,7 +15,7 @@ export const POST = handle(async (request) => {
 
   const db = supabaseAdmin();
   const { data: offer } = await db.from('project_offers')
-    .select('id, project_id, provider_id, offer_type, amount, deposit_percent, status').eq('id', offerId).single();
+    .select('id, project_id, provider_id, offer_type, amount, amount_max, deposit_percent, status').eq('id', offerId).single();
   if (!offer) throw new HttpError(404, 'No encontramos la oferta.');
 
   const { data: project } = await db.from('projects')
@@ -26,35 +27,46 @@ export const POST = handle(async (request) => {
   const { data: provider } = await db.from('providers').select('tier, account_status').eq('id', offer.provider_id).single();
   if (provider?.account_status !== 'active') throw new HttpError(409, 'Este profesional no está disponible por ahora.');
 
+  // Visita de valoración u oferta con rango: el precio final se define después
+  // de visitar. Aceptar no cobra nada; el profesional enviará su cotización.
   const isVisit = offer.offer_type === 'visit';
-  const subtotal = isVisit ? 0 : Number(offer.amount);
-  if (!isVisit && !(subtotal >= PLAN.minChargeMxn)) throw new HttpError(400, 'La oferta no tiene un monto válido.');
-  const depositPercent = Math.min(Number(offer.deposit_percent) || 0, PLAN.maxDepositPercent);
-  const q = quote(subtotal, isTier(provider?.tier) ? provider!.tier : 'verificado', depositPercent);
-  const needsDeposit = q.deposit >= PLAN.minChargeMxn;
+  const isRange = !isVisit && offer.amount_max != null && Number(offer.amount_max) > Number(offer.amount);
+  const tier = isTier(provider?.tier) ? provider!.tier : 'verificado';
+
+  let row: Record<string, unknown>;
+  let needsDeposit = false;
+  if (isVisit || isRange) {
+    row = {
+      service_requested: `${isVisit ? 'Visita de valoración · ' : ''}${project.category}: ${project.title}`,
+      status: 'scheduled',              // la visita queda acordada
+      payment_status: 'awaiting_quote',
+      price_status: 'pending_quote',
+      quote_min: isRange ? Number(offer.amount) : null,
+      quote_max: isRange ? Number(offer.amount_max) : null,
+      total_amount: 0,
+      pricing_tier: tier,
+    };
+  } else {
+    const subtotal = Number(offer.amount);
+    if (!(subtotal >= PLAN.minChargeMxn)) throw new HttpError(400, 'La oferta no tiene un monto válido.');
+    const depositPercent = Math.min(Number(offer.deposit_percent) || 0, PLAN.maxDepositPercent);
+    const q = quote(subtotal, tier, depositPercent);
+    needsDeposit = q.deposit >= PLAN.minChargeMxn;
+    row = {
+      service_requested: `${project.category}: ${project.title}`,
+      status: needsDeposit ? 'pending' : 'scheduled',
+      payment_status: needsDeposit ? 'pending' : 'due_on_delivery',
+      ...pricingColumns(needsDeposit ? q : { ...q, deposit: 0, balance: q.total, advance: 0, depositPercent: 0 }),
+    };
+  }
 
   const { data: order, error } = await db.from('orders').insert({
     display_id: displayId('ORD'),
     client_id: caller.id,
     provider_id: offer.provider_id,
-    service_requested: isVisit ? `Visita de valoración · ${project.category}: ${project.title}` : `${project.category}: ${project.title}`,
-    status: needsDeposit ? 'pending' : 'scheduled',
-    payment_status: needsDeposit ? 'pending' : (q.total > 0 ? 'due_on_delivery' : 'not_required'),
     origin: 'project',
     offer_id: offer.id,
-    pricing_version: q.version,
-    pricing_tier: q.tier,
-    total_amount: q.total,
-    subtotal: q.subtotal,
-    client_fee: q.clientFee,
-    commission: q.commission,
-    commission_tax: q.commissionTax,
-    provider_net: q.providerNet,
-    deposit_percent: needsDeposit ? q.depositPercent : 0,
-    deposit_amount: needsDeposit ? q.deposit : 0,
-    balance_amount: needsDeposit ? q.balance : q.total,
-    advance_amount: needsDeposit ? q.advance : 0,
-    guarantee_contribution: q.guaranteeContribution,
+    ...row,
   }).select('id').single();
   if (error || !order) throw new Error(`No se pudo crear la orden: ${error?.message}`);
 
@@ -63,5 +75,5 @@ export const POST = handle(async (request) => {
     .eq('project_id', project.id).neq('id', offer.id).eq('status', 'active');
   await db.from('projects').update({ status: 'assigned', accepted_offer_id: offer.id, order_id: order.id }).eq('id', project.id);
 
-  return Response.json({ orderId: order.id, needsDeposit });
+  return Response.json({ orderId: order.id, needsDeposit, needsQuote: isVisit || isRange });
 });

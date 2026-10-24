@@ -7,8 +7,14 @@
    - Proyecto del tablero: paga el anticipo al aceptar la oferta y el saldo al confirmar la entrega.
 2. **I mendly retiene el dinero** en su saldo de Stripe.
 3. **El profesional recibe su parte por Stripe Connect** en su cuenta Express:
-   - adelanto para materiales al iniciar el trabajo, si la oferta tenía anticipo;
-   - el resto 24 h después de que el cliente confirma la entrega.
+   - adelanto para materiales al iniciar el trabajo, si la oferta tenía anticipo, con tope por nivel
+     ($5,000 Verificado, $10,000 Certificado, $20,000 Élite);
+   - el resto 24 h después de que el cliente confirma la entrega: una transferencia desde el saldo y,
+     si hubo anticipo retenido por el tope, otra desde el anticipo.
+
+Ofertas con rango y visitas de valoración: aceptar no cobra nada. El profesional envía el precio final
+después de visitar (`order_quotes` guarda cada versión). El cliente lo aprueba pagando el anticipo,
+pide otro precio o cancela sin costo. Un precio arriba del rango exige justificación.
 4. La comisión, su IVA y la tarifa de servicio se quedan en I mendly.
 
 Los números viven en `apps/portal-unified/src/lib/pricing.ts`. Las páginas legales los leen de ahí.
@@ -61,6 +67,5 @@ Tarjeta de prueba: `4242 4242 4242 4242`, cualquier fecha futura y cualquier CVC
 
 ## Pendientes conocidos
 
-- Retenciones de ISR e IVA de plataformas digitales a profesionales personas físicas: definir con el contador antes de producción.
-- Ajuste de precio tras una visita de valoración: hoy una oferta de rango se cobra por su monto inicial.
+- Retenciones de ISR e IVA de plataformas digitales a profesionales personas físicas: pendiente de revisar con el contador antes de producción.
 - Reembolsos después de liberar un adelanto: quedan marcados para revisión del equipo, no son automáticos.

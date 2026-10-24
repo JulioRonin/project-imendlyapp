@@ -106,6 +106,12 @@ export async function onPaymentSucceeded(pi: Stripe.PaymentIntent) {
   if (payment.kind === 'deposit') {
     patch.payment_status = 'deposit_paid';
     if (order.status === 'pending' && order.origin === 'project') patch.status = 'scheduled';
+    // Pagar el anticipo de una cotización ES aprobar el precio final
+    if (order.price_status === 'quoted') {
+      patch.price_status = 'final';
+      must(await db().from('order_quotes').update({ status: 'accepted', decided_at: nowIso() })
+        .eq('order_id', order.id).eq('status', 'sent'));
+    }
   } else if (payment.kind === 'full') {
     patch.payment_status = 'paid';
   } else {
@@ -161,7 +167,9 @@ export async function syncAccount(account: Stripe.Account) {
 
 type ReleaseResult = { released: number } | { skipped: string };
 
-async function transfer(order: any, kind: 'advance' | 'final', amount: number, sourceKind: PaymentKind): Promise<ReleaseResult> {
+type PayoutKind = 'advance' | 'final' | 'retained';
+
+async function transfer(order: any, kind: PayoutKind, amount: number, sourceKind: PaymentKind): Promise<ReleaseResult> {
   if (amount <= 0) return { skipped: 'Sin monto por liberar' };
 
   const { data: done } = must(await db().from('payouts').select('id').eq('order_id', order.id).eq('kind', kind).maybeSingle());
@@ -203,6 +211,10 @@ async function transfer(order: any, kind: 'advance' | 'final', amount: number, s
 export async function releaseAdvance(orderId: string): Promise<ReleaseResult> {
   const order = await loadOrder(orderId);
   if (order.payout_hold) return { skipped: 'Pago retenido por revisión' };
+  // Si ya salió el pago final, el adelanto quedó incluido en él
+  const { count } = must(await db().from('payouts').select('id', { count: 'exact', head: true })
+    .eq('order_id', order.id).in('kind', ['final', 'retained']));
+  if ((count ?? 0) > 0) return { skipped: 'Incluido en el pago final' };
   return transfer(order, 'advance', Number(order.advance_amount), 'deposit');
 }
 
@@ -212,8 +224,22 @@ export async function releaseFinal(orderId: string): Promise<ReleaseResult> {
   if (order.payout_hold) return { skipped: 'Pago retenido por revisión' };
   if (!order.confirmed_at || !order.release_at || new Date(order.release_at) > new Date()) return { skipped: 'Aún en periodo de retención' };
   const { data: advance } = must(await db().from('payouts').select('amount').eq('order_id', order.id).eq('kind', 'advance').maybeSingle());
-  const remaining = Math.round((Number(order.provider_net) - Number(advance?.amount ?? 0)) * 100) / 100;
-  return transfer(order, 'final', remaining, Number(order.balance_amount) > 0 ? 'balance' : 'full');
+  const round = (n: number) => Math.round(n * 100) / 100;
+  const remaining = round(Number(order.provider_net) - Number(advance?.amount ?? 0));
+
+  // Cada transferencia se financia con un cobro y no puede pasar de él. El
+  // saldo cubre casi todo; lo que falte sale de la parte del anticipo que se
+  // quedó retenida por el tope de adelanto.
+  const hasBalance = Number(order.balance_amount) > 0;
+  const fromMain = hasBalance ? Math.min(remaining, Number(order.balance_amount)) : remaining;
+  const fromDeposit = round(remaining - fromMain);
+
+  const first = await transfer(order, 'final', round(fromMain), hasBalance ? 'balance' : 'full');
+  if ('skipped' in first && first.skipped !== 'Ya liberado') return first;
+  if (fromDeposit <= 0) return first;
+  const second = await transfer(await loadOrder(orderId), 'retained', fromDeposit, 'deposit');
+  if ('skipped' in second) return 'released' in first ? first : second;
+  return { released: ('released' in first ? first.released : 0) + second.released };
 }
 
 /**
@@ -238,4 +264,13 @@ export async function refundOrder(order: any, reason: string) {
     }
   }
   return { refunded: true };
+}
+
+/** Cancela el cobro pendiente de una parte de la orden (p. ej. el anticipo de una cotización reemplazada). */
+export async function cancelOpenPayment(orderId: string, kind: PaymentKind) {
+  const { data: p } = must(await db().from('payments').select('id, stripe_payment_intent_id, status')
+    .eq('order_id', orderId).eq('kind', kind).maybeSingle());
+  if (!p || p.status !== 'requires_payment' || !p.stripe_payment_intent_id) return;
+  try { await stripe().paymentIntents.cancel(p.stripe_payment_intent_id); } catch { /* ya no estaba abierto */ }
+  must(await db().from('payments').update({ status: 'canceled' }).eq('id', p.id));
 }

@@ -2,6 +2,7 @@ import { handle, readJson, requireCaller, HttpError } from '@/lib/server/http';
 import { supabaseAdmin } from '@/lib/server/supabaseAdmin';
 import { paymentIntentFor } from '@/lib/server/money';
 import { displayId } from '@/lib/server/ids';
+import { pricingColumns } from '@/lib/server/quotes';
 import { PLAN, quote, isTier } from '@/lib/pricing';
 
 const CUSTOM = 'Personalizado o Explica tu necesidad';
@@ -74,19 +75,7 @@ export const POST = handle(async (request) => {
     scheduled_date: scheduled?.toISOString() ?? null,
     address,
     origin: 'booking',
-    pricing_version: q.version,
-    pricing_tier: q.tier,
-    total_amount: q.total,
-    subtotal: q.subtotal,
-    client_fee: q.clientFee,
-    commission: q.commission,
-    commission_tax: q.commissionTax,
-    provider_net: q.providerNet,
-    deposit_percent: q.depositPercent,
-    deposit_amount: q.deposit,
-    balance_amount: q.balance,
-    advance_amount: q.advance,
-    guarantee_contribution: q.guaranteeContribution,
+    ...pricingColumns(q),
   }).select('*').single();
   if (error || !order) throw new Error(`No se pudo crear la orden: ${error?.message}`);
 

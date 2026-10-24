@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircleCheck, Clock, Hammer, Loader2, PackageCheck, Snowflake, Wallet } from 'lucide-react';
 import { apiPost } from '@/lib/api';
-import { PLAN, formatMxn } from '@/lib/pricing';
+import { PLAN, formatMxn, providerTakeHome, isTier, quote, type ProviderTier } from '@/lib/pricing';
+import { supabase } from '@/lib/supabase';
 
 const EYEBROW = 'text-[10px] font-bold uppercase tracking-[0.18em]';
 
@@ -100,7 +101,11 @@ export function OrderActions({ order, onChanged }: { order: any; onChanged: (pat
         </div>
       )}
 
-      {order.status === 'scheduled' && (
+      {order.status === 'scheduled' && order.price_status && order.price_status !== 'final' && (
+        <QuoteForm order={order} onChanged={onChanged} />
+      )}
+
+      {order.status === 'scheduled' && (!order.price_status || order.price_status === 'final') && (
         <div className="bg-linen rounded-[1.75rem] p-6">
           <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4"><Hammer size={19} /></span>
           <h4 className="text-[16px] font-semibold tracking-tight text-ink">Cuando llegues, inicia el trabajo</h4>
@@ -150,6 +155,110 @@ export function OrderActions({ order, onChanged }: { order: any; onChanged: (pat
 
       {info && <p className="p-4 rounded-[1.25rem] bg-mint-light text-mint-deep text-[13px] font-semibold">{info}</p>}
       {error && <p className="p-4 rounded-[1.25rem] bg-rose/15 text-error text-[13px] font-semibold">{error}</p>}
+    </div>
+  );
+}
+
+/** Precio final después de la visita (ofertas con rango y visitas de valoración). */
+function QuoteForm({ order, onChanged }: { order: any; onChanged: (patch: Record<string, unknown>) => void }) {
+  const [tier, setTier] = useState<ProviderTier>('verificado');
+  const [lastQuote, setLastQuote] = useState<any>(null);
+  const [amount, setAmount] = useState('');
+  const [deposit, setDeposit] = useState(30);
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: prov }, { data: q }] = await Promise.all([
+        supabase.from('providers').select('tier').eq('id', order.provider_id).single(),
+        supabase.from('order_quotes').select('*').eq('order_id', order.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      ]);
+      if (isTier(prov?.tier)) setTier(prov.tier);
+      setLastQuote(q);
+    })();
+  }, [order.id, order.provider_id, order.price_status]);
+
+  const price = Number(amount) || 0;
+  const max = order.quote_max != null ? Number(order.quote_max) : null;
+  const overRange = max != null && price > max;
+  const take = price > 0 ? providerTakeHome(price, tier) : null;
+  const advance = price > 0 ? quote(price, tier, deposit).advance : 0;
+  const missing =
+    price < PLAN.minChargeMxn ? 'Escribe el precio final' :
+    overRange && note.trim().length < 15 ? 'Explica por qué el precio supera el rango (mínimo 15 caracteres)' : '';
+
+  const send = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await apiPost('/api/ordenes/accion', { orderId: order.id, action: 'cotizar', amount: price, depositPercent: deposit, note });
+      onChanged({ price_status: 'quoted' });
+      setAmount(''); setNote('');
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const INPUT = 'w-full h-12 px-4 rounded-[1rem] bg-cream text-[15px] font-semibold text-ink outline-none focus:ring-2 focus:ring-primary/40';
+
+  return (
+    <div className="bg-linen rounded-[1.75rem] p-6 space-y-4">
+      <div>
+        <p className={`${EYEBROW} text-primary-deep`}>Precio final</p>
+        <h4 className="mt-1 text-[16px] font-semibold tracking-tight text-ink">
+          {order.price_status === 'quoted' ? 'Enviaste tu precio. Esperando al cliente' : 'Después de la visita, envía el precio final'}
+        </h4>
+        <p className="mt-1 text-[13px] font-medium text-muted">
+          {max != null
+            ? `Acordaron un rango de ${formatMxn(Number(order.quote_min))} a ${formatMxn(max)}. Si te pasas del máximo, explícale al cliente por qué.`
+            : 'Fue una visita de valoración: cotiza lo que viste.'}
+        </p>
+        {lastQuote?.status === 'sent' && (
+          <p className="mt-2 text-[12.5px] font-semibold text-ink">Última cotización: {formatMxn(Number(lastQuote.amount))}. Puedes corregirla mientras el cliente no la apruebe.</p>
+        )}
+        {lastQuote?.status === 'rejected' && (
+          <p className="mt-2 p-3 rounded-[1rem] bg-lavender-light text-[12.5px] font-semibold text-ink">El cliente pidió otro precio: “{lastQuote.client_note}”</p>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <label className="space-y-1">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Precio</span>
+          <input id={`quote-amount-${order.id}`} inputMode="numeric" placeholder="$" value={amount} onChange={e => setAmount(e.target.value.replace(/[^\d.]/g, ''))} className={INPUT} />
+        </label>
+        <label className="space-y-1">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Anticipo</span>
+          <select id={`quote-deposit-${order.id}`} value={deposit} onChange={e => setDeposit(Number(e.target.value))} className={INPUT}>
+            {[0, 10, 20, 30, 40, 50].map(v => <option key={v} value={v}>{v}%</option>)}
+          </select>
+        </label>
+      </div>
+      <textarea
+        id={`quote-note-${order.id}`} rows={3} value={note} onChange={e => setNote(e.target.value)}
+        placeholder={overRange ? 'Obligatorio: por qué cuesta más de lo acordado' : 'Qué incluye el precio (opcional)'}
+        className="w-full bg-cream rounded-[1rem] px-4 py-3 text-[13.5px] font-medium text-ink outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+      />
+
+      {take && (
+        <p className="text-[12.5px] font-medium text-muted tabular-nums">
+          Recibes <span className="font-semibold text-ink">{formatMxn(take.net)}</span> después de la comisión con IVA ({formatMxn(take.commission)}).
+          {advance > 0 ? ` Al iniciar te adelantamos ${formatMxn(advance)} para materiales.` : ''}
+        </p>
+      )}
+      {overRange && <p className="text-[12.5px] font-semibold text-error">Este precio supera el máximo del rango. El cliente verá tu explicación antes de aprobar.</p>}
+      {error && <p className="p-3 rounded-[1rem] bg-rose/15 text-error text-[13px] font-semibold">{error}</p>}
+
+      <button
+        type="button" onClick={send} disabled={!!missing || busy}
+        className="w-full h-14 rounded-full bg-primary text-ink text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-50"
+      >
+        {busy ? <Loader2 size={16} className="animate-spin" /> : order.price_status === 'quoted' ? 'Enviar precio corregido' : 'Enviar precio al cliente'}
+      </button>
+      {missing && <p className="text-center text-[12px] font-semibold text-muted">{missing}</p>}
     </div>
   );
 }

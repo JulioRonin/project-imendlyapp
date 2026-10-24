@@ -284,8 +284,9 @@ function ProyectoDetallePage() {
                     {formatMXN(offer.amount)}{offer.amount_max ? ` – ${formatMXN(offer.amount_max)}` : ''}
                   </p>
                   <p className="mt-1.5 text-[12px] font-medium text-faint tabular-nums">
-                    Pagas {formatMXN(quote(Number(offer.amount), 'verificado', 0).total)} con la tarifa de servicio
-                    {offer.amount_max ? ' · al aceptar se toma el monto inicial del rango' : ''}
+                    {offer.amount_max
+                      ? 'El precio final se define después de la visita. No pagas nada hasta aprobarlo; si supera el rango, el profesional te explicará por qué.'
+                      : `Pagas ${formatMXN(quote(Number(offer.amount), 'verificado', 0).total)} con la tarifa de servicio`}
                   </p>
                 </div>
               ) : (

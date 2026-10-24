@@ -12,7 +12,7 @@
 // plataforma absorbía ~4.2% + $3.48 de Stripe por cobro.
 // ═════════════════════════════════════════════════════════════
 
-export const PRICING_VERSION = '2026-10-propuesta';
+export const PRICING_VERSION = '2026-10-propuesta.2';
 
 export type ProviderTier = 'verificado' | 'certificado' | 'elite';
 
@@ -33,6 +33,13 @@ export const PLAN = {
   maxDepositPercent: 50,
   /** Parte del anticipo que se adelanta al profesional al iniciar (para materiales). */
   advanceShareOfDeposit: 1,
+  /**
+   * Tope del adelanto por nivel, en MXN. El cliente puede pagar más de
+   * anticipo, pero lo que exceda este tope se queda retenido hasta que
+   * confirme la entrega: así el dinero que sale antes de ver el trabajo
+   * terminado crece con la confianza ganada.
+   */
+  advanceCap: { verificado: 5000, certificado: 10000, elite: 20000 } as Record<ProviderTier, number>,
 
   /** Horas que se retiene el pago después de que el cliente confirma la entrega. */
   holdHours: 24,
@@ -103,7 +110,11 @@ export function quote(subtotalMxn: number, tier: ProviderTier, depositPercent: n
   const deposit = fullUpfront ? total : Math.round(total * pct / 100);
   const balance = total - deposit;
   // Adelanto: la parte del anticipo que corresponde al trabajo, nunca más que lo que le toca al profesional
-  const advance = fullUpfront ? 0 : Math.min(Math.round(sub * pct / 100 * PLAN.advanceShareOfDeposit), providerNet);
+  const advance = fullUpfront ? 0 : Math.min(
+    Math.round(sub * pct / 100 * PLAN.advanceShareOfDeposit),
+    providerNet,
+    toCents(PLAN.advanceCap[tier]),
+  );
 
   return {
     version: PRICING_VERSION,

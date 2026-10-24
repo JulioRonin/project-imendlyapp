@@ -32,6 +32,8 @@ function paymentLabel(o: any): { label: string; cls: string } {
   if (o.payment_status === 'deposit_paid') return { label: 'Anticipo pagado', cls: 'bg-mint-light text-mint-deep' };
   if (o.payment_status === 'due_on_delivery') return { label: 'Pagas al terminar', cls: 'bg-primary-light text-primary-deep' };
   if (o.payment_status === 'not_required') return { label: 'Sin costo', cls: 'bg-sand text-muted' };
+  if (o.price_status === 'pending_quote') return { label: 'Por cotizar', cls: 'bg-sand text-muted' };
+  if (o.price_status === 'quoted') return { label: 'Precio por aprobar', cls: 'bg-primary text-ink' };
   return { label: 'Pago pendiente', cls: 'bg-primary text-ink' };
 }
 
@@ -82,6 +84,9 @@ function OrderDetailsPage() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
+  const [lastQuote, setLastQuote] = useState<any>(null);
+  const [askOpen, setAskOpen] = useState(false);
+  const [askText, setAskText] = useState('');
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -94,6 +99,9 @@ function OrderDetailsPage() {
 
         if (error) throw error;
         setOrder(data);
+        const { data: q } = await supabase.from('order_quotes').select('*')
+          .eq('order_id', orderId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+        setLastQuote(q);
       } catch (err) {
         console.error('Error fetching order:', err);
       } finally {
@@ -223,7 +231,9 @@ function OrderDetailsPage() {
                 Monto del servicio
               </p>
               <p className="text-[44px] md:text-[52px] font-bold tracking-tight leading-none tabular-nums">
-                {total}
+                {order.price_status === 'pending_quote'
+                  ? (order.quote_min != null ? `${formatMxn(Number(order.quote_min))}–${formatMxn(Number(order.quote_max))}` : 'Por cotizar')
+                  : total}
               </p>
               <p className="text-[13px] font-medium text-on-dark/50 mt-3">{serviceName}</p>
             </div>
@@ -243,7 +253,65 @@ function OrderDetailsPage() {
         {/* ── Tu pago ── */}
         <section className="v2-rise v2-d2 bg-cream rounded-[2.25rem] p-7 md:p-9 v2-shadow-soft">
           <h2 className="text-xl font-semibold tracking-tight text-ink mb-6">Tu pago</h2>
-          {order.subtotal != null ? (
+          {order.price_status === 'pending_quote' && (
+            <div className="mb-6 p-5 rounded-[1.5rem] bg-primary-light">
+              <p className="text-[14px] font-semibold text-ink">Esperando el precio final</p>
+              <p className="mt-1 text-[13px] font-medium text-ink/75">
+                {order.quote_min != null
+                  ? `Después de la visita, el profesional te enviará el precio final. Acordaron un rango de ${formatMxn(Number(order.quote_min))} a ${formatMxn(Number(order.quote_max))}.`
+                  : 'Después de la visita de valoración, el profesional te enviará el precio final.'}
+                {' '}No pagas nada hasta que lo apruebes.
+              </p>
+              {lastQuote?.status === 'rejected' && (
+                <p className="mt-2 text-[12.5px] font-medium text-muted">Pediste otro precio: “{lastQuote.client_note}”.</p>
+              )}
+            </div>
+          )}
+
+          {order.price_status === 'quoted' && lastQuote && (
+            <div className="mb-6 p-5 rounded-[1.5rem] bg-sand space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-deep">Precio final propuesto</p>
+              {lastQuote.over_range && (
+                <p className="p-3 rounded-[1rem] bg-rose/15 text-error text-[12.5px] font-semibold">
+                  Supera el máximo que acordaron ({formatMxn(Number(order.quote_max))}). Revisa la explicación antes de aprobar.
+                </p>
+              )}
+              {lastQuote.note && <p className="text-[13.5px] font-medium text-ink/80">“{lastQuote.note}”</p>}
+              <p className="text-[12.5px] font-medium text-muted">
+                {Number(order.deposit_amount) > 0
+                  ? 'Si estás de acuerdo, apruébalo pagando el anticipo. Si no, pide otro precio o cancela sin costo.'
+                  : 'Si estás de acuerdo, apruébalo. Pagas al terminar el trabajo.'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                {Number(order.deposit_amount) === 0 && (
+                  <button onClick={() => act('aprobar')} disabled={busy !== null} className="h-12 px-6 rounded-full bg-ink text-white text-[13px] font-bold v2-press disabled:opacity-60">
+                    {busy === 'aprobar' ? 'Aprobando…' : 'Aprobar precio'}
+                  </button>
+                )}
+                <button onClick={() => setAskOpen(v => !v)} className="h-12 px-6 rounded-full bg-cream border border-line text-ink text-[13px] font-semibold v2-press">
+                  Pedir otro precio
+                </button>
+              </div>
+              {askOpen && (
+                <div className="space-y-2">
+                  <textarea
+                    value={askText} onChange={e => setAskText(e.target.value)} rows={3}
+                    placeholder="Ej. Esperaba que quedara dentro del rango que acordamos…"
+                    className="w-full bg-cream rounded-[1.1rem] px-4 py-3 text-[13.5px] font-medium text-ink outline-none focus:ring-2 focus:ring-lavender/60 resize-none"
+                  />
+                  <button
+                    disabled={askText.trim().length < 5 || busy !== null}
+                    onClick={async () => { if (await act('pedir_otro_precio', askText)) { setAskOpen(false); setAskText(''); } }}
+                    className="h-11 px-5 rounded-full bg-ink text-white text-[12.5px] font-bold v2-press disabled:opacity-40"
+                  >
+                    Enviar al profesional
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {order.price_status === 'pending_quote' ? null : order.subtotal != null ? (
             <PriceBreakdown
               subtotal={Number(order.subtotal)} clientFee={Number(order.client_fee)} total={Number(order.total_amount)}
               deposit={Number(order.deposit_amount)} balance={Number(order.balance_amount)} depositPercent={order.deposit_percent}
@@ -260,7 +328,7 @@ function OrderDetailsPage() {
                 className="w-full h-14 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center gap-2 v2-press disabled:opacity-60"
               >
                 {busy === 'pagar' ? <Loader2 size={16} className="animate-spin" /> : <>
-                  {due.kind === 'deposit' ? 'Pagar anticipo' : due.kind === 'balance' ? 'Pagar saldo y confirmar entrega' : 'Completar pago'} · {formatMxn(due.amount)}
+                  {due.kind === 'deposit' ? (order.price_status === 'quoted' ? 'Aprobar y pagar anticipo' : 'Pagar anticipo') : due.kind === 'balance' ? 'Pagar saldo y confirmar entrega' : 'Completar pago'} · {formatMxn(due.amount)}
                 </>}
               </button>
             )}

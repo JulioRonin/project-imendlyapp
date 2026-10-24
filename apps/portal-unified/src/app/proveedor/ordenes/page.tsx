@@ -234,7 +234,7 @@ export default function OrdersPage() {
                         </div>
                     ) : filteredOrders.map((order, i) => {
                         const client = order.clients;
-                        const amount = formatMxn(Number(order.provider_net ?? order.total_amount));
+                        const amount = order.price_status === 'pending_quote' ? 'Por cotizar' : formatMxn(Number(order.provider_net ?? order.total_amount));
                         const date = new Date(order.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 
                         return (
@@ -321,7 +321,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="shrink-0 md:text-right bg-sand rounded-[1.5rem] px-6 py-4">
                             <p className={`${EYEBROW} text-muted`}>Tu ganancia</p>
-                            <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">{formatMxn(Number(selectedOrder.provider_net ?? selectedOrder.total_amount))}</p>
+                            <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">{selectedOrder.price_status === 'pending_quote' ? 'Por cotizar' : formatMxn(Number(selectedOrder.provider_net ?? selectedOrder.total_amount))}</p>
                         </div>
                     </div>
 
