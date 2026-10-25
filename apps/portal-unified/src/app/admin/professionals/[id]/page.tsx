@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { PLAN, TIER_LABEL, pct, type ProviderTier } from '@/lib/pricing';
 import { supabase } from '../../../../lib/supabase';
 import {
   ArrowLeft,
@@ -135,6 +136,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
     secondaryBank: '',
     avatarUrl: '',
     isTop: false,
+    tier: 'verificado',
     services: [] as any[],
     portfolio: [] as any[],
     availability: [] as any[],
@@ -208,6 +210,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           avatarUrl: u?.avatar_url || '',
           isVerified: data.is_verified || false,
           isTop: (data as any).is_top || false,
+          tier: (data as any).tier || 'verificado',
           services: (services || []).map(s => ({
             id: s.id,
             name: s.name,
@@ -336,6 +339,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
           secondary_bank_name: provider.secondaryBank,
           is_verified: provider.isVerified,
           is_top: provider.isTop,
+          tier: provider.tier,
           updated_at: new Date().toISOString()
         });
 
@@ -628,6 +632,21 @@ export default function ProviderEditForm({ params }: { params: any }) {
                       className="sr-only peer"
                     />
                     <span className={`${SWITCH} bg-cream`} />
+                  </label>
+                  <label className="flex items-center justify-between gap-4 p-4 rounded-[1.5rem] bg-sand">
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-semibold text-ink">Nivel de comisión</p>
+                      <p className="text-[11.5px] font-medium text-muted leading-snug">Aplica a las órdenes nuevas</p>
+                    </div>
+                    <select
+                      value={provider.tier}
+                      onChange={e => setProvider({ ...provider, tier: e.target.value })}
+                      className="h-11 px-4 rounded-full bg-cream text-[13px] font-semibold text-ink"
+                    >
+                      {(Object.keys(TIER_LABEL) as ProviderTier[]).map(t => (
+                        <option key={t} value={t}>{TIER_LABEL[t]} · {pct(PLAN.commission[t])}</option>
+                      ))}
+                    </select>
                   </label>
                 </div>
               </div>
@@ -1117,7 +1136,7 @@ export default function ProviderEditForm({ params }: { params: any }) {
 
                 <SectionCard eyebrow="Dispersión" title="Datos fiscales y pagos" className="v2-rise v2-d2">
                   <p className="text-[13px] font-medium text-muted leading-relaxed mb-5 -mt-2">
-                    Esta información se utiliza para la dispersión de fondos del escrow hacia el proveedor (Stripe Connect / Transferencia).
+                    Los pagos se envían por Stripe Connect a la cuenta que el profesional configura en su portal. Estos datos quedan solo como referencia interna.
                   </p>
                   <div className="space-y-5">
                     <div className="space-y-3">

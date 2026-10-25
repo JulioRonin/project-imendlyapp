@@ -8,7 +8,7 @@ import { SegmentBar } from '@/components/client/ui';
 const PHASES = [
   { phase: "Fase 0", title: "Foundation", items: ["Setup Entorno", "ECC Config", "Supabase Schema", "Design System v2"], status: "completed" },
   { phase: "Fase 1", title: "Portal Proveedor", items: ["Onboarding 6 pasos", "Verificación Identidad", "Dashboard Proveedor"], status: "active" },
-  { phase: "Fase 2", title: "Portal Cliente", items: ["Búsqueda/Filtros", "Integración Conekta", "Escrow Escrow"], status: "todo" },
+  { phase: "Fase 2", title: "Portal Cliente", items: ["Búsqueda/Filtros", "Integración Stripe", "Cobro protegido"], status: "todo" },
   { phase: "Fase 3", title: "Portal Admin", items: ["Dashboard Operativo", "Resolución Disputas", "Analytics"], status: "todo" },
 ];
 
@@ -151,7 +151,7 @@ export default function MasterPlanPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
                     { name: "Arquitecto Senior", desc: "Decisiones de escalabilidad y stack." },
-                    { name: "Payments Expert", desc: "Responsable del Escrow y Conekta." },
+                    { name: "Payments Expert", desc: "Responsable del cobro protegido y Stripe." },
                     { name: "Backend Guru", desc: "RLS Policies y PostgreSQL." },
                     { name: "Frontend Master", desc: "React/Next.js Design System." },
                   ].map((a, i) => (
@@ -228,7 +228,7 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;`}</pre>
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink/60 mb-3">Checklist final · Juárez 2026</p>
               <h2 className="text-[34px] md:text-[48px] font-semibold tracking-tight leading-[1.02] text-ink">¿Listos para el launch?</h2>
               <div className="mt-8 flex flex-wrap justify-center gap-2.5">
-                {['50 proveedores certificados', 'Conekta producción', 'Aviso de privacidad', 'RLS 100%'].map((item, i) => (
+                {['50 proveedores certificados', 'Stripe en producción', 'Aviso de privacidad', 'RLS 100%'].map((item, i) => (
                   <span key={i} className="inline-flex items-center h-10 px-5 rounded-full bg-ink text-white text-[12.5px] font-bold">
                     {item}
                   </span>

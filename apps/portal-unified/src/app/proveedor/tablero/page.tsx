@@ -5,6 +5,7 @@ import {
   Calendar, Check, ClipboardList, Filter, Hammer, Loader2,
   MapPin, Send, ShieldCheck, Users, X, Trophy
 } from 'lucide-react';
+import { providerTakeHome, isTier, formatMxn, TIER_LABEL, type ProviderTier } from '@/lib/pricing';
 import { supabase } from '../../../lib/supabase';
 import {
   OFFER_STATUS_LABELS, findContactInfo, formatMXN, timeAgo, timingLabel
@@ -53,7 +54,7 @@ export default function TableroProveedorPage() {
 
       const { data: prov } = await supabase
         .from('providers')
-        .select('id, category, categories, zones, is_verified, account_status')
+        .select('id, category, categories, zones, is_verified, account_status, tier')
         .eq('id', user.id)
         .single();
       setProvider(prov);
@@ -309,6 +310,16 @@ export default function TableroProveedorPage() {
                             className={INPUT_CLS}
                           />
                         </div>
+                        {Number(amount) > 0 && (() => {
+                          const tier: ProviderTier = isTier(provider?.tier) ? provider.tier : 'verificado';
+                          const take = providerTakeHome(Number(amount), tier);
+                          return (
+                            <p className="px-1 text-[12.5px] font-medium text-muted tabular-nums">
+                              Recibes <span className="font-semibold text-ink">{formatMxn(take.net)}</span> · comisión {TIER_LABEL[tier]} con IVA {formatMxn(take.commission)}
+                              {amountMax ? ' por el monto inicial. Con rango, envías el precio final después de visitar; si pasas del máximo, tendrás que justificarlo' : ''}
+                            </p>
+                          );
+                        })()}
                         <div className="flex items-center gap-3">
                           <input
                             value={estimatedDays}

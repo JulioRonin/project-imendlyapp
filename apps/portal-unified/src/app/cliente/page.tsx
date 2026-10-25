@@ -1,5 +1,6 @@
 "use client";
 
+import { PLAN, formatMxn } from '@/lib/pricing';
 import {
   Search,
   MapPin,
@@ -388,7 +389,7 @@ export default function ClientHome() {
                 <ShieldCheck size={26} />
               </span>
               <div>
-                <h3 className="text-[19px] md:text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">Garantía I mendly de hasta $10,000 MXN</h3>
+                <h3 className="text-[19px] md:text-[22px] font-semibold tracking-tight text-[#111111] leading-tight">Garantía I mendly de hasta {formatMxn(PLAN.guaranteeCap)}</h3>
                 <p className="mt-1.5 text-[13.5px] font-medium text-[#6F6B66] max-w-md">Paga dentro de la app y tu anticipo queda protegido. Si algo sale mal, lo corregimos con otro certificado o te reembolsamos.</p>
               </div>
             </div>

@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { Avatar } from '@i-mendly/shared/components/Avatar';
 import { supabase } from '../../../lib/supabase';
+import { OrderActions } from '@/components/provider/OrderActions';
+import { formatMxn } from '@/lib/pricing';
 
 const ORDERS = [
   {
@@ -121,26 +123,6 @@ export default function OrdersPage() {
       }
   };
 
-  const updateOrderStatus = async (orderId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ status: newStatus })
-        .eq('id', orderId);
-
-      if (error) throw error;
-
-      // Update local state
-      setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-      if (selectedOrder && selectedOrder.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
-      }
-    } catch (err) {
-      console.error('Error updating order status:', err);
-      alert('Error al actualizar el estado de la orden');
-    }
-  };
-
   if (loading) return (
     <div className="flex-1 bg-linen px-6 md:px-12 pt-10">
         <div className="max-w-5xl mx-auto space-y-4">
@@ -252,7 +234,7 @@ export default function OrdersPage() {
                         </div>
                     ) : filteredOrders.map((order, i) => {
                         const client = order.clients;
-                        const amount = `$${order.total_amount.toLocaleString('es-MX')}`;
+                        const amount = order.price_status === 'pending_quote' ? 'Por cotizar' : formatMxn(Number(order.provider_net ?? order.total_amount));
                         const date = new Date(order.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 
                         return (
@@ -338,8 +320,8 @@ export default function OrdersPage() {
                             </div>
                         </div>
                         <div className="shrink-0 md:text-right bg-sand rounded-[1.5rem] px-6 py-4">
-                            <p className={`${EYEBROW} text-muted`}>Total acordado</p>
-                            <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">${selectedOrder.total_amount.toLocaleString('es-MX')}</p>
+                            <p className={`${EYEBROW} text-muted`}>Tu ganancia</p>
+                            <p className="mt-1 text-[32px] font-bold tabular-nums tracking-tight text-ink leading-none">{selectedOrder.price_status === 'pending_quote' ? 'Por cotizar' : formatMxn(Number(selectedOrder.provider_net ?? selectedOrder.total_amount))}</p>
                         </div>
                     </div>
 
@@ -375,77 +357,15 @@ export default function OrdersPage() {
                         </div>
                     </div>
 
-                    {/* Acciones contextuales */}
-                    <div className="mt-6 space-y-4">
-                        {selectedOrder.status === 'pending_confirmation' && (
-                            <div className="relative overflow-hidden bg-ink rounded-[2rem] p-7 md:p-8 text-white">
-                                <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-primary/25 blur-3xl pointer-events-none" />
-                                <div className="relative">
-                                    <p className={`${EYEBROW} text-primary-deep`}>Requiere tu confirmación</p>
-                                    <h4 className="mt-2 text-[21px] font-semibold tracking-tight leading-tight">Revisa y acepta la orden</h4>
-                                    <p className="mt-2 text-[13.5px] font-medium text-white/60 max-w-lg">Revisa los detalles y la dirección antes de aceptar. Puedes sugerir otro horario o aceptar tal como se solicitó.</p>
-                                    <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                        <button type="button" className="h-14 px-6 rounded-full bg-white/10 text-white text-[13px] font-bold v2-press hover:bg-white/15 transition-colors">
-                                            Contraofertar horario
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="h-14 px-8 rounded-full bg-primary text-ink text-[13px] font-bold v2-press hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
-                                            onClick={() => updateOrderStatus(selectedOrder.id, 'scheduled')}
-                                        >
-                                            Aceptar servicio
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {(selectedOrder.status === 'in_progress' || selectedOrder.status === 'pending_client_approval') && (
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
-                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
-                                        <Edit3 size={19} />
-                                    </span>
-                                    <h4 className="text-[16px] font-semibold tracking-tight text-ink">Ajustar costo o alcance</h4>
-                                    <p className="mt-1.5 text-[13px] font-medium text-muted leading-relaxed mb-6">Si al revisar notas que se requiere más trabajo, recalcula el costo. El cliente deberá aceptarlo antes de continuar.</p>
-                                    <button type="button" className="mt-auto h-12 rounded-full bg-cream text-ink text-[13px] font-bold v2-press v2-shadow-soft">
-                                        Crear ajuste
-                                    </button>
-                                </div>
-
-                                <div className="bg-linen rounded-[1.75rem] p-6 flex flex-col">
-                                    <span className="w-12 h-12 rounded-[1rem] bg-primary-light text-primary-deep flex items-center justify-center mb-4">
-                                        <Camera size={19} />
-                                    </span>
-                                    <h4 className="text-[16px] font-semibold tracking-tight text-ink">Entregar servicio</h4>
-                                    <p className="mt-1.5 text-[13px] font-medium text-muted leading-relaxed mb-6">Sube evidencia del trabajo terminado para que el cliente libere los fondos a tu cuenta.</p>
-                                    <button
-                                        type="button"
-                                        className="mt-auto h-12 rounded-full bg-ink text-white text-[13px] font-bold v2-press"
-                                        onClick={() => updateOrderStatus(selectedOrder.id, 'completed')}
-                                    >
-                                        Marcar completado
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {selectedOrder.status === 'completed' && (
-                            <div className="bg-sage-light rounded-[1.75rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <span className="w-12 h-12 shrink-0 rounded-[1rem] bg-white text-sage flex items-center justify-center">
-                                        <Handshake size={20} />
-                                    </span>
-                                    <div>
-                                        <p className="text-[15px] font-semibold tracking-tight text-ink">Trabajo finalizado y pagado</p>
-                                        <p className="text-[12.5px] font-medium text-muted mt-0.5">Fondos liberados y listos para cobro.</p>
-                                    </div>
-                                </div>
-                                <button type="button" className="h-11 px-5 rounded-full bg-white text-ink text-[12.5px] font-bold v2-press shrink-0">
-                                    Ver recibo
-                                </button>
-                            </div>
-                        )}
+                    {/* Acciones y dinero de la orden */}
+                    <div className="mt-6">
+                        <OrderActions
+                            order={selectedOrder}
+                            onChanged={(patch) => {
+                                setOrders(orders.map(o => o.id === selectedOrder.id ? { ...o, ...patch } : o));
+                                setSelectedOrder({ ...selectedOrder, ...patch });
+                            }}
+                        />
                     </div>
                 </section>
             </div>
